@@ -1,7 +1,106 @@
 # RdLn Document Comparison Tool - Comprehensive Changelog
 
-## Version 2.1.0 - "Graceful Substitution Detection" 
-*Released: [Current Date]*
+## Version 0.4.0 - "OCR Integration & Enhanced Testing Framework"
+*Released: June 27, 2025*
+
+### 🔍 OCR Integration & Multi-Format Support
+
+#### **Complete OCR Service Implementation**
+- **NEW FEATURE**: Full OCR integration with Tesseract.js for PDF and image processing
+- **Multi-Language Support**: 50+ language detection and processing capabilities
+- **Smart Caching**: `OCRCacheManager` for performance optimization and reduced processing time
+- **Configuration System**: Flexible OCR settings in `ocrConfig.ts` with quality/speed presets
+- **Language Detection**: Automatic language detection service for optimal OCR accuracy
+- **File Format Support**: PDF, PNG, JPG, JPEG, and other image formats
+
+#### **Enhanced User Interface**
+- **Quick Compare Feature**: One-click comparison functionality for rapid document analysis
+- **File Upload Improvements**: Drag-and-drop support with visual feedback
+- **Progress Indicators**: Real-time processing status for OCR operations
+- **Error Handling**: Comprehensive error messages and recovery options
+- **Mobile Responsiveness**: Improved layout for various screen sizes
+
+### 🧪 Comprehensive Testing Framework
+
+#### **Extreme Test Suite Implementation**
+- **NEW COMPONENT**: `ExtremeTestSuite.tsx` with 15 comprehensive test scenarios
+- **Edge Case Coverage**: Complex legal documents, multilingual content, formatting edge cases
+- **Performance Testing**: Large document handling and processing speed validation
+- **Real-world Scenarios**: Actual legal document patterns and common comparison challenges
+- **Automated Validation**: Built-in test result verification and scoring
+
+#### **Test Data Management**
+- **Structured Test Cases**: JSON-based test case definitions in `test-cases.json`
+- **Extreme Test Cases**: Advanced scenarios in `extreme-test-cases.json`
+- **Test Utilities**: Helper functions in `testSuiteUtils.ts` for test execution
+- **Type Safety**: Comprehensive TypeScript types for test suite components
+
+### 🎨 UI/UX Enhancements
+
+#### **Theme System Overhaul**
+- **Professional Themes**: Enhanced color schemes optimized for legal professionals
+- **Accessibility**: Improved contrast ratios and keyboard navigation
+- **Consistency**: Unified design language across all components
+- **Customization**: User preference management for theme selection
+
+#### **Component Improvements**
+- **ComparisonInterface**: Enhanced layout with better visual hierarchy
+- **RedlineOutput**: Improved diff rendering with cleaner formatting
+- **TextInputPanel**: Better user experience with validation and feedback
+- **TestSuite**: Comprehensive testing interface with detailed results
+
+### 🛠️ Technical Architecture Enhancements
+
+#### **Service Layer Implementation**
+- **OCRService Refactor**: Modular, maintainable OCR processing architecture
+- **Language Detection Service**: Intelligent language identification for optimal processing
+- **Cache Management**: Efficient memory and storage management for OCR results
+- **Error Recovery**: Robust error handling with graceful degradation
+
+#### **Type System Improvements**
+- **OCR Types**: Comprehensive TypeScript definitions in `ocr-types.ts`
+- **Test Suite Types**: Structured types for testing framework in `test-suite-types.ts`
+- **Enhanced Index Types**: Improved main type definitions with better organization
+
+#### **Configuration Management**
+- **OCR Configuration**: Centralized settings management for OCR operations
+- **Performance Tuning**: Optimized settings for different use cases
+- **Quality Presets**: Pre-configured quality/speed balance options
+
+### 📈 MVP Progress Towards v1.0
+
+#### **Core Functionality Complete**
+- **Document Comparison**: Robust Myers algorithm implementation
+- **OCR Processing**: Full image-to-text conversion capabilities
+- **Professional UI**: Legal professional-focused interface design
+- **Testing Framework**: Comprehensive validation and quality assurance
+
+#### **Pre-1.0 Milestones Achieved**
+- ✅ Core comparison algorithm (Myers)
+- ✅ OCR integration
+- ✅ Professional UI/UX
+- ✅ Comprehensive testing
+- ✅ Performance optimization
+- 🔄 User feedback integration (ongoing)
+- 🔄 Beta testing with legal professionals (planned)
+
+---
+
+### 🎉 Release Highlights
+
+Version 0.4.0 represents a significant step toward our v1.0 release, introducing full OCR capabilities while maintaining focus on legal professional needs. This MVP release demonstrates the core value proposition with a comprehensive feature set ready for beta testing.
+
+**Key Achievements**:
+- Complete OCR integration with multi-language support
+- 15-scenario comprehensive testing framework  
+- Enhanced professional UI with improved themes
+- Robust caching and performance optimization
+- Maintained 100% client-side processing for confidentiality
+
+---
+
+## Version 0.3.0 - "Graceful Substitution Detection"
+*Released: [Previous Date]*
 
 ### 🎯 Major Algorithm Improvements
 
@@ -139,7 +238,7 @@ This release represents a significant milestone in document comparison accuracy,
 
 ## Version History
 
-### Version 2.0.0 - "Professional Legal Document Comparison"
+### Version 0.2.0 - "Professional Legal Document Comparison"
 - Initial release with Myers algorithm implementation
 - Multi-language OCR support with Tesseract.js
 - Professional UI design optimized for legal professionals
@@ -147,7 +246,7 @@ This release represents a significant milestone in document comparison accuracy,
 - Real-time document comparison with visual redlining
 - Client-side processing for complete confidentiality
 
-### Version 1.0.0 - "Foundation"
+### Version 0.1.0 - "Foundation"
 - Basic document comparison functionality
 - React + TypeScript + Tailwind CSS foundation
 - Vite build system integration
