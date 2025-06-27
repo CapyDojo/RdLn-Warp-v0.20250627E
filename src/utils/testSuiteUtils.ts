@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Test Suite Utilities
  * 
  * Utility functions for test case management, filtering, validation,
@@ -166,14 +166,14 @@ export function formatCategory(category: string): string {
 export function getStatusIcon(status: 'passed' | 'failed' | 'running' | 'pending'): string {
   switch (status) {
     case 'passed':
-      return '✅';
+      return 'âœ…';
     case 'failed':
-      return '❌';
+      return 'âŒ';
     case 'running':
-      return '⏳';
+      return 'â³';
     case 'pending':
     default:
-      return '⏸️';
+      return 'â¸ï¸';
   }
 }
 

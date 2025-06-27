@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { LogoTestPage } from '../pages/LogoTestPage';
 import { Header } from './Header';
 import { ComparisonInterface } from './ComparisonInterface';
@@ -47,19 +47,19 @@ function AppContent({ isLogoTestPage }: AppContentProps) {
             {/* Enhanced footer features with glassmorphic styling */}
             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="glass-panel p-4 rounded-lg border border-theme-neutral-200 subtle-button">
-                <h4 className="font-semibold text-theme-primary-800 mb-2 text-sm">🔒 Privacy First</h4>
+                <h4 className="font-semibold text-theme-primary-800 mb-2 text-sm">ðŸ”’ Privacy First</h4>
                 <p className="text-xs text-theme-neutral-600">
                   Client-side processing ensures complete confidentiality
                 </p>
               </div>
               <div className="glass-panel p-4 rounded-lg border border-theme-neutral-200 subtle-button">
-                <h4 className="font-semibold text-theme-primary-800 mb-2 text-sm">⚡ Lightning Fast</h4>
+                <h4 className="font-semibold text-theme-primary-800 mb-2 text-sm">âš¡ Lightning Fast</h4>
                 <p className="text-xs text-theme-neutral-600">
                   Optimized Myers algorithm for instant results
                 </p>
               </div>
               <div className="glass-panel p-4 rounded-lg border border-theme-neutral-200 subtle-button">
-                <h4 className="font-semibold text-theme-primary-800 mb-2 text-sm">🌍 Multi-Language</h4>
+                <h4 className="font-semibold text-theme-primary-800 mb-2 text-sm">ðŸŒ Multi-Language</h4>
                 <p className="text-xs text-theme-neutral-600">
                   Advanced OCR supports 10+ languages
                 </p>
@@ -69,7 +69,7 @@ function AppContent({ isLogoTestPage }: AppContentProps) {
             {/* Professional attribution */}
             <div className="mt-6 pt-4 border-t border-theme-neutral-200">
               <p className="text-xs text-theme-neutral-400 font-serif">
-                © 2024 RdLn - Professional Legal Document Comparison Tool
+                Â© 2024 RdLn - Professional Legal Document Comparison Tool
               </p>
             </div>
           </div>

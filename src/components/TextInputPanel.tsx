@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import { FileText, Image, AlertCircle, Loader, Settings, Globe, ChevronDown, Languages } from 'lucide-react';
 import { useOCR } from '../hooks/useOCR';
-import { OCRLanguage } from '../utils/OCRService';
+import { OCRLanguage } from '../types/ocr-types';
 
 interface TextInputPanelProps {
   title: string;

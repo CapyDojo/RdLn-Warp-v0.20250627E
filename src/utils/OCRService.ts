@@ -5,34 +5,16 @@
  * This service coordinates between language detection, caching, and post-processing services.
  */
 
-import { LanguageOption, OCRLanguage, OCROptions, CacheStats } from '../types/ocr-types';
+import { createWorker } from 'tesseract.js';
+import type { Worker as TesseractWorker } from 'tesseract.js';
+import { LanguageOption, OCRLanguage, OCROptions, CacheStats, CachedWorker, LanguageDetectionCacheEntry } from '../types/ocr-types';
 import { SUPPORTED_LANGUAGES } from '../config/ocrConfig';
-import { OCRCacheManager } from '../services/OCRCacheManager';
-import { LanguageDetectionService } from '../services/LanguageDetectionService';
-import { TextPostProcessor } from '../services/TextPostProcessor';
 
-// Re-export types and constants for backwards compatibility
-export { LanguageOption, OCRLanguage, OCROptions } from '../types/ocr-types';
-export { SUPPORTED_LANGUAGES } from '../config/ocrConfig';
-
-// Enhanced worker cache with lifecycle management
-interface CachedWorker {
-  worker: Tesseract.Worker;
-  lastUsed: number;
-  useCount: number;
-  languages: OCRLanguage[]; // Track which languages this worker supports
-}
-
-// Language detection cache interface
-interface LanguageDetectionCacheEntry {
-  languages: OCRLanguage[];
-  timestamp: number;
-  hitCount: number;
-}
+// Note: Re-exports removed to avoid module resolution conflicts
 
 export class OCRService {
   private static workers: Map<string, CachedWorker> = new Map();
-  private static loadingPromises: Map<string, Promise<Tesseract.Worker>> = new Map();
+  private static loadingPromises: Map<string, Promise<TesseractWorker>> = new Map();
   private static detectionWorker: CachedWorker | null = null;
   
   // Language detection cache
@@ -218,7 +200,7 @@ export class OCRService {
     return languages.sort().join('-');
   }
 
-  private static async initializeDetectionWorker(): Promise<Tesseract.Worker> {
+  private static async initializeDetectionWorker(): Promise<TesseractWorker> {
     // Check cache first
     if (this.detectionWorker) {
       this.detectionWorker.lastUsed = Date.now();
@@ -249,7 +231,7 @@ export class OCRService {
     return worker;
   }
 
-  private static async initializeWorker(languages: OCRLanguage[]): Promise<Tesseract.Worker> {
+  private static async initializeWorker(languages: OCRLanguage[]): Promise<TesseractWorker> {
     const workerKey = this.getWorkerKey(languages);
     
     // Check cache first
@@ -396,7 +378,7 @@ export class OCRService {
       return detectedLanguages;
     } catch (error) {
       console.warn('Language detection failed, defaulting to English:', error);
-      const fallbackLanguages = ['eng'];
+      const fallbackLanguages: OCRLanguage[] = ['eng'];
       
       // Store fallback result in cache to avoid repeated failures
       await this.storeLanguageCache(imageFile, fallbackLanguages);
@@ -906,44 +888,62 @@ export class OCRService {
   }
 
   private static intelligentParagraphReconstruction(text: string): string {
-    const lines = text.split('\n').filter(line => line.trim().length > 0);
-    const paragraphs: string[] = [];
+    // CONSERVATIVE APPROACH: Preserve existing paragraph structure while fixing obvious line breaks
+    const lines = text.split('\n');
+    const result: string[] = [];
     let currentParagraph = '';
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
+      const prevLine = i > 0 ? lines[i - 1]?.trim() : '';
       const nextLine = i < lines.length - 1 ? lines[i + 1]?.trim() : '';
 
-      // Check if this line starts a new paragraph
-      if (this.isNewParagraphStart(line, currentParagraph)) {
-        if (currentParagraph) {
-          paragraphs.push(currentParagraph.trim());
+      // Skip empty lines - they indicate paragraph breaks
+      if (line.length === 0) {
+        // Finish current paragraph if we have one
+        if (currentParagraph.trim()) {
+          result.push(currentParagraph.trim());
+          currentParagraph = '';
         }
-        currentParagraph = line;
-      } else if (this.shouldJoinWithPrevious(currentParagraph, line)) {
-        // Join with previous line
-        currentParagraph += (currentParagraph.endsWith('-') ? '' : ' ') + line;
-      } else {
-        // Start new paragraph
-        if (currentParagraph) {
-          paragraphs.push(currentParagraph.trim());
-        }
-        currentParagraph = line;
+        continue;
       }
 
-      // Check if we should end the current paragraph
-      if (this.shouldEndParagraph(line, nextLine)) {
-        paragraphs.push(currentParagraph.trim());
-        currentParagraph = '';
+      // Definitely start new paragraph for legal/formal indicators
+      if (this.isDefiniteNewParagraph(line)) {
+        if (currentParagraph.trim()) {
+          result.push(currentParagraph.trim());
+        }
+        currentParagraph = line;
+        continue;
+      }
+
+      // Only join lines if there's clear evidence they should be joined
+      if (currentParagraph && this.shouldDefinitelyJoin(currentParagraph, line)) {
+        // Join with previous line (handle hyphenation)
+        currentParagraph += (currentParagraph.endsWith('-') ? '' : ' ') + line;
+      } else {
+        // Start new paragraph or continue existing one
+        if (currentParagraph.trim()) {
+          // Only end paragraph if we have strong evidence
+          if (this.shouldDefinitelyEndParagraph(currentParagraph, line)) {
+            result.push(currentParagraph.trim());
+            currentParagraph = line;
+          } else {
+            // Continue same paragraph
+            currentParagraph += ' ' + line;
+          }
+        } else {
+          currentParagraph = line;
+        }
       }
     }
 
     // Add final paragraph
     if (currentParagraph.trim()) {
-      paragraphs.push(currentParagraph.trim());
+      result.push(currentParagraph.trim());
     }
 
-    return paragraphs.join('\n\n');
+    return result.join('\n\n');
   }
 
   private static isNewParagraphStart(line: string, currentParagraph: string): boolean {
@@ -1026,6 +1026,64 @@ export class OCRService {
 
     // End paragraph after sentence-ending punctuation if next line starts with capital
     if (/[.!?]$/.test(currentLine.trim()) && /^[A-Z]/.test(nextLine.trim())) {
+      return true;
+    }
+
+    return false;
+  }
+
+  // Conservative helper methods for paragraph reconstruction
+  private static isDefiniteNewParagraph(line: string): boolean {
+    // Only mark as definite new paragraph for very clear indicators
+    const definiteStarters = [
+      /^\d+\./,                           // Numbered paragraphs like "1."
+      /^[A-Z]\./,                         // Lettered paragraphs like "A."
+      /^\([a-z]\)/,                       // Lettered sub-paragraphs like "(a)"
+      /^\([0-9]+\)/,                      // Numbered sub-paragraphs like "(1)"
+      /^WHEREAS\b/i,                      // Contract clauses
+      /^NOW THEREFORE\b/i,                // Contract clauses
+      /^IN WITNESS WHEREOF\b/i,           // Contract clauses
+      /^Section\s+\d+/i,                  // Section headers
+      /^Article\s+\d+/i,                  // Article headers
+      /^Chapter\s+\d+/i,                  // Chapter headers
+    ];
+
+    return definiteStarters.some(pattern => pattern.test(line));
+  }
+
+  private static shouldDefinitelyJoin(currentParagraph: string, line: string): boolean {
+    if (!currentParagraph || !line) return false;
+
+    // Don't join if current line looks like a new paragraph
+    if (this.isDefiniteNewParagraph(line)) return false;
+
+    // Only join if there's very clear evidence lines should be joined
+    const clearJoinIndicators = [
+      /-$/,                               // Previous line ends with hyphen
+      /,$/,                               // Previous line ends with comma
+      /\sand$/,                           // Previous line ends with "and"
+      /\sor$/,                            // Previous line ends with "or"
+    ];
+
+    // Check if previous line has clear join indicator
+    if (clearJoinIndicators.some(pattern => pattern.test(currentParagraph.trim()))) {
+      return true;
+    }
+
+    // Join if current line starts with lowercase (likely continuation)
+    if (/^[a-z]/.test(line)) return true;
+
+    return false;
+  }
+
+  private static shouldDefinitelyEndParagraph(currentParagraph: string, line: string): boolean {
+    // Only end paragraph if we have very strong evidence
+    
+    // End if next line is definitely a new paragraph
+    if (this.isDefiniteNewParagraph(line)) return true;
+
+    // End if current paragraph ends with sentence punctuation and next starts with capital
+    if (/[.!?]$/.test(currentParagraph.trim()) && /^[A-Z]/.test(line.trim())) {
       return true;
     }
 

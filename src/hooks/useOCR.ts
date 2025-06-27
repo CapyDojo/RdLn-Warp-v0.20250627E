@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
-import { OCRService, OCROptions, OCRLanguage, SUPPORTED_LANGUAGES } from '../utils/OCRService';
+import { OCRService } from '../utils/OCRService';
+import { OCROptions, OCRLanguage } from '../types/ocr-types';
+import { SUPPORTED_LANGUAGES } from '../config/ocrConfig';
 
 export interface OCRState {
   isProcessing: boolean;

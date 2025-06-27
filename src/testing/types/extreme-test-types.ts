@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Type definitions for the Extreme Test Suite.
  * Defines the structure of complex test cases used for stress testing the comparison algorithm.
  */

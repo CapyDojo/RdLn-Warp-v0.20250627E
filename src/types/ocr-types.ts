@@ -33,7 +33,7 @@ export interface OCROptions {
 /** Cached worker with lifecycle management */
 export interface CachedWorker {
   /** The Tesseract worker instance */
-  worker: Tesseract.Worker;
+  worker: any; // Using any to avoid circular import, will be typed as Tesseract.Worker at runtime
   /** Timestamp of last usage */
   lastUsed: number;
   /** Number of times this worker has been used */
@@ -127,3 +127,4 @@ export interface ParagraphReconstructionRules {
   /** Patterns that indicate continuation words */
   continuationStarters: RegExp[];
 }
+

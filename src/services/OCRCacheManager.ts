@@ -1,4 +1,4 @@
-/**
+﻿/**
  * OCR Cache Manager
  * 
  * Handles caching of Tesseract workers and language detection results
@@ -74,7 +74,7 @@ export class OCRCacheManager {
     for (const key of expiredKeys) {
       const cached = this.workers.get(key);
       if (cached) {
-        console.log(`🧹 Cleaning up expired OCR worker: ${key}`);
+        console.log(`ðŸ§¹ Cleaning up expired OCR worker: ${key}`);
         await cached.worker.terminate();
         this.workers.delete(key);
       }
@@ -82,7 +82,7 @@ export class OCRCacheManager {
 
     // Cleanup detection worker if expired
     if (this.detectionWorker && now - this.detectionWorker.lastUsed > CACHE_CONFIGURATION.cacheExpiryMs) {
-      console.log('🧹 Cleaning up expired detection worker');
+      console.log('ðŸ§¹ Cleaning up expired detection worker');
       await this.detectionWorker.worker.terminate();
       this.detectionWorker = null;
     }
@@ -94,7 +94,7 @@ export class OCRCacheManager {
       
       const toRemove = sortedEntries.slice(0, this.workers.size - CACHE_CONFIGURATION.maxCachedWorkers);
       for (const [key, cached] of toRemove) {
-        console.log(`🧹 Removing LRU OCR worker: ${key}`);
+        console.log(`ðŸ§¹ Removing LRU OCR worker: ${key}`);
         await cached.worker.terminate();
         this.workers.delete(key);
       }
@@ -118,7 +118,7 @@ export class OCRCacheManager {
     // Remove expired entries
     for (const key of expiredKeys) {
       this.languageCache.delete(key);
-      console.log(`🧹 Cleaned up expired language detection cache entry`);
+      console.log(`ðŸ§¹ Cleaned up expired language detection cache entry`);
     }
 
     // If cache is too large, remove least recently used
@@ -135,7 +135,7 @@ export class OCRCacheManager {
       const toRemove = sortedEntries.slice(0, this.languageCache.size - CACHE_CONFIGURATION.maxLanguageCacheEntries);
       for (const [key] of toRemove) {
         this.languageCache.delete(key);
-        console.log(`🧹 Removed LRU language detection cache entry`);
+        console.log(`ðŸ§¹ Removed LRU language detection cache entry`);
       }
     }
   }
@@ -174,16 +174,16 @@ export class OCRCacheManager {
         if (now - cached.timestamp < CACHE_CONFIGURATION.languageCacheExpiryMs) {
           // Update hit count and return cached result
           cached.hitCount++;
-          console.log(`🎯 LANGUAGE CACHE HIT: Found cached detection result (hit #${cached.hitCount}):`, cached.languages);
+          console.log(`ðŸŽ¯ LANGUAGE CACHE HIT: Found cached detection result (hit #${cached.hitCount}):`, cached.languages);
           return cached.languages;
         } else {
           // Expired entry
           this.languageCache.delete(cacheKey);
-          console.log(`⏰ Language cache entry expired, removing`);
+          console.log(`â° Language cache entry expired, removing`);
         }
       }
       
-      console.log(`🔍 LANGUAGE CACHE MISS: No cached detection result found`);
+      console.log(`ðŸ” LANGUAGE CACHE MISS: No cached detection result found`);
       return null;
     } catch (error) {
       console.warn('Failed to check language cache:', error);
@@ -204,7 +204,7 @@ export class OCRCacheManager {
         hitCount: 0
       });
       
-      console.log(`💾 LANGUAGE CACHE STORE: Cached detection result for future use:`, languages);
+      console.log(`ðŸ’¾ LANGUAGE CACHE STORE: Cached detection result for future use:`, languages);
       
       // Trigger cleanup if cache is getting large
       if (this.languageCache.size > CACHE_CONFIGURATION.maxLanguageCacheEntries) {
@@ -223,11 +223,11 @@ export class OCRCacheManager {
     if (this.detectionWorker) {
       this.detectionWorker.lastUsed = Date.now();
       this.detectionWorker.useCount++;
-      console.log(`🎯 DETECTION CACHE HIT: Reusing detection worker (used ${this.detectionWorker.useCount} times)`);
+      console.log(`ðŸŽ¯ DETECTION CACHE HIT: Reusing detection worker (used ${this.detectionWorker.useCount} times)`);
       return this.detectionWorker.worker;
     }
 
-    console.log('🔄 DETECTION CACHE MISS: Creating new detection worker with full language support:', DETECTION_LANGUAGES);
+    console.log('ðŸ”„ DETECTION CACHE MISS: Creating new detection worker with full language support:', DETECTION_LANGUAGES);
     
     const worker = await createWorker(DETECTION_LANGUAGES, 1, {
       logger: this.createLogger()
@@ -242,7 +242,7 @@ export class OCRCacheManager {
     };
 
     this.startCleanupTimer();
-    console.log('✅ Multi-language detection worker cached successfully');
+    console.log('âœ… Multi-language detection worker cached successfully');
     return worker;
   }
 
@@ -257,18 +257,18 @@ export class OCRCacheManager {
       const cached = this.workers.get(workerKey)!;
       cached.lastUsed = Date.now();
       cached.useCount++;
-      console.log(`🎯 EXTRACTION CACHE HIT: Reusing worker for ${workerKey} (used ${cached.useCount} times)`);
+      console.log(`ðŸŽ¯ EXTRACTION CACHE HIT: Reusing worker for ${workerKey} (used ${cached.useCount} times)`);
       return cached.worker;
     }
 
     // Return existing loading promise if in progress
     if (this.loadingPromises.has(workerKey)) {
-      console.log(`⏳ Waiting for existing worker creation: ${workerKey}`);
+      console.log(`â³ Waiting for existing worker creation: ${workerKey}`);
       return this.loadingPromises.get(workerKey)!;
     }
 
     // Create new worker with basic configuration
-    console.log(`🔄 EXTRACTION CACHE MISS: Creating new worker for languages: ${workerKey}`);
+    console.log(`ðŸ”„ EXTRACTION CACHE MISS: Creating new worker for languages: ${workerKey}`);
     const loadingPromise = createWorker(languages, 1, {
       logger: this.createLogger()
     });
@@ -289,7 +289,7 @@ export class OCRCacheManager {
       this.loadingPromises.delete(workerKey);
       this.startCleanupTimer();
       
-      console.log(`✅ Extraction worker cached for ${workerKey}`);
+      console.log(`âœ… Extraction worker cached for ${workerKey}`);
       return worker;
     } catch (error) {
       this.loadingPromises.delete(workerKey);
@@ -342,6 +342,6 @@ export class OCRCacheManager {
     // Clear language detection cache
     this.languageCache.clear();
     
-    console.log('🧹 All OCR workers terminated and caches cleared');
+    console.log('ðŸ§¹ All OCR workers terminated and caches cleared');
   }
 }

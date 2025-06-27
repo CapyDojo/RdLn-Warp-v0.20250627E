@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Test Suite Type Definitions
  * 
  * This file contains all type definitions used by the test suite components,
