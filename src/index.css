@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* DEFINITIVE FIX: Force transparent base layers */
+html {
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+body {
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  /* Background will be set by ThemeContext with !important */
+}
+
+#root {
+  min-height: 100vh !important;
+  background: transparent !important;
+}
+
+/* FORCE REMOVE ANY CONFLICTING STYLES */
+* {
+  box-sizing: border-box;
+}
+
+/* ENSURE BACKDROP-FILTER WORKS */
+.glass-panel {
+  isolation: isolate !important;
+}

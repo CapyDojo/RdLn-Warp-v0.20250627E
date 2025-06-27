@@ -1,0 +1,311 @@
+/* Glassmorphism Effects - Enhanced with Logo Test Page Aesthetics */
+
+/* Base glassmorphism panel with enhanced hover effects */
+.glass-panel {
+  background: rgba(0, 0, 0, 0.01) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Enhanced hover effects for glass panels - inspired by logo test page */
+.glass-panel:hover {
+  transform: translateY(-2px) scale(1.005);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Professional theme glassmorphism */
+[data-theme="professional"] .glass-panel {
+  background: rgba(255, 255, 255, var(--effect-backgroundOpacity, 0.6));
+  border: 1px solid rgba(var(--color-primary-200-rgb), 0.5);
+  box-shadow: 0 8px 32px 0 rgba(var(--color-primary-600-rgb), 0.15);
+  backdrop-filter: blur(var(--effect-backdropBlur, 12px));
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px));
+  color: rgb(var(--color-neutral-800-rgb));
+}
+
+[data-theme="professional"] .glass-panel:hover {
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 16px 48px 0 rgba(var(--color-primary-600-rgb), 0.25);
+  border-color: rgba(var(--color-primary-300-rgb), 0.6);
+  transform: translateY(-3px) scale(1.005);
+}
+
+/* Professional theme input fields with glassmorphism */
+[data-theme="professional"] .glass-input-field {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(var(--color-primary-300-rgb), 0.4) !important;
+  backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
+  color: rgb(var(--color-neutral-800-rgb)) !important;
+  box-shadow: none !important;
+  transition: all 0.3s ease !important;
+}
+
+[data-theme="professional"] .glass-input-field:focus {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(var(--color-primary-500-rgb), 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-500-rgb), 0.15) !important;
+  outline: none !important;
+  transform: scale(1.002);
+}
+
+[data-theme="professional"] .glass-input-field::placeholder {
+  color: rgba(var(--color-neutral-600-rgb), 0.7) !important;
+}
+
+/* Bamboo theme glassmorphism - Enhanced visibility with better contrast */
+[data-theme="bamboo"] .glass-panel {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(93, 138, 58, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(93, 138, 58, 0.2);
+  backdrop-filter: blur(var(--effect-backdropBlur, 12px));
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px));
+}
+
+[data-theme="bamboo"] .glass-panel:hover {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 16px 48px 0 rgba(93, 138, 58, 0.3);
+  border-color: rgba(93, 138, 58, 0.5);
+  transform: translateY(-3px) scale(1.005);
+}
+
+/* Apple Light theme glassmorphism */
+[data-theme="apple-light"] .glass-panel {
+  background: rgba(248, 250, 252, var(--effect-backgroundOpacity, 0.5));
+  border: 1px solid rgba(203, 213, 225, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(14, 165, 233, 0.1);
+  backdrop-filter: blur(var(--effect-backdropBlur, 20px));
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 20px));
+  border-radius: 12px;
+}
+
+[data-theme="apple-light"] .glass-panel:hover {
+  background: rgba(248, 250, 252, 0.7);
+  box-shadow: 0 16px 48px 0 rgba(14, 165, 233, 0.2);
+  border-color: rgba(14, 165, 233, 0.4);
+  transform: translateY(-3px) scale(1.005);
+}
+
+/* Apple Dark theme glassmorphism */
+[data-theme="apple-dark"] .glass-panel {
+  background: rgba(23, 23, 23, var(--effect-backgroundOpacity, 0.5));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(139, 92, 246, 0.1);
+  backdrop-filter: blur(var(--effect-backdropBlur, 20px));
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 20px));
+  border-radius: 12px;
+}
+
+[data-theme="apple-dark"] .glass-panel:hover {
+  background: rgba(23, 23, 23, 0.7);
+  box-shadow: 0 16px 48px 0 rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.3);
+  transform: translateY(-3px) scale(1.005);
+}
+
+/* Enhanced button hover effects - inspired by logo test page */
+.enhanced-button {
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.enhanced-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.15);
+}
+
+.enhanced-button:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+/* Subtle button hover effects for smaller elements */
+.subtle-button {
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.05);
+}
+
+.subtle-button:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Input field glassmorphism base */
+.glass-input-field {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
+  box-shadow: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.glass-input-field:hover {
+  transform: scale(1.001);
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Bamboo theme input fields with glassmorphism - Enhanced contrast */
+[data-theme="bamboo"] .glass-input-field {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(93, 138, 58, 0.3) !important;
+  backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
+  color: rgba(15, 20, 15, 0.95) !important;
+}
+
+[data-theme="bamboo"] .glass-input-field:focus {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(93, 138, 58, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(93, 138, 58, 0.15) !important;
+  outline: none !important;
+  transform: scale(1.002);
+}
+
+[data-theme="bamboo"] .glass-input-field::placeholder {
+  color: rgba(42, 50, 42, 0.7) !important;
+}
+
+/* Apple Light theme input fields */
+[data-theme="apple-light"] .glass-input-field {
+  background: rgba(248, 250, 252, 0.05) !important;
+  border: 1px solid rgba(203, 213, 225, 0.2) !important;
+  backdrop-filter: blur(var(--effect-backdropBlur, 20px)) !important;
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 20px)) !important;
+  color: rgba(31, 41, 55, 0.9) !important;
+  border-radius: 12px !important;
+}
+
+[data-theme="apple-light"] .glass-input-field:focus {
+  background: rgba(248, 250, 252, 0.1) !important;
+  border-color: rgba(14, 165, 233, 0.4) !important;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1) !important;
+  outline: none !important;
+  transform: scale(1.002);
+}
+
+/* Apple Dark theme input fields */
+[data-theme="apple-dark"] .glass-input-field {
+  background: rgba(23, 23, 23, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(var(--effect-backdropBlur, 20px)) !important;
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 20px)) !important;
+  color: rgba(243, 244, 246, 0.9) !important;
+  border-radius: 12px !important;
+}
+
+[data-theme="apple-dark"] .glass-input-field:focus {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(139, 92, 246, 0.4) !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1) !important;
+  outline: none !important;
+  transform: scale(1.002);
+}
+
+/* Glass panel header and footer sections */
+[data-theme="bamboo"] .glass-panel-header-footer {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(93, 138, 58, 0.3);
+}
+
+[data-theme="bamboo"] .glass-panel-inner-content {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Text contrast improvements for bamboo theme */
+[data-theme="bamboo"] .glass-panel {
+  color: rgb(15, 20, 15);
+}
+
+[data-theme="bamboo"] .text-theme-neutral-600 {
+  color: rgb(61, 69, 61) !important;
+}
+
+[data-theme="bamboo"] .text-theme-neutral-500 {
+  color: rgb(90, 100, 90) !important;
+}
+
+[data-theme="bamboo"] .text-theme-neutral-400 {
+  color: rgb(138, 148, 138) !important;
+}
+
+[data-theme="bamboo"] .text-theme-neutral-400 {
+  color: rgba(42, 50, 42, 0.8) !important;
+}
+
+[data-theme="bamboo"] .text-theme-primary-400 {
+  color: rgba(45, 125, 45, 0.9) !important;
+}
+
+/* Enhanced glassmorphism utility */
+.glass-effect {
+  backdrop-filter: blur(var(--effect-backdropBlur, 12px));
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px));
+  background-opacity: var(--effect-backgroundOpacity, 0.8);
+}
+
+/* Smooth transitions for all elements */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease, transform 0.3s ease;
+}
+
+/* Libertinus Math font styles */
+.libertinus-math-text {
+  font-family: 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "onum" 1;
+  font-variant-numeric: oldstyle-nums;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
+}
+
+.libertinus-math-placeholder {
+  font-family: 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  letter-spacing: 0.01em;
+}
+
+.libertinus-math-output {
+  font-family: 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "onum" 1;
+  font-variant-numeric: oldstyle-nums;
+  letter-spacing: 0.01em;
+  line-height: 1.7;
+  font-size: 1.05em;
+}
+
+/* Enhanced placeholder styling for all themes */
+.glass-input-field::placeholder {
+  font-family: 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  letter-spacing: 0.01em;
+  opacity: 0.7;
+}
+
+/* Theme-specific placeholder enhancements */
+[data-theme="professional"] .glass-input-field::placeholder {
+  color: rgba(113, 113, 122, 0.7) !important;
+}
+
+[data-theme="apple-light"] .glass-input-field::placeholder {
+  color: rgba(107, 114, 128, 0.7) !important;
+}
+
+[data-theme="apple-dark"] .glass-input-field::placeholder {
+  color: rgba(156, 163, 175, 0.7) !important;
+}
+
+/* Ensure Libertinus Math loads properly with fallbacks */
+@font-face {
+  font-family: 'Libertinus Math Fallback';
+  src: local('Georgia'), local('Times New Roman'), local('Times');
+  font-display: swap;
+}
+
+.libertinus-math-text,
+.libertinus-math-placeholder,
+.libertinus-math-output {
+  font-family: 'Libertinus Math', 'Libertinus Math Fallback', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
+}
