@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Play, RotateCcw, AlertCircle, CheckCircle, Image, Globe, ArrowLeftRight } from 'lucide-react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { Play, RotateCcw, AlertCircle, CheckCircle, Image, Globe, ArrowLeftRight, Zap, ZapOff, GripHorizontal } from 'lucide-react';
 import { useComparison } from '../hooks/useComparison';
 import { TextInputPanel } from './TextInputPanel';
 import { RedlineOutput } from './RedlineOutput';
@@ -18,10 +18,27 @@ export const ComparisonInterface: React.FC = () => {
     setOriginalText,
     setRevisedText,
     compareDocuments,
-    resetComparison
+    resetComparison,
+    quickCompareEnabled,
+    toggleQuickCompare
   } = useComparison();
 
   const [copySuccess, setCopySuccess] = React.useState(false);
+  const [autoCompareCountdown, setAutoCompareCountdown] = React.useState(0);
+  
+  // Resizable panels state
+  const [panelHeight, setPanelHeight] = useState(400);
+  const [outputHeight, setOutputHeight] = useState(500);
+  const resizeHandleRef = useRef<HTMLDivElement>(null);
+  const outputResizeHandleRef = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
+  const isOutputDraggingRef = useRef(false);
+  const dragStartY = useRef(0);
+  const startHeight = useRef(0);
+  const outputDragStartY = useRef(0);
+  const outputStartHeight = useRef(0);
+  const minHeight = 200;
+  const minOutputHeight = 300;
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -45,6 +62,71 @@ export const ComparisonInterface: React.FC = () => {
     setOriginalText(originalText);
     setRevisedText(revisedText);
   };
+  
+  // Resize handlers for synchronized input panels
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDraggingRef.current) return;
+    
+    // Calculate delta from initial mouse position
+    const deltaY = e.clientY - dragStartY.current;
+    const newHeight = Math.max(minHeight, Math.min(800, startHeight.current + deltaY));
+    setPanelHeight(newHeight);
+  }, [minHeight]);
+  
+  const handleMouseUp = useCallback(() => {
+    isDraggingRef.current = false;
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  }, [handleMouseMove]);
+  
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Capture initial state
+    dragStartY.current = e.clientY;
+    startHeight.current = panelHeight;
+    isDraggingRef.current = true;
+    
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+  }, [handleMouseMove, handleMouseUp, panelHeight]);
+  
+  
+  // Output resize handlers
+  const handleOutputMouseMove = useCallback((e: MouseEvent) => {
+    if (!isOutputDraggingRef.current) return;
+    
+    // Calculate delta from initial mouse position
+    const deltaY = e.clientY - outputDragStartY.current;
+    const newHeight = Math.max(minOutputHeight, Math.min(900, outputStartHeight.current + deltaY));
+    setOutputHeight(newHeight);
+  }, [minOutputHeight]);
+  
+  const handleOutputMouseUp = useCallback(() => {
+    isOutputDraggingRef.current = false;
+    document.removeEventListener('mousemove', handleOutputMouseMove);
+    document.removeEventListener('mouseup', handleOutputMouseUp);
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  }, [handleOutputMouseMove]);
+  
+  const handleOutputMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Capture initial state
+    outputDragStartY.current = e.clientY;
+    outputStartHeight.current = outputHeight;
+    isOutputDraggingRef.current = true;
+    
+    document.addEventListener('mousemove', handleOutputMouseMove);
+    document.addEventListener('mouseup', handleOutputMouseUp);
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+  }, [handleOutputMouseMove, handleOutputMouseUp, outputHeight]);
 
   const handleSwapContent = () => {
     const tempOriginal = originalText;
@@ -91,24 +173,34 @@ export const ComparisonInterface: React.FC = () => {
       {/* Input Section with Centered Swap Button - Enhanced with glassmorphism */}
       <div className="relative mb-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="glass-panel p-6 shadow-lg transition-all duration-300">
-            <TextInputPanel
-              title="Original Version"
-              value={originalText}
-              onChange={setOriginalText}
-              placeholder="Paste your original legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
-              disabled={isProcessing}
-            />
-          </div>
+          <TextInputPanel
+            title="Original Version"
+            value={originalText}
+            onChange={setOriginalText}
+            placeholder="Paste your original legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
+            disabled={isProcessing}
+            height={panelHeight}
+          />
           
-          <div className="glass-panel p-6 shadow-lg transition-all duration-300">
-            <TextInputPanel
-              title="Revised Version"
-              value={revisedText}
-              onChange={setRevisedText}
-              placeholder="Paste your revised legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
-              disabled={isProcessing}
-            />
+          <TextInputPanel
+            title="Revised Version"
+            value={revisedText}
+            onChange={setRevisedText}
+            placeholder="Paste your revised legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
+            disabled={isProcessing}
+            height={panelHeight}
+          />
+        </div>
+        
+        {/* Resizable Panels Handle - Glassmorphic and thumb-friendly */}
+        <div className="flex justify-center mt-4 mb-2">
+          <div
+            ref={resizeHandleRef}
+            className="glass-panel flex items-center justify-center w-20 h-8 bg-theme-neutral-200/60 hover:bg-theme-neutral-300/70 cursor-row-resize rounded-lg transition-all duration-300 touch-none select-none backdrop-blur-md border border-theme-neutral-300/30 shadow-lg hover:shadow-xl hover:scale-105"
+            onMouseDown={handleMouseDown}
+            title="Drag to resize input panels"
+          >
+            <GripHorizontal className="w-6 h-6 text-theme-neutral-700" />
           </div>
         </div>
 
@@ -138,62 +230,107 @@ export const ComparisonInterface: React.FC = () => {
         </div>
       </div>
 
-      {/* Control Bar - Enhanced with glassmorphism */}
+      {/* Control Bar - Enhanced with glassmorphism and Quick Compare */}
       <div className="glass-panel p-4 mb-6 shadow-lg transition-all duration-300">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-center gap-4">
+          {!quickCompareEnabled && (
             <button
-              onClick={compareDocuments}
+              onClick={() => compareDocuments()}
               disabled={isProcessing || !originalText.trim() || !revisedText.trim()}
               className="enhanced-button flex items-center gap-2 px-6 py-2.5 bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 disabled:bg-theme-neutral-400 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-lg"
             >
               <Play className="w-4 h-4" />
-              {isProcessing ? 'Processing...' : 'Compare Documents'}
+              {isProcessing ? 'Processing...' : 'Compare'}
             </button>
-            
-            <button
-              onClick={resetComparison}
-              className="enhanced-button flex items-center gap-2 px-4 py-2.5 bg-theme-neutral-600 text-white rounded-lg hover:bg-theme-neutral-700 transition-all duration-200 shadow-lg"
-            >
-              <RotateCcw className="w-4 h-4" />
-              New Comparison
-            </button>
-          </div>
+          )}
           
-          <div className="text-sm text-theme-neutral-600">
-            Press <kbd className="px-2 py-1 bg-theme-neutral-100 rounded text-xs">Ctrl+Enter</kbd> to compare
-          </div>
+          <button
+            onClick={resetComparison}
+            className="enhanced-button flex items-center gap-2 px-4 py-2.5 bg-theme-neutral-600 text-white rounded-lg hover:bg-theme-neutral-700 transition-all duration-200 shadow-lg"
+          >
+            <RotateCcw className="w-4 h-4" />
+            New Comparison
+          </button>
+          
+          {/* Auto-Compare Toggle */}
+          <button
+            onClick={toggleQuickCompare}
+            className={`enhanced-button flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-200 shadow-lg ${
+              quickCompareEnabled 
+                ? 'bg-theme-accent-500 text-white hover:bg-theme-accent-600' 
+                : 'bg-theme-neutral-100 text-theme-neutral-700 hover:bg-theme-neutral-200'
+            }`}
+            title={quickCompareEnabled ? 'Auto-Compare enabled - real-time comparison on all changes (typing, pasting, OCR)' : 'Auto-Compare disabled - manual RedLine button required'}
+          >
+            {quickCompareEnabled ? <Zap className="w-4 h-4" /> : <ZapOff className="w-4 h-4" />}
+            <span className="hidden sm:inline">
+              Auto-Compare {quickCompareEnabled ? 'On' : 'Off'}
+            </span>
+          </button>
         </div>
         
-        {error && (
-          <div className="mt-3 flex items-center gap-2 text-red-600 text-sm">
-            <AlertCircle className="w-4 h-4" />
-            {error}
-          </div>
-        )}
-        
-        {copySuccess && (
-          <div className="mt-3 flex items-center gap-2 text-theme-secondary-600 text-sm">
-            <CheckCircle className="w-4 h-4" />
-            Redlined text copied to clipboard!
-          </div>
-        )}
+        <div className="text-sm text-theme-neutral-600 text-center">
+          {quickCompareEnabled ? (
+            <div>
+              <div className="flex items-center gap-1 text-theme-accent-600">
+                <Zap className="w-3 h-3" />
+                <span className="font-medium">Auto-Compare enabled</span>
+              </div>
+              <div className="text-xs">Real-time comparison active</div>
+            </div>
+          ) : (
+            <div>
+              <div>Press <kbd className="px-2 py-1 bg-theme-neutral-100 rounded text-xs">Ctrl+Enter</kbd> to compare</div>
+              <div className="text-xs">or enable Auto-Compare</div>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Error and Success Messages */}
+      {error && (
+        <div className="mt-3 flex items-center gap-2 text-red-600 text-sm">
+          <AlertCircle className="w-4 h-4" />
+          {error}
+        </div>
+      )}
+      
+      {copySuccess && (
+        <div className="mt-3 flex items-center gap-2 text-theme-secondary-600 text-sm">
+          <CheckCircle className="w-4 h-4" />
+          Redlined text copied to clipboard!
+        </div>
+      )}
 
       {/* Results Section - Enhanced with glassmorphism */}
       {result && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <RedlineOutput 
-              changes={result.changes} 
-              onCopy={handleCopy}
-            />
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <RedlineOutput 
+                changes={result.changes} 
+                onCopy={handleCopy}
+                height={outputHeight}
+              />
+              
+              {/* Output Resize Handle - Positioned at bottom center of output */}
+              <div className="flex justify-center mt-4">
+                <div
+                  ref={outputResizeHandleRef}
+                  className="glass-panel flex items-center justify-center w-20 h-8 bg-theme-primary-200/60 hover:bg-theme-primary-300/70 cursor-row-resize rounded-lg transition-all duration-300 touch-none select-none backdrop-blur-md border border-theme-primary-300/30 shadow-lg hover:shadow-xl hover:scale-105"
+                  onMouseDown={handleOutputMouseDown}
+                  title="Drag to resize output panel"
+                >
+                  <GripHorizontal className="w-6 h-6 text-theme-primary-700" />
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <ComparisonStats stats={result.stats} />
+            </div>
           </div>
-          
-          <div>
-            <ComparisonStats stats={result.stats} />
-          </div>
-        </div>
+        </>
       )}
 
       {/* Processing Indicator */}

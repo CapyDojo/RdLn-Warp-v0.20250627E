@@ -5,9 +5,10 @@ import { DiffChange } from '../types';
 interface RedlineOutputProps {
   changes: DiffChange[];
   onCopy: () => void;
+  height?: number;
 }
 
-export const RedlineOutput: React.FC<RedlineOutputProps> = ({ changes, onCopy }) => {
+export const RedlineOutput: React.FC<RedlineOutputProps> = ({ changes, onCopy, height = 500 }) => {
   const renderChange = (change: DiffChange, index: number) => {
     const key = `${change.type}-${index}`;
     
@@ -82,7 +83,7 @@ export const RedlineOutput: React.FC<RedlineOutputProps> = ({ changes, onCopy })
         </div>
       </div>
       
-      <div className="glass-panel-inner-content p-6 max-h-96 overflow-y-auto">
+      <div className="glass-panel-inner-content p-6 overflow-y-auto" style={{ height: `${height - 120}px`, minHeight: '200px' }}>
         <div className="font-serif text-theme-neutral-800 leading-relaxed whitespace-pre-wrap libertinus-math-output">
           {changes.map((change, index) => renderChange(change, index))}
         </div>

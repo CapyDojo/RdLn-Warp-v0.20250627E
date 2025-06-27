@@ -6,9 +6,10 @@ import { OCRLanguage } from '../utils/OCRService';
 interface TextInputPanelProps {
   title: string;
   value: string;
-  onChange: (value: string) => void;
+  onChange: ((value: string) => void) | ((value: string, isPasteAction?: boolean) => void);
   placeholder: string;
   disabled?: boolean;
+  height?: number;
 }
 
 export const TextInputPanel: React.FC<TextInputPanelProps> = ({
@@ -16,10 +17,12 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   value,
   onChange,
   placeholder,
-  disabled = false
+  disabled = false,
+  height = 400
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [showLanguageSettings, setShowLanguageSettings] = useState(false);
+  const [isPasteInProgress, setIsPasteInProgress] = useState(false);
   
   const { 
     isProcessing, 
@@ -46,6 +49,14 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   const handlePaste = useCallback(async (e: React.ClipboardEvent) => {
     const items = Array.from(e.clipboardData.items);
     const imageItem = items.find(item => item.type.startsWith('image/'));
+    const textItem = items.find(item => item.type.startsWith('text/'));
+    
+    // Mark that a paste is in progress for regular text
+    if (textItem && !imageItem) {
+      setIsPasteInProgress(true);
+      // Clear the flag after a short delay to catch the onChange event
+      setTimeout(() => setIsPasteInProgress(false), 100);
+    }
     
     if (imageItem) {
       e.preventDefault();
@@ -70,7 +81,12 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
             (end < currentValue.length && currentValue[end] !== '\n' ? '\n\n' : '') +
             currentValue.substring(end);
           
-          onChange(newValue);
+          // Use enhanced onChange to trigger auto-compare
+          if (onChange.length > 1) {
+            (onChange as (value: string, isPasteAction?: boolean) => void)(newValue, true);
+          } else {
+            onChange(newValue);
+          }
           
           // Set cursor position after inserted text
           setTimeout(() => {
@@ -80,12 +96,18 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
           }, 0);
         } else {
           // Fallback: append to existing text
-          onChange(value + (value ? '\n\n' : '') + extractedText);
+          const newValue = value + (value ? '\n\n' : '') + extractedText;
+          if (onChange.length > 1) {
+            (onChange as (value: string, isPasteAction?: boolean) => void)(newValue, true);
+          } else {
+            onChange(newValue);
+          }
         }
       } catch (error) {
         console.error('OCR failed:', error);
       }
     }
+    // Regular text paste will be handled by the onChange handler with isPasteInProgress flag
   }, [value, onChange, extractTextFromImage]);
 
   const handleDrop = useCallback(async (e: React.DragEvent) => {
@@ -127,11 +149,11 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-3 pb-2 border-b border-theme-neutral-200">
+    <div className="glass-panel overflow-hidden shadow-lg transition-all duration-300">
+      <div className="glass-panel-header-footer px-4 py-3 border-b border-theme-neutral-200 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <FileText className="w-5 h-5 text-theme-primary-900" />
-          <h2 className="text-lg font-semibold text-theme-primary-900">{title}</h2>
+          <h3 className="text-lg font-semibold text-theme-primary-900">{title}</h3>
           {isProcessing && (
             <div className="flex items-center gap-2">
               <Loader className="w-4 h-4 text-theme-primary-600 animate-spin" />
@@ -182,7 +204,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
 
       {/* Language Settings Panel */}
       {showLanguageSettings && (
-        <div className="mb-4 p-4 bg-theme-neutral-50 rounded-lg border border-theme-neutral-200">
+        <div className="px-4 py-4 bg-theme-neutral-50 border-b border-theme-neutral-200">
           <div className="space-y-4">
             {/* Auto-detect toggle */}
             <div className="flex items-center justify-between">
@@ -299,18 +321,34 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         </div>
       )}
       
-      <div className="flex-1 relative">
+      <div className="glass-panel-inner-content relative" style={{ height: `${height}px`, minHeight: '200px' }}>
         <textarea
           ref={textareaRef}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            const newValue = e.target.value;
+            // Check if this is a paste action (significant content change or isPasteInProgress flag)
+            const isLikelyPaste = isPasteInProgress || (newValue.length - value.length > 5);
+            
+            // Try to call enhanced onChange if it exists, otherwise use regular onChange
+            try {
+              if (isLikelyPaste) {
+                (onChange as (value: string, isPasteAction?: boolean) => void)(newValue, true);
+              } else {
+                onChange(newValue);
+              }
+            } catch (error) {
+              // Fallback to regular onChange if enhanced version doesn't work
+              onChange(newValue);
+            }
+          }}
           onPaste={handlePaste}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           placeholder={isProcessing ? '' : placeholder}
           disabled={disabled || isProcessing}
-          className="glass-input-field w-full h-full p-4 rounded-lg resize-none focus:ring-2 focus:ring-theme-primary-500 focus:border-transparent font-serif text-theme-neutral-800 leading-relaxed disabled:cursor-not-allowed transition-colors libertinus-math-text"
-          style={{ minHeight: '400px' }}
+          className="glass-input-field w-full h-full p-6 resize-none focus:ring-2 focus:ring-theme-primary-500 focus:border-transparent font-serif text-theme-neutral-800 leading-relaxed disabled:cursor-not-allowed transition-colors libertinus-math-text border-0 bg-transparent"
+          style={{ height: '100%' }}
         />
         
         {/* OCR Progress Bar */}

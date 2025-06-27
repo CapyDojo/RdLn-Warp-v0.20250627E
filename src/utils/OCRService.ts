@@ -1,32 +1,19 @@
-import { createWorker } from 'tesseract.js';
+/**
+ * OCR Service - Main Interface
+ * 
+ * Provides a simplified interface for OCR text extraction with multi-language support.
+ * This service coordinates between language detection, caching, and post-processing services.
+ */
 
-export interface LanguageOption {
-  code: string;
-  name: string;
-  flag: string;
-  downloadSize: string;
-}
+import { LanguageOption, OCRLanguage, OCROptions, CacheStats } from '../types/ocr-types';
+import { SUPPORTED_LANGUAGES } from '../config/ocrConfig';
+import { OCRCacheManager } from '../services/OCRCacheManager';
+import { LanguageDetectionService } from '../services/LanguageDetectionService';
+import { TextPostProcessor } from '../services/TextPostProcessor';
 
-export const SUPPORTED_LANGUAGES: LanguageOption[] = [
-  { code: 'eng', name: 'English', flag: '🇺🇸', downloadSize: '4.2MB' },
-  { code: 'chi_sim', name: 'Chinese (Simplified)', flag: '🇨🇳', downloadSize: '12.8MB' },
-  { code: 'chi_tra', name: 'Chinese (Traditional)', flag: '🇹🇼', downloadSize: '15.2MB' },
-  { code: 'spa', name: 'Spanish', flag: '🇪🇸', downloadSize: '4.8MB' },
-  { code: 'fra', name: 'French', flag: '🇫🇷', downloadSize: '5.1MB' },
-  { code: 'deu', name: 'German', flag: '🇩🇪', downloadSize: '5.3MB' },
-  { code: 'jpn', name: 'Japanese', flag: '🇯🇵', downloadSize: '8.9MB' },
-  { code: 'kor', name: 'Korean', flag: '🇰🇷', downloadSize: '6.7MB' },
-  { code: 'ara', name: 'Arabic', flag: '🇸🇦', downloadSize: '7.2MB' },
-  { code: 'rus', name: 'Russian', flag: '🇷🇺', downloadSize: '6.1MB' }
-];
-
-export type OCRLanguage = typeof SUPPORTED_LANGUAGES[number]['code'];
-
-export interface OCROptions {
-  languages?: OCRLanguage[];
-  autoDetect?: boolean;
-  primaryLanguage?: OCRLanguage;
-}
+// Re-export types and constants for backwards compatibility
+export { LanguageOption, OCRLanguage, OCROptions } from '../types/ocr-types';
+export { SUPPORTED_LANGUAGES } from '../config/ocrConfig';
 
 // Enhanced worker cache with lifecycle management
 interface CachedWorker {

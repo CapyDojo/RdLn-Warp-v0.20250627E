@@ -1,30 +1,48 @@
+/**
+ * Extreme Test Suite Component
+ * 
+ * This is a comprehensive stress-testing module for the document comparison algorithm.
+ * It contains ultra-complex test cases designed to push the system to its absolute limits.
+ * 
+ * IMPORTANT: This is a development-only module and should be removed before production deployment.
+ * 
+ * Features:
+ * - 11 extreme test cases with massive document samples
+ * - Performance monitoring and analytics
+ * - Stress testing across multiple document types
+ * - Real-time execution metrics
+ * 
+ * File Organization:
+ * - Test data: ./data/extreme-test-cases.json
+ * - Types: ./types/extreme-test-types.ts
+ * - Utils: ./utils/extreme-test-utils.ts
+ */
+
 import React, { useState } from 'react';
-import { Play, ChevronDown, ChevronRight, Zap, CheckCircle, XCircle, AlertTriangle, Flame, Clock, TrendingUp } from 'lucide-react';
+import {
+  Play,
+  ChevronDown,
+  ChevronRight,
+  Zap,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  Flame,
+  Clock,
+  TrendingUp
+} from 'lucide-react';
 import { MyersAlgorithm } from '../algorithms/MyersAlgorithm';
 import { ComparisonResult } from '../types';
+import {
+  ExtremeTestCase,
+  ExtremeTestResult,
+  ExtremeTestResultsMap,
+  ExtremeTestDifficulty
+} from './types/extreme-test-types';
 
-interface ExtremeTestCase {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  difficulty: 'Extreme' | 'Ultra' | 'Nightmare';
-  complexity: {
-    wordCount: number;
-    sentenceCount: number;
-    expectedChanges: number;
-    nestingDepth: number;
-  };
-  originalText: string;
-  revisedText: string;
-  expectedBehavior: {
-    description: string;
-    criticalFeatures: string[];
-    performanceExpectations: string;
-    edgeCases: string[];
-  };
-  stressTestAspects: string[];
-}
+// =============================================================================
+// SAMPLE TEST DATA (For demonstration - full data would be loaded from JSON)
+// =============================================================================
 
 const EXTREME_TEST_CASES: ExtremeTestCase[] = [
   {

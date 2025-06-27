@@ -1,0 +1,22 @@
+{
+  "supportedLanguages": [
+    { "code": "eng", "name": "English", "flag": "🇺🇸", "downloadSize": "4.2MB" },
+    { "code": "chi_sim", "name": "Chinese (Simplified)", "flag": "🇨🇳", "downloadSize": "12.8MB" },
+    { "code": "chi_tra", "name": "Chinese (Traditional)", "flag": "🇹🇼", "downloadSize": "15.2MB" },
+    { "code": "spa", "name": "Spanish", "flag": "🇪🇸", "downloadSize": "4.8MB" },
+    { "code": "fra", "name": "French", "flag": "🇫🇷", "downloadSize": "5.1MB" },
+    { "code": "deu", "name": "German", "flag": "🇩🇪", "downloadSize": "5.3MB" },
+    { "code": "jpn", "name": "Japanese", "flag": "🇯🇵", "downloadSize": "8.9MB" },
+    { "code": "kor", "name": "Korean", "flag": "🇰🇷", "downloadSize": "6.7MB" },
+    { "code": "ara", "name": "Arabic", "flag": "🇸🇦", "downloadSize": "7.2MB" },
+    { "code": "rus", "name": "Russian", "flag": "🇷🇺", "downloadSize": "6.1MB" }
+  ],
+  "detectionLanguages": ["eng", "chi_sim", "chi_tra", "spa", "fra", "deu", "jpn", "kor", "ara", "rus"],
+  "cacheConfiguration": {
+    "cacheExpiryMs": 600000,
+    "maxCachedWorkers": 5,
+    "cleanupIntervalMs": 300000,
+    "languageCacheExpiryMs": 1800000,
+    "maxLanguageCacheEntries": 50
+  }
+}
