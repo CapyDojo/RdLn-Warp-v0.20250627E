@@ -4,33 +4,35 @@ import { ThemeSelector } from './ThemeSelector';
 
 export const Header: React.FC = () => {
   return (
-    <header className="bg-gradient-to-r from-theme-primary-900 to-theme-primary-800 text-white shadow-lg">
+    <header className="bg-gradient-to-r from-theme-primary-900 to-theme-primary-800 text-white shadow-lg overflow-visible relative">
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between min-h-0">
+          <div className="flex items-center gap-3 flex-shrink-0">
             <div className="bg-theme-accent-500 p-2 rounded-lg">
               <Scale className="w-6 h-6 text-white" />
             </div>
-            <div>
+            <div className="min-w-0">
               <h1 className="text-2xl font-bold font-serif">RdLn</h1>
               <p className="text-theme-primary-200 text-sm">Professional Legal Document Comparison with OCR</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-6 flex-shrink-0">
+            <div className="hidden lg:flex items-center gap-2 text-sm">
               <Image className="w-4 h-4 text-theme-accent-400" />
-              <span className="text-theme-primary-200">Screenshot OCR</span>
+              <span className="text-theme-primary-200 whitespace-nowrap">Screenshot OCR</span>
             </div>
-            <div className="flex items-center gap-2 text-sm">
+            <div className="hidden md:flex items-center gap-2 text-sm">
               <Zap className="w-4 h-4 text-theme-accent-400" />
-              <span className="text-theme-primary-200">Lightning-fast • Client-side • Confidential</span>
+              <span className="text-theme-primary-200 whitespace-nowrap">Lightning-fast • Client-side • Confidential</span>
             </div>
-            <ThemeSelector />
+            <div className="relative z-50">
+              <ThemeSelector />
+            </div>
             {/* Temporary Logo Test Link - REMOVE AFTER TESTING */}
             <a 
               href="/logo-test" 
-              className="text-theme-primary-200 hover:text-white text-sm underline transition-colors"
+              className="text-theme-primary-200 hover:text-white text-sm underline transition-colors whitespace-nowrap"
               title="View logo concept designs"
             >
               Logo Test

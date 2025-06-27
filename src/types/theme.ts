@@ -59,5 +59,9 @@ export interface ThemeConfig {
     glassmorphism?: boolean;
     backdropBlur?: string;
     backgroundOpacity?: string;
+    shadowIntensity?: 'light' | 'medium' | 'strong' | 'ultra';
+    gradientOverlay?: boolean;
+    animationLevel?: 'none' | 'subtle' | 'enhanced' | 'premium';
+    textureOverlay?: boolean;
   };
 }

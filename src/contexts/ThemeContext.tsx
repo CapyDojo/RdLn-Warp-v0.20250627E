@@ -58,23 +58,81 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       });
     });
 
-    // Apply effect variables for glassmorphism
-    if (themeConfig.effects) {
-      Object.entries(themeConfig.effects).forEach(([effect, value]) => {
-        if (typeof value === 'string') {
-          root.style.setProperty(`--effect-${effect}`, value);
-        }
-      });
+    // Generate enhanced glassmorphism effects based on theme configuration
+    const effects = themeConfig.effects || {};
+    
+    if (effects.glassmorphism) {
+      // Set basic glassmorphism variables
+      root.style.setProperty('--glass-blur', effects.backdropBlur || '24px');
+      root.style.setProperty('--glass-opacity', effects.backgroundOpacity || '0.8');
+      
+      // Shadow intensity mapping
+      const shadowMap = {
+        light: '0 4px 16px rgba(31, 38, 135, 0.2)',
+        medium: '0 8px 32px rgba(31, 38, 135, 0.37)',
+        strong: '0 12px 48px rgba(31, 38, 135, 0.5)',
+        ultra: '0 16px 64px rgba(31, 38, 135, 0.7), 0 4px 16px rgba(31, 38, 135, 0.4)'
+      };
+      root.style.setProperty('--glass-shadow', shadowMap[effects.shadowIntensity || 'strong']);
+      
+      // Generate vivid gradient overlays using theme colors
+      if (effects.gradientOverlay) {
+        // Helper function to convert hex to rgba
+        const hexToRgba = (hex: string, alpha: number) => {
+          const r = parseInt(hex.slice(1, 3), 16);
+          const g = parseInt(hex.slice(3, 5), 16);
+          const b = parseInt(hex.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+        
+        // Use theme colors for vivid gradients
+        const primaryColor = Object.values(themeConfig.colors.primary)[5]; // 500 shade
+        const secondaryColor = Object.values(themeConfig.colors.secondary)[4]; // 400 shade
+        const accentColor = Object.values(themeConfig.colors.accent)[4]; // 400 shade
+        
+        root.style.setProperty('--gradient-start', hexToRgba(primaryColor, 0.35));
+        root.style.setProperty('--gradient-middle', hexToRgba(secondaryColor, 0.25));
+        root.style.setProperty('--gradient-end', hexToRgba(accentColor, 0.15));
+        root.style.setProperty('--gradient-accent', hexToRgba(accentColor, 0.4));
+      } else {
+        // Fallback subtle gradients
+        root.style.setProperty('--gradient-start', 'rgba(255, 255, 255, 0.3)');
+        root.style.setProperty('--gradient-middle', 'rgba(255, 255, 255, 0.2)');
+        root.style.setProperty('--gradient-end', 'rgba(255, 255, 255, 0.1)');
+        root.style.setProperty('--gradient-accent', 'rgba(255, 255, 255, 0.25)');
+      }
+      
+      // Animation level mapping
+      const animationMap = {
+        none: '0ms',
+        subtle: '200ms',
+        enhanced: '300ms',
+        premium: '500ms'
+      };
+      root.style.setProperty('--glass-transition', animationMap[effects.animationLevel || 'enhanced']);
+      
+      // Border intensity based on shadow level
+      const borderMap = {
+        light: 'rgba(255, 255, 255, 0.1)',
+        medium: 'rgba(255, 255, 255, 0.18)',
+        strong: 'rgba(255, 255, 255, 0.25)',
+        ultra: 'rgba(255, 255, 255, 0.35)'
+      };
+      root.style.setProperty('--glass-border', borderMap[effects.shadowIntensity || 'strong']);
     }
 
     // DEFINITIVE FIX: Force body background with !important and remove all conflicting styles
     document.body.style.cssText = '';
     
-    // Apply theme-specific body backgrounds with maximum priority and proper background settings
+    // Apply theme-specific solid backgrounds + CSS noise for zero banding
     switch (currentTheme) {
       case 'professional':
         document.body.style.cssText = `
-          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 25%, #cbd5e1 75%, #94a3b8 100%) !important;
+          background: #f1f5f9 !important;
+          background-image: 
+            radial-gradient(circle at 25% 25%, rgba(226, 232, 240, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(203, 213, 225, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(241, 245, 249, 0.02) 0%, transparent 50%) !important;
           background-repeat: no-repeat !important;
           background-attachment: fixed !important;
           background-size: 100% 100% !important;
@@ -82,11 +140,15 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('💼 FORCED professional gradient background for glassmorphism');
+        console.log('💼 Applied professional solid + noise (zero banding)');
         break;
       case 'bamboo':
         document.body.style.cssText = `
-          background: linear-gradient(135deg, #5d8a3a 0%, #7ba05f 35%, #a8c49a 70%, #c8d8b8 100%) !important;
+          background: #7ba05f !important;
+          background-image: 
+            radial-gradient(circle at 25% 25%, rgba(108, 153, 73, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(138, 178, 108, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(93, 138, 58, 0.03) 0%, transparent 50%) !important;
           background-repeat: no-repeat !important;
           background-attachment: fixed !important;
           background-size: 100% 100% !important;
@@ -94,11 +156,15 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🌿 FORCED bamboo gradient background');
+        console.log('🌿 Applied bamboo solid + noise (zero banding)');
         break;
       case 'apple-light':
         document.body.style.cssText = `
-          background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%) !important;
+          background: #f8fafc !important;
+          background-image: 
+            radial-gradient(circle at 25% 25%, rgba(241, 245, 249, 0.04) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(226, 232, 240, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(248, 250, 252, 0.02) 0%, transparent 50%) !important;
           background-repeat: no-repeat !important;
           background-attachment: fixed !important;
           background-size: 100% 100% !important;
@@ -106,11 +172,15 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🍎 FORCED Apple Light gradient background');
+        console.log('🍎 Applied Apple Light solid + noise (zero banding)');
         break;
       case 'apple-dark':
         document.body.style.cssText = `
-          background: linear-gradient(135deg, #000000 0%, #0a0a0a 25%, #171717 75%, #262626 100%) !important;
+          background: #0a0a0a !important;
+          background-image: 
+            radial-gradient(circle at 25% 25%, rgba(23, 23, 23, 0.06) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(38, 38, 38, 0.04) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(15, 15, 15, 0.03) 0%, transparent 50%) !important;
           background-repeat: no-repeat !important;
           background-attachment: fixed !important;
           background-size: 100% 100% !important;
@@ -118,7 +188,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🌙 FORCED Apple Dark gradient background');
+        console.log('🌙 Applied Apple Dark solid + noise (zero banding)');
         break;
       default:
         // Fallback

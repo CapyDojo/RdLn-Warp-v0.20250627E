@@ -2,21 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Vivid and Enhanced Glassmorphic Design Enhancements */
+/* Enhanced Glassmorphic Design with Vivid Dynamic Effects */
 :root {
-  --glass-opacity: 0.75;
-  --glass-blur: 16px;
-  --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-  --gradient-start: rgba(255, 255, 255, 0.45);
+  /* Default fallback values - will be overridden by ThemeContext */
+  --glass-opacity: 0.8;
+  --glass-blur: 24px;
+  --glass-shadow: 0 12px 48px rgba(31, 38, 135, 0.5);
+  --glass-transition: 300ms;
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --gradient-start: rgba(255, 255, 255, 0.35);
+  --gradient-middle: rgba(255, 255, 255, 0.25);
   --gradient-end: rgba(255, 255, 255, 0.15);
+  --gradient-accent: rgba(255, 255, 255, 0.4);
 }
 
+/* Clean Glass Panel - Optimized blur to prevent banding */
 .glass-panel {
-  backdrop-filter: blur(var(--glass-blur));
-  background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%) !important;
+  position: relative;
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.75)) saturate(1.4);
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.75)) saturate(1.4);
+  background: rgba(255, 255, 255, 0.1) !important;
   box-shadow: var(--glass-shadow);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  transition: all var(--glass-transition) cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* Glass Panel Hover Effects */
+.glass-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glass-shadow), 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-color: var(--gradient-accent);
+}
+
+/* Glass Panel Clean Hover Effects - No Banding */
+.glass-panel {
+  transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel:hover {
+  backdrop-filter: blur(calc(var(--glass-blur) * 1.1)) saturate(1.1);
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 1.1)) saturate(1.1);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 /* DEFINITIVE FIX: Force transparent base layers */
@@ -47,4 +75,81 @@ body {
 /* ENSURE BACKDROP-FILTER WORKS */
 .glass-panel {
   isolation: isolate !important;
+}
+
+/* Enhanced Glass Button Effects - No Gradients */
+.enhanced-button {
+  position: relative;
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.6)) saturate(1.5);
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid var(--glass-border);
+  transition: all var(--glass-transition) cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.enhanced-button:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.7)) saturate(1.3);
+}
+
+/* Enhanced Glass Input Fields - No Gradients */
+.glass-input-field {
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.4)) saturate(1.2);
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all var(--glass-transition) ease;
+}
+
+.glass-input-field:focus {
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-500-rgb), 0.1);
+}
+
+/* Glass Panel Headers and Footers - No Gradients */
+.glass-panel-header-footer {
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.8));
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.glass-panel-inner-content {
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.3));
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Premium Animation Effects */
+@keyframes glassShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.glass-panel-premium::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  transform: translateX(-100%);
+  animation: glassShimmer 3s infinite;
+  pointer-events: none;
+}
+
+/* Enhanced Focus States */
+.glass-panel:focus-within {
+  border-color: var(--gradient-accent);
+  box-shadow: var(--glass-shadow), 0 0 0 3px rgba(var(--color-primary-500-rgb), 0.1);
 }
