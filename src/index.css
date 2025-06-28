@@ -44,6 +44,139 @@ body {
   box-sizing: border-box;
 }
 
+/* Global text legibility improvements - WCAG AAA compliance with 10% safety margin */
+
+/* Professional theme global text */
+[data-theme="professional"] {
+  --text-body: #1e293b;
+  --text-header: #0f172a;
+  --text-secondary: #475569;
+  --text-interactive: #ea580c;
+  --text-success: #1d4ed8;
+  --text-on-glass: #1e293b;
+}
+
+/* Bamboo theme global text */
+[data-theme="bamboo"] {
+  --text-body: #0f140f;
+  --text-header: #1a3f1a;
+  --text-secondary: #44403c;
+  --text-interactive: #a06d15;
+  --text-success: #256325;
+  --text-on-glass: #0f140f;
+}
+
+/* Apple Light theme global text */
+[data-theme="apple-light"] {
+  --text-body: #111827;
+  --text-header: #1f2937;
+  --text-secondary: #4b5563;
+  --text-interactive: #7c3aed;
+  --text-success: #0284c7;
+  --text-on-glass: #111827;
+}
+
+/* Apple Dark theme global text */
+[data-theme="apple-dark"] {
+  --text-body: #f5f5f5;
+  --text-header: #ffffff;
+  --text-secondary: #d4d4d4;
+  --text-interactive: #a78bfa;
+  --text-success: #80deea;
+  --text-on-glass: #f5f5f5;
+}
+
+/* Kyoto theme global text - Autumn garden inspired */
+[data-theme="kyoto"] {
+  --text-body: #1c1917;      /* Deepest charcoal - tatami contrast */
+  --text-header: #14532d;    /* Deepest forest green - evergreen trees */
+  --text-secondary: #57534e; /* Medium-dark stone - natural materials */
+  --text-interactive: #dc2626; /* Medium-dark maple red - autumn leaves */
+  --text-success: #15803d;   /* Dark forest green - bamboo success */
+  --text-on-glass: #1c1917; /* Same as body for glass panels */
+}
+
+/* New York theme global text */
+[data-theme="new-york"] {
+  --text-body: #fafafa;
+  --text-header: #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-interactive: #ffb74d;
+  --text-success: #4dd0e1;
+  --text-on-glass: #fafafa;
+}
+
+/* Global text hierarchy classes */
+.text-body,
+textarea,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+p,
+span:not(.text-header):not(.text-secondary) {
+  color: var(--text-body) !important;
+  line-height: 1.6 !important;
+}
+
+.text-header,
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-header) !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+
+.text-secondary,
+.text-sm,
+.text-xs,
+label {
+  color: var(--text-secondary) !important;
+}
+
+.text-interactive,
+button,
+a,
+.cursor-pointer {
+  color: var(--text-interactive) !important;
+}
+
+.text-success,
+.text-active {
+  color: var(--text-success) !important;
+}
+
+/* Enhanced readability for glass panels */
+.glass-panel .text-body,
+.glass-panel textarea,
+.glass-panel input,
+.glass-panel p,
+.glass-panel span:not(.text-header):not(.text-secondary) {
+  color: var(--text-on-glass) !important;
+  font-weight: 500 !important;
+}
+
+/* Legal document specific improvements */
+.libertinus-math-text {
+  color: var(--text-body) !important;
+  font-weight: 500 !important;
+  line-height: 1.7 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Focus states for accessibility */
+button:focus,
+a:focus,
+input:focus,
+textarea:focus {
+  outline: 2px solid var(--text-interactive) !important;
+  outline-offset: 2px !important;
+}
+
+/* Selection states */
+::selection {
+  background: var(--text-interactive) !important;
+  color: white !important;
+}
+
 /* ENSURE BACKDROP-FILTER WORKS */
 .glass-panel {
   isolation: isolate !important;

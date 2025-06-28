@@ -70,11 +70,15 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     // DEFINITIVE FIX: Force body background with !important and remove all conflicting styles
     document.body.style.cssText = '';
     
-    // Apply theme-specific body backgrounds with maximum priority and proper background settings
+    // Apply theme-specific solid backgrounds + CSS noise for zero banding
     switch (currentTheme) {
       case 'professional':
         document.body.style.cssText = `
-          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 25%, #cbd5e1 75%, #94a3b8 100%) !important;
+          background: #f1f5f9 !important;
+          background-image: 
+            radial-gradient(circle at 25% 25%, rgba(226, 232, 240, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(203, 213, 225, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(241, 245, 249, 0.02) 0%, transparent 50%) !important;
           background-repeat: no-repeat !important;
           background-attachment: fixed !important;
           background-size: 100% 100% !important;
@@ -82,11 +86,15 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('💼 FORCED professional gradient background for glassmorphism');
+        console.log('💼 Applied professional solid + noise (zero banding)');
         break;
       case 'bamboo':
         document.body.style.cssText = `
-          background: linear-gradient(135deg, #5d8a3a 0%, #7ba05f 35%, #a8c49a 70%, #c8d8b8 100%) !important;
+          background: #7ba05f !important;
+          background-image: 
+            radial-gradient(circle at 25% 25%, rgba(108, 153, 73, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(138, 178, 108, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(93, 138, 58, 0.03) 0%, transparent 50%) !important;
           background-repeat: no-repeat !important;
           background-attachment: fixed !important;
           background-size: 100% 100% !important;
@@ -94,11 +102,15 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🌿 FORCED bamboo gradient background');
+        console.log('🌿 Applied bamboo solid + noise (zero banding)');
         break;
       case 'apple-light':
         document.body.style.cssText = `
-          background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%) !important;
+          background: #f8fafc !important;
+          background-image: 
+            radial-gradient(circle at 25% 25%, rgba(241, 245, 249, 0.04) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(226, 232, 240, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(248, 250, 252, 0.02) 0%, transparent 50%) !important;
           background-repeat: no-repeat !important;
           background-attachment: fixed !important;
           background-size: 100% 100% !important;
@@ -106,11 +118,15 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🍎 FORCED Apple Light gradient background');
+        console.log('🍎 Applied Apple Light solid + noise (zero banding)');
         break;
       case 'apple-dark':
         document.body.style.cssText = `
-          background: linear-gradient(135deg, #000000 0%, #0a0a0a 25%, #171717 75%, #262626 100%) !important;
+          background: #0a0a0a !important;
+          background-image: 
+            radial-gradient(circle at 25% 25%, rgba(23, 23, 23, 0.06) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(38, 38, 38, 0.04) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(15, 15, 15, 0.03) 0%, transparent 50%) !important;
           background-repeat: no-repeat !important;
           background-attachment: fixed !important;
           background-size: 100% 100% !important;
@@ -118,7 +134,44 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🌙 FORCED Apple Dark gradient background');
+        console.log('🌙 Applied Apple Dark solid + noise (zero banding)');
+        break;
+      case 'kyoto':
+        document.body.style.cssText = `
+          background: #14532d !important;
+          background-image: 
+            radial-gradient(circle at 25% 15%, rgba(239, 68, 68, 0.06) 0%, transparent 40%),
+            radial-gradient(circle at 75% 25%, rgba(220, 38, 38, 0.04) 0%, transparent 35%),
+            radial-gradient(circle at 60% 85%, rgba(185, 28, 28, 0.03) 0%, transparent 30%),
+            radial-gradient(circle at 20% 75%, rgba(34, 197, 94, 0.05) 0%, transparent 45%),
+            radial-gradient(circle at 85% 60%, rgba(22, 163, 74, 0.04) 0%, transparent 40%),
+            radial-gradient(circle at 50% 50%, rgba(120, 113, 108, 0.02) 0%, transparent 60%) !important;
+          background-repeat: no-repeat !important;
+          background-attachment: fixed !important;
+          background-size: 100% 100% !important;
+          min-height: 100vh !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        `;
+        console.log('🍁 Applied Kyoto autumn garden background (maple & forest)');
+        break;
+      case 'new-york':
+        document.body.style.cssText = `
+          background: #0a0a0a !important;
+          background-image: 
+            linear-gradient(180deg, #0f172a 0%, #1e293b 30%, #451a03 100%),
+            radial-gradient(circle at 50% 100%, rgba(251, 140, 0, 0.08) 0%, transparent 60%),
+            radial-gradient(circle at 25% 80%, rgba(255, 152, 0, 0.04) 0%, transparent 40%),
+            radial-gradient(circle at 75% 90%, rgba(239, 108, 0, 0.03) 0%, transparent 35%),
+            repeating-linear-gradient(90deg, transparent 0%, rgba(16, 16, 16, 0.6) 2%, transparent 4%) !important;
+          background-repeat: no-repeat !important;
+          background-attachment: fixed !important;
+          background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 2px !important;
+          min-height: 100vh !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        `;
+        console.log('🏙️ Applied New York Night skyline + city glow (zero banding)');
         break;
       default:
         // Fallback
@@ -131,7 +184,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🔄 FORCED fallback background');
+        console.log('🔄 Applied fallback background');
         break;
     }
   }, [currentTheme]);

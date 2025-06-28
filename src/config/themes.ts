@@ -308,4 +308,132 @@ export const themes: Record<ThemeName, ThemeConfig> = {
     },
     effects: GLASSMORPHISM_EFFECTS.premium,
   },
+
+  /**
+   * Kyoto Zen Theme
+   * Inspired by Japanese autumn gardens with vibrant maple reds and deep forest greens.
+   * Features warm tatami backgrounds, autumn maple accents, and natural stone neutrals.
+   */
+  kyoto: {
+    name: 'kyoto',
+    displayName: 'Kyoto Zen',
+    description: 'Japanese autumn garden with maple reds and forest greens',
+    colors: {
+      // Deep Forest Green primary palette - inspired by evergreen trees
+      primary: createColorPalette({
+        50: '#f0fdf4',   // Lightest green tint
+        100: '#dcfce7',  // Very light green
+        200: '#bbf7d0',  // Light green
+        300: '#86efac',  // Medium-light green
+        400: '#4ade80',  // Medium green
+        500: '#22c55e',  // Base green - vibrant forest
+        600: '#16a34a',  // Medium-dark green
+        700: '#15803d',  // Dark green
+        800: '#166534',  // Darker green
+        900: '#14532d',  // Deepest forest green
+      }),
+      // Autumn Maple Red secondary palette - hero accent colors
+      secondary: createColorPalette({
+        50: '#fef2f2',   // Lightest maple tint
+        100: '#fde8e8',  // Very light red
+        200: '#fbd5d5',  // Light coral-red
+        300: '#f8b4b4',  // Medium-light red
+        400: '#f87171',  // Medium red
+        500: '#ef4444',  // Base red - vibrant maple
+        600: '#dc2626',  // Medium-dark red
+        700: '#b91c1c',  // Dark red
+        800: '#991b1b',  // Darker red
+        900: '#7f1d1d',  // Deepest red
+      }),
+      // Warm Earth Tones accent palette - bamboo and gold
+      accent: createColorPalette({
+        50: '#fefdf8',   // Warm paper white
+        100: '#fefbf3',  // Cream
+        200: '#fef7e6',  // Light warm beige
+        300: '#fdefd3',  // Medium beige
+        400: '#fce4a6',  // Warm tan
+        500: '#f5d563',  // Golden yellow - bamboo
+        600: '#eab308',  // Rich gold
+        700: '#ca8a04',  // Dark gold
+        800: '#a16207',  // Bronze
+        900: '#713f12',  // Deep bronze
+      }),
+      // Tatami & Stone neutral palette - natural materials
+      neutral: createColorPalette({
+        50: '#fafaf9',   // Pure tatami white
+        100: '#f5f5f4',  // Very light stone
+        200: '#e7e5e4',  // Light stone
+        300: '#d6d3d1',  // Medium-light stone
+        400: '#a8a29e',  // Medium stone
+        500: '#78716c',  // Base stone - tatami brown
+        600: '#57534e',  // Medium-dark stone
+        700: '#44403c',  // Dark stone
+        800: '#292524',  // Darker stone
+        900: '#1c1917',  // Deepest charcoal
+      }),
+    },
+    effects: GLASSMORPHISM_EFFECTS.premium,
+  },
+
+  /**
+   * New York Night Theme
+   * A sophisticated dark theme inspired by a NYC skyline at night.
+   * Features charcoal grays, warm amber accents, and electric blue highlights.
+   */
+  'new-york': {
+    name: 'new-york',
+    displayName: 'New York Night',
+    description: 'Urban night skyline with warm amber accents',
+    colors: {
+      primary: createColorPalette({
+        50: '#ebebeb',
+        100: '#d7d7d7',
+        200: '#b0b0b0',
+        300: '#888888',
+        400: '#606060',
+        500: '#404040',
+        600: '#303030',
+        700: '#202020',
+        800: '#101010',
+        900: '#000000',
+      }),
+      secondary: createColorPalette({
+        50: '#fff3e0',
+        100: '#ffe0b2',
+        200: '#ffcc80',
+        300: '#ffb74d',
+        400: '#ffa726',
+        500: '#ff9800',
+        600: '#fb8c00',
+        700: '#f57c00',
+        800: '#ef6c00',
+        900: '#e65100',
+      }),
+      accent: createColorPalette({
+        50: '#e0f7fa',
+        100: '#b2ebf2',
+        200: '#80deea',
+        300: '#4dd0e1',
+        400: '#26c6da',
+        500: '#00bcd4',
+        600: '#00acc1',
+        700: '#0097a7',
+        800: '#00838f',
+        900: '#006064',
+      }),
+      neutral: createColorPalette({
+        50: '#fafafa',
+        100: '#f5f5f5',
+        200: '#eeeeee',
+        300: '#e0e0e0',
+        400: '#bdbdbd',
+        500: '#9e9e9e',
+        600: '#757575',
+        700: '#616161',
+        800: '#424242',
+        900: '#212121',
+      }),
+    },
+    effects: GLASSMORPHISM_EFFECTS.premium,
+  },
 } as const;
