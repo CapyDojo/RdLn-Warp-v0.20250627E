@@ -58,13 +58,67 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       });
     });
 
-    // Apply effect variables for glassmorphism
-    if (themeConfig.effects) {
-      Object.entries(themeConfig.effects).forEach(([effect, value]) => {
-        if (typeof value === 'string') {
-          root.style.setProperty(`--effect-${effect}`, value);
-        }
-      });
+    // Generate enhanced glassmorphism effects based on theme configuration
+    const effects = themeConfig.effects || {};
+    
+    if (effects.glassmorphism) {
+      // Set basic glassmorphism variables
+      root.style.setProperty('--glass-blur', effects.backdropBlur || '24px');
+      root.style.setProperty('--glass-opacity', effects.backgroundOpacity || '0.8');
+      
+      // Shadow intensity mapping
+      const shadowMap = {
+        light: '0 4px 16px rgba(31, 38, 135, 0.2)',
+        medium: '0 8px 32px rgba(31, 38, 135, 0.37)',
+        strong: '0 12px 48px rgba(31, 38, 135, 0.5)',
+        ultra: '0 16px 64px rgba(31, 38, 135, 0.7), 0 4px 16px rgba(31, 38, 135, 0.4)'
+      };
+      root.style.setProperty('--glass-shadow', shadowMap[effects.shadowIntensity || 'strong']);
+      
+      // Generate vivid gradient overlays using theme colors
+      if (effects.gradientOverlay) {
+        // Helper function to convert hex to rgba
+        const hexToRgba = (hex: string, alpha: number) => {
+          const r = parseInt(hex.slice(1, 3), 16);
+          const g = parseInt(hex.slice(3, 5), 16);
+          const b = parseInt(hex.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+        
+        // Use theme colors for vivid gradients
+        const primaryColor = Object.values(themeConfig.colors.primary)[5]; // 500 shade
+        const secondaryColor = Object.values(themeConfig.colors.secondary)[4]; // 400 shade
+        const accentColor = Object.values(themeConfig.colors.accent)[4]; // 400 shade
+        
+        root.style.setProperty('--gradient-start', hexToRgba(primaryColor, 0.35));
+        root.style.setProperty('--gradient-middle', hexToRgba(secondaryColor, 0.25));
+        root.style.setProperty('--gradient-end', hexToRgba(accentColor, 0.15));
+        root.style.setProperty('--gradient-accent', hexToRgba(accentColor, 0.4));
+      } else {
+        // Fallback subtle gradients
+        root.style.setProperty('--gradient-start', 'rgba(255, 255, 255, 0.3)');
+        root.style.setProperty('--gradient-middle', 'rgba(255, 255, 255, 0.2)');
+        root.style.setProperty('--gradient-end', 'rgba(255, 255, 255, 0.1)');
+        root.style.setProperty('--gradient-accent', 'rgba(255, 255, 255, 0.25)');
+      }
+      
+      // Animation level mapping
+      const animationMap = {
+        none: '0ms',
+        subtle: '200ms',
+        enhanced: '300ms',
+        premium: '500ms'
+      };
+      root.style.setProperty('--glass-transition', animationMap[effects.animationLevel || 'enhanced']);
+      
+      // Border intensity based on shadow level
+      const borderMap = {
+        light: 'rgba(255, 255, 255, 0.1)',
+        medium: 'rgba(255, 255, 255, 0.18)',
+        strong: 'rgba(255, 255, 255, 0.25)',
+        ultra: 'rgba(255, 255, 255, 0.35)'
+      };
+      root.style.setProperty('--glass-border', borderMap[effects.shadowIntensity || 'strong']);
     }
 
     // DEFINITIVE FIX: Force body background with !important and remove all conflicting styles
