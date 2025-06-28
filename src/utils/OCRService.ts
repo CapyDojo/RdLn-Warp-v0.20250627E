@@ -7,7 +7,9 @@
 
 import { createWorker } from 'tesseract.js';
 import type { Worker as TesseractWorker } from 'tesseract.js';
-import { LanguageOption, OCRLanguage, OCROptions, CacheStats, CachedWorker, LanguageDetectionCacheEntry } from '../types/ocr-types';
+import { OCRLanguage, CachedWorker, LanguageDetectionCacheEntry, CacheStats } from '../types/ocr-types';
+// STAGE 4: Import opencc-js for intelligent Traditional vs Simplified detection
+import { Converter } from 'opencc-js';
 import { SUPPORTED_LANGUAGES } from '../config/ocrConfig';
 
 // Note: Re-exports removed to avoid module resolution conflicts
@@ -310,12 +312,10 @@ export class OCRService {
       // Enhanced text-based language detection
       // Check for non-Latin scripts first (these are easier to identify)
       if (this.containsChinese(text)) {
-        if (this.isTraditionalChinese(text)) {
-          detectedLanguages.push('chi_tra');
-        } else {
-          detectedLanguages.push('chi_sim');
-        }
-        console.log('✅ Chinese script detected');
+        // STAGE 4: Use chinese-conv for intelligent Traditional vs Simplified detection
+        const chineseVariant = this.detectChineseVariant(text);
+        detectedLanguages.push(chineseVariant);
+        console.log(`✅ Chinese script detected as: ${chineseVariant}`);
       }
       
       if (this.containsJapanese(text)) {
@@ -340,33 +340,64 @@ export class OCRService {
       
       // If no non-Latin script detected, check for Latin-based languages
       if (detectedLanguages.length === 0) {
-        // Check for Spanish first (has unique characters)
+        // STAGE 3: More conservative Latin language detection
+        const latinCandidates: { lang: OCRLanguage, confidence: number }[] = [];
+        
+        // Check each Latin language with confidence scoring
         if (this.containsSpanish(text)) {
-          detectedLanguages.push('spa');
-          console.log('✅ Spanish detected based on unique characters and patterns');
+          const confidence = this.getSpanishConfidence(text);
+          latinCandidates.push({ lang: 'spa', confidence });
+          console.log('🔍 Spanish candidate found with confidence:', confidence);
         }
         
-        // Check for French
         if (this.containsFrench(text)) {
-          detectedLanguages.push('fra');
-          console.log('✅ French detected based on unique characters and patterns');
+          const confidence = this.getFrenchConfidence(text);
+          latinCandidates.push({ lang: 'fra', confidence });
+          console.log('🔍 French candidate found with confidence:', confidence);
         }
         
-        // Check for German
         if (this.containsGerman(text)) {
-          detectedLanguages.push('deu');
-          console.log('✅ German detected based on unique characters and patterns');
+          const confidence = this.getGermanConfidence(text);
+          latinCandidates.push({ lang: 'deu', confidence });
+          console.log('🔍 German candidate found with confidence:', confidence);
         }
         
-        // If no specific Latin language detected, default to English
-        if (detectedLanguages.length === 0) {
+        // Select only the highest confidence Latin language (if confidence > threshold)
+        if (latinCandidates.length > 0) {
+          latinCandidates.sort((a, b) => b.confidence - a.confidence);
+          const topCandidate = latinCandidates[0];
+          
+          // Only accept if confidence is high enough
+          if (topCandidate.confidence >= 0.6) {
+            detectedLanguages.push(topCandidate.lang);
+            console.log('✅ Selected primary Latin language:', topCandidate.lang, 'with confidence:', topCandidate.confidence);
+            
+            // Only add secondary languages if they have very high confidence AND are significantly different
+            for (let i = 1; i < latinCandidates.length; i++) {
+              const candidate = latinCandidates[i];
+              if (candidate.confidence >= 0.8 && (topCandidate.confidence - candidate.confidence) < 0.2) {
+                detectedLanguages.push(candidate.lang);
+                console.log('✅ Added secondary Latin language:', candidate.lang, 'with confidence:', candidate.confidence);
+              }
+            }
+          } else {
+            console.log('⚠️ No Latin language met confidence threshold, defaulting to English');
+            detectedLanguages.push('eng');
+          }
+        } else {
+          // No Latin languages detected, default to English
           detectedLanguages.push('eng');
           console.log('📝 Defaulting to English - no specific language patterns detected');
         }
       }
       
-      // Always include English as fallback for mixed documents (unless it's already primary)
-      if (!detectedLanguages.includes('eng') && detectedLanguages.length > 0) {
+      // CONSERVATIVE: Only add English as fallback if we detected non-Latin scripts
+      // For Latin scripts, stick with the primary detected language to avoid confusion
+      const hasNonLatinScript = detectedLanguages.some(lang => 
+        ['chi_sim', 'chi_tra', 'jpn', 'kor', 'ara', 'rus'].includes(lang)
+      );
+      
+      if (hasNonLatinScript && !detectedLanguages.includes('eng')) {
         detectedLanguages.push('eng');
       }
       
@@ -461,11 +492,19 @@ export class OCRService {
       return true;
     }
     
-    // German compound words (characteristic long words)
+    // German compound words (characteristic long words) - TIGHTENED DETECTION
+    // Require BOTH German words AND long words for detection
     const germanCompounds = /\b\w{12,}\b/g;
     const longWords = text.match(germanCompounds);
-    if (longWords && longWords.length >= 2) {
-      console.log('🔍 German compound words found:', longWords.slice(0, 3));
+    if (longWords && longWords.length >= 3 && germanMatches && germanMatches.length >= 5) {
+      console.log('🔍 German compound words + German words found:', { longWords: longWords.slice(0, 3), germanWords: germanMatches.slice(0, 3) });
+      return true;
+    }
+    
+    // Additional German-specific indicators (more conservative)
+    const strongGermanIndicators = /\b(Gesellschaft|Unternehmen|Vereinbarung|Bestimmungen|Verpflichtungen|Verantwortung)\b/gi;
+    if (strongGermanIndicators.test(text) && germanMatches && germanMatches.length >= 3) {
+      console.log('🔍 Strong German business terms found');
       return true;
     }
     
@@ -476,6 +515,56 @@ export class OCRService {
     return /[\u4e00-\u9fff]/.test(text);
   }
 
+  // STAGE 4: Intelligent Chinese variant detection using opencc-js library
+  private static detectChineseVariant(text: string): 'chi_sim' | 'chi_tra' {
+    try {
+      // Use opencc-js for intelligent Traditional vs Simplified detection
+      // Create converters to test conversion results
+      const toSimplified = Converter({ from: 'tw', to: 'cn' }); // Traditional to Simplified
+      const toTraditional = Converter({ from: 'cn', to: 'tw' }); // Simplified to Traditional
+      
+      // Convert text both ways and compare with original
+      const convertedToSimplified = toSimplified(text);
+      const convertedToTraditional = toTraditional(text);
+      
+      // Calculate similarity scores
+      const simplicityScore = this.calculateTextSimilarity(text, convertedToSimplified);
+      const traditionalScore = this.calculateTextSimilarity(text, convertedToTraditional);
+      
+      // Determine variant based on which conversion changed the text more
+      // If traditional score is higher, the text is more similar to traditional
+      const result = traditionalScore > simplicityScore ? 'chi_tra' : 'chi_sim';
+      
+      console.log(`🎯 Chinese variant detected by opencc-js: ${result}`);
+      console.log(`📊 Scores - Simplified: ${simplicityScore.toFixed(2)}, Traditional: ${traditionalScore.toFixed(2)}`);
+      console.log(`📝 Sample text analyzed: "${text.substring(0, 100)}..."`);
+      
+      return result;
+    } catch (error) {
+      console.warn('⚠️ opencc-js detection failed, falling back to simplified:', error);
+      // Safe fallback to simplified (more common globally)
+      return 'chi_sim';
+    }
+  }
+  
+  // Helper function to calculate text similarity
+  private static calculateTextSimilarity(text1: string, text2: string): number {
+    const length = Math.max(text1.length, text2.length);
+    if (length === 0) return 1.0;
+    
+    let matches = 0;
+    const minLength = Math.min(text1.length, text2.length);
+    
+    for (let i = 0; i < minLength; i++) {
+      if (text1[i] === text2[i]) {
+        matches++;
+      }
+    }
+    
+    return matches / length;
+  }
+
+  // DEPRECATED: Keep for reference but no longer used
   private static isTraditionalChinese(text: string): boolean {
     // Common traditional Chinese characters not used in simplified
     const traditionalChars = /[繁體中文台灣香港澳門]/;
@@ -500,6 +589,83 @@ export class OCRService {
   private static containsCyrillic(text: string): boolean {
     // Cyrillic script
     return /[\u0400-\u04ff]/.test(text);
+  }
+
+  // STAGE 3: Confidence scoring functions for more precise Latin language detection
+  private static getSpanishConfidence(text: string): number {
+    let confidence = 0;
+    
+    // Spanish-specific characters (high confidence)
+    const spanishChars = text.match(/[ñáéíóúüÑÁÉÍÓÚÜ¿¡]/g);
+    if (spanishChars) {
+      confidence += Math.min(spanishChars.length * 0.1, 0.4);
+    }
+    
+    // Spanish punctuation (medium confidence)
+    if (/[¿¡]/.test(text)) {
+      confidence += 0.3;
+    }
+    
+    // Spanish words (scaled by frequency)
+    const spanishWords = text.match(/\b(el|la|los|las|de|del|en|con|por|para|que|es|son|está|están|tiene|tienen|hace|hacen|muy|más|también|pero|como|cuando|donde|porque)\b/gi);
+    if (spanishWords) {
+      confidence += Math.min(spanishWords.length * 0.05, 0.4);
+    }
+    
+    return Math.min(confidence, 1.0);
+  }
+  
+  private static getFrenchConfidence(text: string): number {
+    let confidence = 0;
+    
+    // French-specific characters (high confidence)
+    const frenchChars = text.match(/[àâäçéèêëïîôöùûüÿæœÀÂÄÇÉÈÊËÏÎÔÖÙÛÜŸÆŒ]/g);
+    if (frenchChars) {
+      confidence += Math.min(frenchChars.length * 0.1, 0.4);
+    }
+    
+    // French contractions (high confidence)
+    const frenchPatterns = text.match(/\b(c'est|d'un|d'une|l'|qu'|n'|s'|t'|j'|m')\b/gi);
+    if (frenchPatterns) {
+      confidence += Math.min(frenchPatterns.length * 0.15, 0.4);
+    }
+    
+    // French words (scaled by frequency)
+    const frenchWords = text.match(/\b(le|la|les|de|du|des|un|une|et|est|sont|avec|dans|pour|par|sur|sous|entre|vers|chez|sans|contre|pendant|après|avant)\b/gi);
+    if (frenchWords) {
+      confidence += Math.min(frenchWords.length * 0.05, 0.4);
+    }
+    
+    return Math.min(confidence, 1.0);
+  }
+  
+  private static getGermanConfidence(text: string): number {
+    let confidence = 0;
+    
+    // German-specific characters (high confidence)
+    const germanChars = text.match(/[äöüßÄÖÜ]/g);
+    if (germanChars) {
+      confidence += Math.min(germanChars.length * 0.15, 0.4);
+    }
+    
+    // German words (scaled by frequency)
+    const germanWords = text.match(/\b(der|die|das|den|dem|des|ein|eine|einen|einem|einer|eines|und|oder|aber|doch|jedoch|sondern|denn|weil|da|wenn|als|wie|wo)\b/gi);
+    if (germanWords) {
+      confidence += Math.min(germanWords.length * 0.05, 0.4);
+    }
+    
+    // German compound words (medium confidence) - more conservative than before
+    const germanCompounds = text.match(/\b\w{12,}\b/g);
+    if (germanCompounds && germanCompounds.length >= 3 && germanWords && germanWords.length >= 5) {
+      confidence += Math.min(germanCompounds.length * 0.05, 0.2);
+    }
+    
+    // Strong German business terms (high confidence)
+    if (/\b(Gesellschaft|Unternehmen|Vereinbarung|Bestimmungen|Verpflichtungen|Verantwortung)\b/gi.test(text)) {
+      confidence += 0.3;
+    }
+    
+    return Math.min(confidence, 1.0);
   }
 
   public static async extractTextFromImage(
@@ -557,40 +723,41 @@ export class OCRService {
     }
   }
 
-  private static multiLanguagePostProcessing(text: string, languages: OCRLanguage[]): string {
-    let processed = text;
-
-    // Apply language-specific processing
-    for (const language of languages) {
-      switch (language) {
-        case 'eng':
-          processed = this.enhancedPostProcessing(processed);
-          break;
-        case 'chi_sim':
-        case 'chi_tra':
-          processed = this.chinesePostProcessing(processed);
-          break;
-        case 'jpn':
-          processed = this.japanesePostProcessing(processed);
-          break;
-        case 'kor':
-          processed = this.koreanPostProcessing(processed);
-          break;
-        case 'ara':
-          processed = this.arabicPostProcessing(processed);
-          break;
-        case 'rus':
-          processed = this.russianPostProcessing(processed);
-          break;
-        case 'spa':
-        case 'fra':
-        case 'deu':
-          processed = this.europeanLanguagePostProcessing(processed, language);
-          break;
+  // STAGE 2: Safe primary language selection (capability-based priority)
+  private static selectPrimaryLanguage(detectedLanguages: OCRLanguage[]): OCRLanguage {
+    // Capability-based priority: Most capable OCR models first (handle multiple scripts)
+    const capabilityPriority: OCRLanguage[] = [
+      'chi_sim',    // Handles Chinese + Latin alphabet
+      'chi_tra',    // Handles Traditional Chinese + Latin
+      'jpn',        // Handles Japanese scripts + Latin
+      'kor',        // Handles Korean + Latin  
+      'ara',        // Handles Arabic + some Latin
+      'rus',        // Handles Cyrillic + some Latin
+      'eng',        // Handles Latin alphabet only
+      'fra',        // Handles Latin + French diacritics
+      'deu',        // Handles Latin + German characters
+      'spa'         // Handles Latin + Spanish characters
+    ];
+    
+    // Select highest priority language from detected languages
+    for (const lang of capabilityPriority) {
+      if (detectedLanguages.includes(lang)) {
+        console.log(`🎯 Primary language selected: ${lang} from detected: [${detectedLanguages.join(', ')}]`);
+        return lang;
       }
     }
+    
+    // Safe fallback
+    console.log(`🔄 No priority language found, defaulting to English from: [${detectedLanguages.join(', ')}]`);
+    return 'eng';
+  }
 
-    return processed;
+  private static multiLanguagePostProcessing(text: string, languages: OCRLanguage[]): string {
+    // STAGE 2: Primary language selection + universal preservation
+    const primaryLanguage = this.selectPrimaryLanguage(languages);
+    console.log('🧘 Processing with primary language:', primaryLanguage, 'from detected:', languages.join(', '));
+    
+    return this.gentleUniversalPreservation(text);
   }
 
   private static chinesePostProcessing(text: string): string {
@@ -644,16 +811,10 @@ export class OCRService {
   }
 
   private static europeanLanguagePostProcessing(text: string, language: OCRLanguage): string {
-    let processed = text;
+    // ENHANCED: Apply universal paragraph preservation for European languages
+    let processed = this.universalParagraphPreservation(text);
 
-    // Common European language fixes
-    processed = processed
-      .replace(/\s{2,}/g, ' ')           // Multiple spaces to single
-      .replace(/\n{3,}/g, '\n\n')       // Multiple newlines to double
-      .replace(/\s+([,.;:!?])/g, '$1')  // Remove space before punctuation
-      .replace(/([,.;:!?])(?=[a-zA-ZÀ-ÿ])/g, '$1 '); // Add space after punctuation
-
-    // Language-specific fixes
+    // Language-specific character and punctuation fixes
     switch (language) {
       case 'fra':
         // French-specific punctuation rules
@@ -681,7 +842,8 @@ export class OCRService {
         break;
     }
 
-    return processed.trim();
+    // Final cleanup while preserving paragraph structure
+    return this.finalCleanupUniversal(processed);
   }
 
   // Keep the original English post-processing method
@@ -922,19 +1084,11 @@ export class OCRService {
         // Join with previous line (handle hyphenation)
         currentParagraph += (currentParagraph.endsWith('-') ? '' : ' ') + line;
       } else {
-        // Start new paragraph or continue existing one
+        // DEFAULT: Start new paragraph (preserve paragraph breaks)
         if (currentParagraph.trim()) {
-          // Only end paragraph if we have strong evidence
-          if (this.shouldDefinitelyEndParagraph(currentParagraph, line)) {
-            result.push(currentParagraph.trim());
-            currentParagraph = line;
-          } else {
-            // Continue same paragraph
-            currentParagraph += ' ' + line;
-          }
-        } else {
-          currentParagraph = line;
+          result.push(currentParagraph.trim());
         }
+        currentParagraph = line;
       }
     }
 
@@ -1122,6 +1276,174 @@ export class OCRService {
       oldestLanguageCache: this.languageCache.size > 0 ? Math.min(...Array.from(this.languageCache.values()).map(entry => entry.timestamp)) : Infinity,
       newestLanguageCache: this.languageCache.size > 0 ? Math.max(...Array.from(this.languageCache.values()).map(entry => entry.timestamp)) : -Infinity
     };
+  }
+
+  // Universal paragraph preservation function for all European languages
+  private static universalParagraphPreservation(text: string): string {
+    // SAFE UNIVERSAL APPROACH: Preserve existing structure while fixing obvious issues
+    const lines = text.split('\n');
+    const result: string[] = [];
+    let currentParagraph = '';
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      // Skip empty lines - they indicate paragraph breaks
+      if (line.length === 0) {
+        // Finish current paragraph if we have one
+        if (currentParagraph.trim()) {
+          result.push(currentParagraph.trim());
+          currentParagraph = '';
+        }
+        continue;
+      }
+
+      // Universal paragraph starters (work across European languages)
+      if (this.isUniversalNewParagraph(line)) {
+        if (currentParagraph.trim()) {
+          result.push(currentParagraph.trim());
+        }
+        currentParagraph = line;
+        continue;
+      }
+
+      // Universal line joining (very conservative)
+      if (currentParagraph && this.shouldUniversallyJoin(currentParagraph, line)) {
+        // Join with previous line (handle hyphenation)
+        currentParagraph += (currentParagraph.endsWith('-') ? '' : ' ') + line;
+      } else {
+        // DEFAULT: Start new paragraph (preserve paragraph breaks)
+        if (currentParagraph.trim()) {
+          result.push(currentParagraph.trim());
+        }
+        currentParagraph = line;
+      }
+    }
+
+    // Add final paragraph
+    if (currentParagraph.trim()) {
+      result.push(currentParagraph.trim());
+    }
+
+    return result.join('\n\n');
+  }
+
+  // Universal paragraph starter detection (language-agnostic)
+  private static isUniversalNewParagraph(line: string): boolean {
+    // Only very obvious paragraph starters that work across languages
+    const universalStarters = [
+      /^\d+\./,                           // Numbered paragraphs like "1."
+      /^[A-Z]\./,                         // Lettered paragraphs like "A."
+      /^\([a-z]\)/,                       // Lettered sub-paragraphs like "(a)"
+      /^\([0-9]+\)/,                      // Numbered sub-paragraphs like "(1)"
+      /^[IVX]+\./,                        // Roman numerals like "I.", "II."
+    ];
+
+    return universalStarters.some(pattern => pattern.test(line));
+  }
+
+  // Universal line joining (very conservative, works across languages)
+  private static shouldUniversallyJoin(currentParagraph: string, line: string): boolean {
+    if (!currentParagraph || !line) return false;
+
+    // Don't join if current line looks like a new paragraph
+    if (this.isUniversalNewParagraph(line)) return false;
+
+    // Only join with very clear universal indicators
+    const universalJoinIndicators = [
+      /-$/,                               // Previous line ends with hyphen (universal)
+      /,$/,                               // Previous line ends with comma (universal)
+    ];
+
+    // Check if previous line has clear join indicator
+    if (universalJoinIndicators.some(pattern => pattern.test(currentParagraph.trim()))) {
+      return true;
+    }
+
+    // Join if current line starts with lowercase (universal continuation)
+    if (/^[a-z]/.test(line)) return true;
+
+    return false;
+  }
+
+  // Universal final cleanup (preserves paragraph structure)
+  private static finalCleanupUniversal(text: string): string {
+    return text
+      // Clean up excessive spaces within lines
+      .replace(/\s{2,}/g, ' ')
+      // Remove excessive line breaks (preserve double breaks for paragraphs)
+      .replace(/\n{3,}/g, '\n\n')
+      // Trim each paragraph
+      .split('\n\n')
+      .map(para => para.trim())
+      .filter(para => para.length > 0)
+      .join('\n\n')
+      // Final trim
+      .trim();
+  }
+
+  // STAGE 1: Gentle universal preservation - preserves paragraph structure for ALL languages
+  private static gentleUniversalPreservation(text: string): string {
+    console.log('🧘 Re-evaluating paragraph preservation...');
+
+    const lines = text.split('\n');
+    const result: string[] = [];
+    let currentParagraph = '';
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      if (line.length === 0) {
+        // Empty line: end of paragraph
+        if (currentParagraph.trim()) {
+          result.push(currentParagraph.trim());
+          currentParagraph = '';
+        }
+        continue;
+      }
+
+      // Detect definitive paragraph starters (numbered sections, legal headers)
+      const definiteParagraphStart = /^[1-9]\d*\.|^[A-Z]\.|^\([a-z]\)|^\([0-9]+\)|^WHEREAS\b|^NOW THEREFORE\b|^IN WITNESS WHEREOF\b/i.test(line);
+
+      // Intelligent line joining logic
+      if (currentParagraph && !definiteParagraphStart) {
+        // Check if we should join this line with the previous paragraph
+        const shouldJoin = this.shouldJoinLines(currentParagraph, line);
+        
+        if (shouldJoin) {
+          currentParagraph += ' ' + line;
+        } else {
+          // Start new paragraph
+          result.push(currentParagraph.trim());
+          currentParagraph = line;
+        }
+      } else {
+        // Definitive paragraph start or first line
+        if (currentParagraph.trim()) {
+          result.push(currentParagraph.trim());
+        }
+        currentParagraph = line;
+      }
+    }
+
+    if (currentParagraph.trim()) {
+      result.push(currentParagraph.trim());
+    }
+    return result.join('\n\n');
+  }
+
+  // ZEN APPROACH: Simple and effective - preserve clear paragraph breaks, join everything else
+  private static shouldJoinLines(currentParagraph: string, line: string): boolean {
+    if (!currentParagraph || !line) return false;
+
+    // DON'T join if current line is clearly a new paragraph
+    if (this.isDefiniteNewParagraph(line)) {
+      return false;
+    }
+
+    // JOIN everything else - simple and effective!
+    console.log('🧘 Zen joining:', currentParagraph.slice(-20), '|', line.slice(0, 30));
+    return true;
   }
 
   public static async terminate(): Promise<void> {

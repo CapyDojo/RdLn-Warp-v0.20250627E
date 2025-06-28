@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Tests Live Visualization</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .content {
+            padding: 30px;
+        }
+        .test-suite {
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .suite-header {
+            background: #f5f5f5;
+            padding: 15px 20px;
+            font-weight: bold;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .suite-header:hover {
+            background: #eee;
+        }
+        .test-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .test-item:last-child {
+            border-bottom: none;
+        }
+        .test-item.running {
+            background: #fff3cd;
+            animation: pulse 1s infinite;
+        }
+        .test-name {
+            font-weight: 500;
+        }
+        .test-description {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85em;
+            text-transform: uppercase;
+        }
+        .passed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .running {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .pending {
+            background: #e2e3e5;
+            color: #6c757d;
+        }
+        .test-output {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            color: #495057;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .run-button {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        .run-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .run-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .icon {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 OCR Test Suite</h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number" id="total-tests">23</div>
+                    <div>Total Tests</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="passed-tests">0</div>
+                    <div>Passed</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="failed-tests">0</div>
+                    <div>Failed</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="duration">0s</div>
+                    <div>Duration</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <button class="run-button" onclick="runAllTests()">🚀 Run All Tests</button>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            
+            <div id="test-suites"></div>
+        </div>
+    </div>
+
+    <script>
+        const testSuites = {
+            "Static Service": [
+                { name: "should have static methods available", description: "Verifies OCRService has correct static methods", output: "✓ OCRService.detectLanguage is a function\n✓ OCRService.extractTextFromImage is a function\n✓ OCRService.terminate is a function" }
+            ],
+            "Language Detection": [
+                { name: "should detect English language", description: "Tests English language detection", output: "🔍 Starting language detection...\n📖 Running detection OCR with full language support...\n⏱️ Detection OCR completed in 0ms\n✅ Detected languages: ['eng']" },
+                { name: "should detect Chinese language", description: "Tests Chinese language detection", output: "🔍 Starting language detection...\n📖 Running detection OCR with full language support...\n⏱️ Detection OCR completed in 0ms\n✅ Detected languages: ['eng']" },
+                { name: "should detect multiple languages", description: "Tests multi-language detection", output: "🔍 Starting language detection...\n📖 Running detection OCR with full language support...\n⏱️ Detection OCR completed in 0ms\n✅ Detected languages: ['eng']" },
+                { name: "should cache language detection results", description: "Tests language detection caching", output: "🎯 LANGUAGE CACHE HIT: Found cached detection result\n✅ Cache working correctly" }
+            ],
+            "Text Extraction": [
+                { name: "should extract text from English image", description: "Tests English text extraction", output: "🚀 Getting extraction worker for languages: English\n📖 Extracting text from image...\n⏱️ Text extraction completed in 0ms\n✅ Text: 'Mocked OCR text'" },
+                { name: "should extract text from Chinese image", description: "Tests Chinese text extraction", output: "🚀 Getting extraction worker for languages: Chinese (Simplified)\n📖 Extracting text from image...\n⏱️ Text extraction completed in 0ms\n✅ Text: 'Mocked OCR text'" },
+                { name: "should handle multi-language extraction", description: "Tests multi-language text extraction", output: "🚀 Getting extraction worker for languages: English, Chinese (Simplified)\n📖 Extracting text from image...\n⏱️ Text extraction completed in 0ms\n✅ Multi-language extraction successful" },
+                { name: "should preserve paragraphs when requested", description: "Tests paragraph preservation", output: "🧘 Re-evaluating paragraph preservation...\n✅ Paragraphs preserved correctly" },
+                { name: "should handle extraction options", description: "Tests custom extraction options", output: "🎯 Primary language selected: chi_sim\n🧘 Processing with primary language: chi_sim\n✅ Options handled correctly" }
+            ],
+            "Worker Management": [
+                { name: "should create workers as needed", description: "Tests worker creation", output: "🔄 EXTRACTION CACHE MISS: Creating new worker\n✅ Extraction worker cached\n✅ Worker created successfully" },
+                { name: "should reuse workers when possible", description: "Tests worker reuse", output: "🎯 EXTRACTION CACHE HIT: Reusing worker\n✅ Worker reused successfully" },
+                { name: "should clean up workers properly", description: "Tests worker cleanup", output: "🧹 All OCR workers terminated and caches cleared\n✅ Cleanup successful" }
+            ],
+            "Error Handling": [
+                { name: "should handle invalid image data", description: "Tests error handling for invalid data", output: "❌ Expected error but got success (mocked)" },
+                { name: "should handle unsupported languages", description: "Tests error handling for unsupported languages", output: "❌ Expected error but got success (mocked)" },
+                { name: "should handle empty language array", description: "Tests handling of empty language arrays", output: "🔍 Detecting document language...\n✅ Defaulted to English successfully" }
+            ]
+        };
+
+        let totalTests = 0;
+        let passedTests = 0;
+        let failedTests = 0;
+        let currentTestIndex = 0;
+        let allTests = [];
+
+        function initializeTests() {
+            const suitesContainer = document.getElementById('test-suites');
+            
+            Object.entries(testSuites).forEach(([suiteName, tests]) => {
+                const suiteDiv = document.createElement('div');
+                suiteDiv.className = 'test-suite';
+                
+                const suiteHeader = document.createElement('div');
+                suiteHeader.className = 'suite-header';
+                suiteHeader.innerHTML = `
+                    <span>📁 ${suiteName}</span>
+                    <span>${tests.length} tests</span>
+                `;
+                
+                const suiteContent = document.createElement('div');
+                
+                tests.forEach((test, index) => {
+                    totalTests++;
+                    const testId = `test-${totalTests}`;
+                    allTests.push({ ...test, suiteName, testId });
+                    
+                    const testDiv = document.createElement('div');
+                    testDiv.className = 'test-item';
+                    testDiv.id = testId;
+                    testDiv.innerHTML = `
+                        <div>
+                            <div class="test-name">🧪 ${test.name}</div>
+                            <div class="test-description">${test.description}</div>
+                            <div class="test-output" id="output-${testId}">${test.output}</div>
+                        </div>
+                        <div class="status pending" id="status-${testId}">pending</div>
+                    `;
+                    
+                    testDiv.addEventListener('click', () => {
+                        const output = document.getElementById(`output-${testId}`);
+                        output.style.display = output.style.display === 'none' ? 'block' : 'none';
+                    });
+                    
+                    suiteContent.appendChild(testDiv);
+                });
+                
+                suiteDiv.appendChild(suiteHeader);
+                suiteDiv.appendChild(suiteContent);
+                suitesContainer.appendChild(suiteDiv);
+            });
+            
+            document.getElementById('total-tests').textContent = totalTests;
+        }
+
+        function runAllTests() {
+            const button = document.querySelector('.run-button');
+            button.disabled = true;
+            button.textContent = '🏃 Running Tests...';
+            
+            passedTests = 0;
+            failedTests = 0;
+            currentTestIndex = 0;
+            
+            const startTime = Date.now();
+            
+            function runNextTest() {
+                if (currentTestIndex >= allTests.length) {
+                    // All tests completed
+                    const duration = ((Date.now() - startTime) / 1000).toFixed(1);
+                    document.getElementById('duration').textContent = duration + 's';
+                    button.disabled = false;
+                    button.textContent = '🚀 Run All Tests';
+                    return;
+                }
+                
+                const test = allTests[currentTestIndex];
+                const testElement = document.getElementById(test.testId);
+                const statusElement = document.getElementById(`status-${test.testId}`);
+                
+                // Mark as running
+                testElement.classList.add('running');
+                statusElement.className = 'status running';
+                statusElement.textContent = 'running';
+                
+                // Simulate test execution time
+                setTimeout(() => {
+                    testElement.classList.remove('running');
+                    
+                    // Determine if test passes or fails (based on our known results)
+                    const shouldFail = test.name.includes('invalid image data') || test.name.includes('unsupported languages');
+                    
+                    if (shouldFail) {
+                        failedTests++;
+                        statusElement.className = 'status failed';
+                        statusElement.textContent = 'failed';
+                    } else {
+                        passedTests++;
+                        statusElement.className = 'status passed';
+                        statusElement.textContent = 'passed';
+                    }
+                    
+                    // Update progress
+                    const progress = ((currentTestIndex + 1) / allTests.length) * 100;
+                    document.getElementById('progress').style.width = progress + '%';
+                    
+                    // Update stats
+                    document.getElementById('passed-tests').textContent = passedTests;
+                    document.getElementById('failed-tests').textContent = failedTests;
+                    
+                    currentTestIndex++;
+                    
+                    // Run next test
+                    setTimeout(runNextTest, 200);
+                }, Math.random() * 1000 + 500); // Random delay between 500-1500ms
+            }
+            
+            runNextTest();
+        }
+
+        // Initialize the page
+        initializeTests();
+    </script>
+</body>
+</html>

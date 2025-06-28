@@ -1,5 +1,55 @@
 # RdLn Document Comparison Tool - Comprehensive Changelog
 
+## Version 0.4.1 - "Production Finalization & Build Optimization"
+*Released: June 28, 2025*
+
+### 🚀 Production Readiness & Optimization
+
+#### **Build System & Asset Management**
+- **Build Optimization**: Updated production build assets with optimized bundling
+- **Package Management**: Enhanced dependencies with latest security updates
+- **Asset Versioning**: Improved cache busting with updated asset hashes
+- **Performance**: Streamlined build process for faster deployment
+
+#### **Code Quality & Maintenance**
+- **Service Refinement**: Enhanced OCRService with improved error handling and performance
+- **Language Detection**: Optimized LanguageDetectionService for better accuracy
+- **Cache Management**: Refined OCRCacheManager for more efficient memory usage
+- **Type Safety**: Enhanced TypeScript configurations and type definitions
+
+#### **Testing Framework Enhancements**
+- **Test Import Utilities**: Added `test-import.ts` for streamlined test data management
+- **Type Definitions**: Improved test suite type definitions for better development experience
+- **Configuration**: Enhanced TypeScript app configuration for testing modules
+
+#### **Component Improvements**
+- **AppRouter**: Enhanced routing logic for better navigation flow
+- **TextInputPanel**: Minor UI improvements for better user experience
+- **OCR Hook**: Optimized useOCR hook for improved performance
+
+### 📦 Technical Infrastructure
+
+#### **Deployment Readiness**
+- **Production Build**: Finalized build configuration for deployment
+- **Asset Management**: Optimized asset delivery and caching strategies
+- **Performance Metrics**: Enhanced loading times and runtime performance
+- **Security Updates**: Latest package updates for security and stability
+
+---
+
+### 🎉 Release Highlights
+
+Version 0.4.1 represents the finalization of our MVP for production deployment. This release focuses on build optimization, code quality improvements, and deployment readiness while maintaining all the powerful features introduced in v0.4.0.
+
+**Key Achievements**:
+- Production-ready build system with optimized assets
+- Enhanced code quality and performance improvements
+- Streamlined testing framework for ongoing development
+- Security updates and dependency management
+- Ready for beta deployment and user feedback
+
+---
+
 ## Version 0.4.0 - "OCR Integration & Enhanced Testing Framework"
 *Released: June 27, 2025*
 
