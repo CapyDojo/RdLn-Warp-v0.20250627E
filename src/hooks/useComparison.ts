@@ -198,10 +198,15 @@ export const useComparison = () => {
         });
       }
       
+      // 🎯 CRITICAL PERFORMANCE LOGGING FOR STATE UPDATE THAT CAUSES LAG
+      console.log('🚨 ABOUT TO UPDATE STATE WITH RESULT - THIS MAY CAUSE LAG');
+      const stateUpdateStartTime = performance.now();
+      
       setState(prev => {
         console.log('🔬 Inside setState, updating with result...');
         console.log('🔍 Previous state result:', !!prev.result);
         console.log('🔍 New result being set:', !!result);
+        console.log('🎯 STATE UPDATE START TIME:', stateUpdateStartTime);
         
         // TESTING: Keep progress bar visible for debugging
         // TODO: Restore auto-hide after testing
@@ -234,7 +239,19 @@ export const useComparison = () => {
           error: newState.error
         });
         
+        const stateUpdateEndTime = performance.now();
+        console.log('🎯 STATE UPDATE COMPLETED:', {
+          stateDuration: (stateUpdateEndTime - stateUpdateStartTime).toFixed(2) + 'ms',
+          endTime: stateUpdateEndTime
+        });
+        
         return newState;
+      });
+      
+      const postStateUpdateTime = performance.now();
+      console.log('🚨 POST-STATE UPDATE TIME:', {
+        totalPostAlgorithmTime: (postStateUpdateTime - stateUpdateStartTime).toFixed(2) + 'ms',
+        timestamp: postStateUpdateTime
       });
       
       // Restore focus after comparison completes

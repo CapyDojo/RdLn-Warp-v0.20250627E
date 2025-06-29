@@ -18,6 +18,19 @@ export const RedlineOutput: React.FC<RedlineOutputProps> = ({ changes, onCopy, h
   const RENDER_CHUNK_SIZE = 200; // Render 200 changes per chunk
   const RENDER_DELAY = 16; // 16ms delay between chunks (60fps)
   
+  // 🎯 COMPREHENSIVE PERFORMANCE LOGGING TO IDENTIFY LAG SOURCE
+  const performanceStartTime = React.useRef(performance.now());
+  const componentRenderStartTime = React.useRef(performance.now());
+  
+  console.log('🎨 RedlineOutput COMPONENT RENDER START:', {
+    changesLength: changes.length,
+    timestamp: performance.now(),
+    memoryUsage: (performance as any).memory ? {
+      usedJSHeapSize: Math.round((performance as any).memory.usedJSHeapSize / 1024 / 1024) + 'MB',
+      totalJSHeapSize: Math.round((performance as any).memory.totalJSHeapSize / 1024 / 1024) + 'MB'
+    } : 'unavailable'
+  });
+  
   // DEBUG: Log rendering performance for large change sets
   React.useEffect(() => {
     console.log('🎨 RedlineOutput rendering:', {
@@ -44,18 +57,47 @@ export const RedlineOutput: React.FC<RedlineOutputProps> = ({ changes, onCopy, h
             setIsProgressiveRendering(false);
           }
           
+          if (nextCount >= changes.length) {
+            console.log('✅ Progressive rendering fully completed:', changes.length);
+            console.timeEnd('Progressive Rendering Timer');
+          }
           return nextCount;
         });
       };
       
+      console.time('Progressive Rendering Timer');
+      console.log('🔄 Starting progressive rendering...');
       // Start with first chunk after a brief delay
       setTimeout(renderNextChunk, RENDER_DELAY);
     } else {
+      console.log('🔍 Rendering small change set all at once:', changes.length);
       // Small change set - render all at once
       setRenderedCount(changes.length);
       setIsProgressiveRendering(false);
+      console.timeEnd('RedlineOutput Render Time');
     }
   }, [changes.length]);
+  
+  // 📊 Track component lifecycle performance
+  React.useLayoutEffect(() => {
+    console.log('🎨 RedlineOutput LAYOUT EFFECT START:', performance.now());
+    return () => {
+      console.log('🎨 RedlineOutput LAYOUT EFFECT CLEANUP:', performance.now());
+    };
+  }, [changes]);
+  
+  React.useEffect(() => {
+    const endTime = performance.now();
+    console.log('🎨 RedlineOutput COMPONENT RENDER COMPLETE:', {
+      totalRenderTime: (endTime - componentRenderStartTime.current).toFixed(2) + 'ms',
+      timestamp: endTime,
+      changesRendered: renderedCount,
+      totalChanges: changes.length
+    });
+  }, [renderedCount]);
+  
+  // 🎯 Add DOM manipulation tracking
+  const containerRef = React.useRef<HTMLDivElement>(null);
   
   const renderChange = (change: DiffChange, index: number) => {
     const key = `${change.type}-${index}`;
@@ -116,8 +158,54 @@ export const RedlineOutput: React.FC<RedlineOutputProps> = ({ changes, onCopy, h
     }
   };
 
+  // 🎯 BROWSER THREAD BLOCKING DETECTION
+  React.useEffect(() => {
+    let lastTime = performance.now();
+    let animationFrameId: number;
+    
+    const checkForBlocking = () => {
+      const currentTime = performance.now();
+      const timeDelta = currentTime - lastTime;
+      
+      // If more than 50ms has passed since last frame, the main thread was likely blocked
+      if (timeDelta > 50) {
+        console.warn('🚨 MAIN THREAD BLOCKING DETECTED:', {
+          blockingDuration: timeDelta.toFixed(2) + 'ms',
+          timestamp: currentTime,
+          changesLength: changes.length,
+          renderedCount: renderedCount
+        });
+      }
+      
+      lastTime = currentTime;
+      animationFrameId = requestAnimationFrame(checkForBlocking);
+    };
+    
+    animationFrameId = requestAnimationFrame(checkForBlocking);
+    
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [changes.length, renderedCount]);
+  
+  // 🎯 DOM RENDER TIMING
+  React.useLayoutEffect(() => {
+    const renderStartTime = performance.now();
+    console.log('🎨 DOM LAYOUT START:', renderStartTime);
+    
+    return () => {
+      const renderEndTime = performance.now();
+      console.log('🎨 DOM LAYOUT END:', {
+        duration: (renderEndTime - renderStartTime).toFixed(2) + 'ms',
+        timestamp: renderEndTime
+      });
+    };
+  }, [renderedCount]);
+  
   return (
-    <div className="glass-panel overflow-hidden shadow-lg transition-all duration-300">
+    <div ref={containerRef} className="glass-panel overflow-hidden shadow-lg transition-all duration-300">
       <div className="glass-panel-header-footer px-4 py-3 border-b border-theme-neutral-200 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-theme-primary-900">Redlined Document</h3>
         <div className="flex gap-2">

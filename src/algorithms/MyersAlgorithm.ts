@@ -1411,13 +1411,32 @@ export class MyersAlgorithm {
       totalReductionAchieved: totalReductionRatio.toFixed(1) + '%'
     });
     
+    // COMPREHENSIVE PERFORMANCE LOGGING FOR POST-PROCESSING ANALYSIS
+    console.log('🎯 POST-PROCESSING PERFORMANCE ANALYSIS:');
+    console.log('📊 Algorithm completed, starting return phase...');
+    
+    const returnStartTime = performance.now();
+    
     // SAFE: Report completion
     if (progressCallback) {
       console.log('📊 Calling progressCallback(100, "Complete")');
       progressCallback(100, 'Complete');
     }
     
-    return { changes: finalChanges, stats };
+    console.log('📊 About to return result object...');
+    const result = { changes: finalChanges, stats };
+    
+    const returnEndTime = performance.now();
+    console.log(`🎯 Return preparation completed in ${(returnEndTime - returnStartTime).toFixed(2)}ms`);
+    console.log('📊 Result object size analysis:', {
+      changesCount: finalChanges.length,
+      estimatedMemorySize: JSON.stringify(result).length,
+      largestChangeContent: Math.max(...finalChanges.map(c => (c.content?.length || 0))),
+      returnTime: (returnEndTime - returnStartTime).toFixed(2) + 'ms'
+    });
+    
+    console.log('🚀 ALGORITHM COMPLETE - Returning to React component...');
+    return result;
   }
 
   /**
