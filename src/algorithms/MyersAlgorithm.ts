@@ -1445,7 +1445,7 @@ export class MyersAlgorithm {
     debugLog('🌊 Starting streaming Myers algorithm for', totalTokens, 'tokens');
     
     // Configuration for streaming (tunable based on performance testing)
-    const CHUNK_SIZE = 2000; // Process 2000 tokens per chunk
+const CHUNK_SIZE = 1800; // Process 1800 tokens per chunk (adjustable)
     const YIELD_INTERVAL = 0; // 0ms yield (just let UI update)
     const BASE_PROGRESS = 25; // Start progress from 25% (after tokenization)
     const PROGRESS_RANGE = 65; // Use 65% of progress bar for streaming (25% -> 90%)
