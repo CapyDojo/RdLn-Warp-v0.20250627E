@@ -11,6 +11,8 @@ import { OCRLanguage, CachedWorker, LanguageDetectionCacheEntry, CacheStats } fr
 // STAGE 4: Import opencc-js for intelligent Traditional vs Simplified detection
 import { Converter } from 'opencc-js';
 import { SUPPORTED_LANGUAGES } from '../config/ocrConfig';
+// STEP 2: Import Background Language Loader for smart worker usage (SSMR Implementation)
+import { BackgroundLanguageLoader } from '../services/BackgroundLanguageLoader';
 
 // Note: Re-exports removed to avoid module resolution conflicts
 

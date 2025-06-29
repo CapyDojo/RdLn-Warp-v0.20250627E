@@ -1,5 +1,11 @@
 import { DiffChange, ComparisonResult } from '../types';
 
+// DEBUG MODE: Set to true to enable detailed logging for debugging
+const DEBUG_MODE = false;
+
+// Debug logger that can be easily toggled
+const debugLog = DEBUG_MODE ? console.log : () => {};
+
 export class MyersAlgorithm {
   private static tokenize(text: string): string[] {
     // Enhanced tokenization that preserves meaningful units and handles abbreviations
@@ -198,7 +204,7 @@ export class MyersAlgorithm {
     // Case 1: Single capital letter followed by period, then another capital letter
     // This handles "J." in "J.P." - we want to include the period to continue building "J.P."
     if (currentToken.length === 1 && /[A-Z]/.test(currentToken) && /[A-Z]/.test(nextChar)) {
-      console.log(`📝 Single capital "${currentToken}" + period + capital "${nextChar}" - including period`);
+      debugLog(`📝 Single capital "${currentToken}" + period + capital "${nextChar}" - including period`);
       return true;
     }
     
@@ -206,14 +212,14 @@ export class MyersAlgorithm {
     // This handles the final period in "J.P." to complete the abbreviation
     const multiPartPattern = /^[A-Z](\.[A-Z])+$/;
     if (multiPartPattern.test(currentToken)) {
-      console.log(`📝 Multi-part abbreviation "${currentToken}" + final period - including period`);
+      debugLog(`📝 Multi-part abbreviation "${currentToken}" + final period - including period`);
       return true;
     }
     
     // Case 3: Check if current token + period forms a complete known abbreviation
     const tokenWithPeriod = currentToken + '.';
     if (this.isCompleteAbbreviation(tokenWithPeriod)) {
-      console.log(`📝 Complete abbreviation "${tokenWithPeriod}" - including period`);
+      debugLog(`📝 Complete abbreviation "${tokenWithPeriod}" - including period`);
       return true;
     }
     
@@ -221,23 +227,23 @@ export class MyersAlgorithm {
     if (currentToken.length === 1 && /[A-Z]/.test(currentToken)) {
       // Look ahead to see if there's space then capital (like "J. Smith")
       if (nextChar === ' ' && /[A-Z]/.test(charAfterNext)) {
-        console.log(`📝 Single capital "${currentToken}" + period + space + capital - including period`);
+        debugLog(`📝 Single capital "${currentToken}" + period + space + capital - including period`);
         return true;
       }
       // Or if it's at the end of a word boundary
       if (!nextChar || /\s/.test(nextChar)) {
-        console.log(`📝 Single capital "${currentToken}" at word boundary - including period`);
+        debugLog(`📝 Single capital "${currentToken}" at word boundary - including period`);
         return true;
       }
     }
     
     // Case 5: Multi-letter abbreviations (2-4 letters)
     if (currentToken.length >= 2 && currentToken.length <= 4 && /^[A-Z]+$/i.test(currentToken)) {
-      console.log(`📝 Multi-letter abbreviation "${currentToken}" - including period`);
+      debugLog(`📝 Multi-letter abbreviation "${currentToken}" - including period`);
       return true;
     }
     
-    console.log(`📝 Token "${currentToken}" + period - NOT including period`);
+    debugLog(`📝 Token "${currentToken}" + period - NOT including period`);
     return false;
   }
 
@@ -306,9 +312,9 @@ export class MyersAlgorithm {
         
         if (x >= n && y >= m) {
           const rawChanges = this.backtrack(a, b, trace, d);
-          console.log('🔍 Raw changes before processing:', rawChanges);
+          debugLog('🔍 Raw changes before processing:', rawChanges);
           const processedChanges = this.preciseChunking(rawChanges);
-          console.log('📦 Changes after precise processing:', processedChanges);
+          debugLog('📦 Changes after precise processing:', processedChanges);
           return processedChanges;
         }
       }
@@ -367,7 +373,7 @@ export class MyersAlgorithm {
    * PRECISE chunking that preserves all characters while creating intelligent substitutions
    */
   private static preciseChunking(changes: Array<{type: string, content: string}>): Array<{type: string, content: string, originalContent?: string, revisedContent?: string}> {
-    console.log('🎯 Starting precise chunking with character preservation');
+    debugLog('🎯 Starting precise chunking with character preservation');
     const processed: Array<{type: string, content: string, originalContent?: string, revisedContent?: string}> = [];
     let i = 0;
     
@@ -384,13 +390,13 @@ export class MyersAlgorithm {
       // For added/removed tokens, look for substitution opportunities
       if (current.type === 'added' || current.type === 'removed') {
         const segment = this.collectPreciseChangeSegment(changes, i);
-        console.log(`🔍 Collected precise segment from index ${i} to ${segment.endIndex - 1}:`, segment.tokens);
+        debugLog(`🔍 Collected precise segment from index ${i} to ${segment.endIndex - 1}:`, segment.tokens);
         
         // Check if this segment should become a substitution
         const substitutionResult = this.evaluateSubstitution(segment.tokens);
         
         if (substitutionResult.isSubstitution) {
-          console.log(`✅ Creating substitution: "${substitutionResult.removedContent}" -> "${substitutionResult.addedContent}"`);
+          debugLog(`✅ Creating substitution: "${substitutionResult.removedContent}" -> "${substitutionResult.addedContent}"`);
           processed.push({
             type: 'changed',
             content: '',
@@ -399,7 +405,7 @@ export class MyersAlgorithm {
           });
         } else {
           // Process tokens individually with intelligent grouping
-          console.log(`📝 Processing segment tokens individually`);
+          debugLog(`📝 Processing segment tokens individually`);
           this.processTokensIndividually(segment.tokens, processed);
         }
         
@@ -412,7 +418,7 @@ export class MyersAlgorithm {
       i++;
     }
     
-    console.log('🏁 Precise chunking complete. Result:', processed.length, 'items');
+    debugLog('🏁 Precise chunking complete. Result:', processed.length, 'items');
     return processed;
   }
 
@@ -429,12 +435,12 @@ export class MyersAlgorithm {
     const tokens: Array<{type: string, content: string}> = [];
     let i = startIndex;
     
-    console.log(`🔍 Starting precise segment collection from index ${i}`);
+    debugLog(`🔍 Starting precise segment collection from index ${i}`);
     
     // First, collect all consecutive added/removed tokens
     while (i < changes.length && (changes[i].type === 'added' || changes[i].type === 'removed')) {
       tokens.push(changes[i]);
-      console.log(`  ➕ Added ${changes[i].type}: "${changes[i].content}"`);
+      debugLog(`  ➕ Added ${changes[i].type}: "${changes[i].content}"`);
       i++;
     }
     
@@ -445,7 +451,7 @@ export class MyersAlgorithm {
       // Only consider whitespace or connective punctuation as potential internal tokens
       if (!this.isWhitespaceOnly(unchangedToken.content) && 
           !this.isConnectivePunctuation(unchangedToken.content)) {
-        console.log(`  🛑 Stopping at significant unchanged token: "${unchangedToken.content}"`);
+        debugLog(`  🛑 Stopping at significant unchanged token: "${unchangedToken.content}"`);
         break;
       }
       
@@ -471,22 +477,22 @@ export class MyersAlgorithm {
       
       if (hasMoreChanges) {
         tokens.push(unchangedToken);
-        console.log(`  ⬜ Added internal unchanged: "${unchangedToken.content}"`);
+        debugLog(`  ⬜ Added internal unchanged: "${unchangedToken.content}"`);
         i++;
         
         // Continue collecting more added/removed tokens
         while (i < changes.length && (changes[i].type === 'added' || changes[i].type === 'removed')) {
           tokens.push(changes[i]);
-          console.log(`  ➕ Added ${changes[i].type}: "${changes[i].content}"`);
+          debugLog(`  ➕ Added ${changes[i].type}: "${changes[i].content}"`);
           i++;
         }
       } else {
-        console.log(`  🛑 Stopping at boundary unchanged token: "${unchangedToken.content}"`);
+        debugLog(`  🛑 Stopping at boundary unchanged token: "${unchangedToken.content}"`);
         break;
       }
     }
     
-    console.log(`📦 Collected precise segment with ${tokens.length} tokens`);
+    debugLog(`📦 Collected precise segment with ${tokens.length} tokens`);
     return { tokens, endIndex: i };
   }
 
@@ -521,15 +527,15 @@ export class MyersAlgorithm {
       .map(token => token.content)
       .join('');
     
-    console.log(`🧠 Evaluating substitution:`);
-    console.log(`  📤 Removed: "${removedContent}"`);
-    console.log(`  📥 Added: "${addedContent}"`);
+    debugLog(`🧠 Evaluating substitution:`);
+    debugLog(`  📤 Removed: "${removedContent}"`);
+    debugLog(`  📥 Added: "${addedContent}"`);
     
     // Check if this should be a substitution
     const isSubstitution = removedContent && addedContent && 
                           this.shouldTreatAsSubstitution(removedContent, addedContent);
     
-    console.log(`  🎯 Decision: ${isSubstitution ? 'SUBSTITUTE' : 'SEPARATE'}`);
+    debugLog(`  🎯 Decision: ${isSubstitution ? 'SUBSTITUTE' : 'SEPARATE'}`);
     
     return {
       isSubstitution,
@@ -578,7 +584,7 @@ export class MyersAlgorithm {
       const group = this.collectConsecutiveTokens(tokens, i, current.type);
       
       if (group.length > 1 && this.shouldGroupConsecutiveTokens(group)) {
-        console.log(`📦 Grouping ${group.length} consecutive ${current.type} tokens`);
+        debugLog(`📦 Grouping ${group.length} consecutive ${current.type} tokens`);
         processed.push({
           type: current.type,
           content: group.map(token => token.content).join('')
@@ -770,8 +776,8 @@ export class MyersAlgorithm {
     const originalTokens = this.tokenize(originalText);
     const revisedTokens = this.tokenize(revisedText);
     
-    console.log('📝 Original tokens:', originalTokens);
-    console.log('📝 Revised tokens:', revisedTokens);
+    debugLog('📝 Original tokens:', originalTokens);
+    debugLog('📝 Revised tokens:', revisedTokens);
     
     const diff = this.myers(originalTokens, revisedTokens);
     

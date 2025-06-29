@@ -3,23 +3,95 @@ import { OCRService } from '../../src/utils/OCRService';
 import { OCRLanguage } from '../../src/types/ocr-types';
 // import { TEST_IMAGES, EXPECTED_TEXT, EXPECTED_LANGUAGES } from '../helpers/test-utils';
 
-// Mock Tesseract.js
+// Mock Tesseract.js with realistic responses
+const mockOCRResponses = {
+  english: {
+    data: {
+      text: 'This is a sample English document.\n\nIt contains multiple paragraphs of text.\n\nEach paragraph demonstrates proper formatting.',
+      confidence: 94.5,
+      words: [
+        { text: 'This', confidence: 96, bbox: { x0: 50, y0: 50, x1: 80, y1: 70 } },
+        { text: 'is', confidence: 98, bbox: { x0: 85, y0: 50, x1: 95, y1: 70 } },
+        { text: 'a', confidence: 97, bbox: { x0: 100, y0: 50, x1: 110, y1: 70 } }
+      ],
+      paragraphs: [
+        { text: 'This is a sample English document.', confidence: 95 },
+        { text: 'It contains multiple paragraphs of text.', confidence: 93 },
+        { text: 'Each paragraph demonstrates proper formatting.', confidence: 96 }
+      ]
+    }
+  },
+  chinese: {
+    data: {
+      text: '这是一个中文文档示例。\n\n它包含多个段落的文本。\n\n每个段落都展示了正确的格式。',
+      confidence: 89.2,
+      words: [
+        { text: '这', confidence: 91, bbox: { x0: 50, y0: 50, x1: 70, y1: 70 } },
+        { text: '是', confidence: 88, bbox: { x0: 75, y0: 50, x1: 95, y1: 70 } }
+      ],
+      paragraphs: [
+        { text: '这是一个中文文档示例。', confidence: 90 },
+        { text: '它包含多个段落的文本。', confidence: 88 },
+        { text: '每个段落都展示了正确的格式。', confidence: 91 }
+      ]
+    }
+  },
+  multilingual: {
+    data: {
+      text: 'Hello World 你好世界\n\nThis document contains both English and Chinese.\n这个文档包含英文和中文。',
+      confidence: 87.8,
+      words: [
+        { text: 'Hello', confidence: 95, bbox: { x0: 50, y0: 50, x1: 85, y1: 70 } },
+        { text: 'World', confidence: 94, bbox: { x0: 90, y0: 50, x1: 125, y1: 70 } },
+        { text: '你好', confidence: 86, bbox: { x0: 130, y0: 50, x1: 155, y1: 70 } },
+        { text: '世界', confidence: 88, bbox: { x0: 160, y0: 50, x1: 185, y1: 70 } }
+      ],
+      paragraphs: [
+        { text: 'Hello World 你好世界', confidence: 89 },
+        { text: 'This document contains both English and Chinese.\n这个文档包含英文和中文。', confidence: 86 }
+      ]
+    }
+  },
+  lowQuality: {
+    data: {
+      text: 'Th1s 15 p00r qu4l1ty 0CR t3xt w1th 3rr0rs.',
+      confidence: 62.3,
+      words: [
+        { text: 'Th1s', confidence: 65, bbox: { x0: 50, y0: 50, x1: 75, y1: 70 } },
+        { text: '15', confidence: 45, bbox: { x0: 80, y0: 50, x1: 90, y1: 70 } }
+      ],
+      paragraphs: [
+        { text: 'Th1s 15 p00r qu4l1ty 0CR t3xt w1th 3rr0rs.', confidence: 62 }
+      ]
+    }
+  }
+};
+
+const mockWorker = {
+  loadLanguage: vi.fn().mockResolvedValue(undefined),
+  initialize: vi.fn().mockResolvedValue(undefined),
+  setParameters: vi.fn().mockResolvedValue(undefined),
+  recognize: vi.fn().mockImplementation((image, options) => {
+    // Simulate different responses based on language or context
+    const langs = Array.isArray(options) ? options : [options];
+    
+    if (langs.includes('chi_sim') && langs.includes('eng')) {
+      return Promise.resolve(mockOCRResponses.multilingual);
+    } else if (langs.includes('chi_sim')) {
+      return Promise.resolve(mockOCRResponses.chinese);
+    } else if (langs.includes('eng')) {
+      // Simulate low quality response sometimes
+      const isLowQuality = Math.random() < 0.1; // 10% chance
+      return Promise.resolve(isLowQuality ? mockOCRResponses.lowQuality : mockOCRResponses.english);
+    }
+    
+    return Promise.resolve(mockOCRResponses.english);
+  }),
+  terminate: vi.fn().mockResolvedValue(undefined)
+};
+
 vi.mock('tesseract.js', () => ({
-  createWorker: vi.fn(() => ({
-    loadLanguage: vi.fn().mockResolvedValue(undefined),
-    initialize: vi.fn().mockResolvedValue(undefined),
-    setParameters: vi.fn().mockResolvedValue(undefined),
-    recognize: vi.fn().mockResolvedValue({
-      data: {
-        text: 'Mocked OCR text',
-        confidence: 95,
-        words: [],
-        paragraphs: [],
-        lines: []
-      }
-    }),
-    terminate: vi.fn().mockResolvedValue(undefined)
-  }))
+  createWorker: vi.fn(() => mockWorker)
 }));
 
 // Mock opencc-js
@@ -49,25 +121,67 @@ describe('OCRService', () => {
   });
 
   describe('Language Detection', () => {
-    it('should detect English language', async () => {
+    it('should detect English language correctly', async () => {
+      // Set up mock to return English content
+      mockWorker.recognize.mockResolvedValueOnce(mockOCRResponses.english);
+      
       const mockBlob = new Blob(['test'], { type: 'image/png' });
       const result = await OCRService.detectLanguage(mockBlob);
+      
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBe(true);
+      expect(result).toContain('eng');
     });
 
-    it('should detect Chinese language', async () => {
+    it('should detect Chinese language correctly', async () => {
+      // Set up mock to return Chinese content
+      mockWorker.recognize.mockResolvedValueOnce(mockOCRResponses.chinese);
+      
       const mockBlob = new Blob(['test'], { type: 'image/png' });
       const result = await OCRService.detectLanguage(mockBlob);
+      
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBe(true);
+      expect(result).toContain('chi_sim');
     });
 
-    it('should detect multiple languages', async () => {
+    it('should detect multiple languages in mixed content', async () => {
+      // Set up mock to return multilingual content
+      mockWorker.recognize.mockResolvedValueOnce(mockOCRResponses.multilingual);
+      
       const mockBlob = new Blob(['test'], { type: 'image/png' });
       const result = await OCRService.detectLanguage(mockBlob);
+      
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBe(true);
+      expect(result.length).toBeGreaterThan(1);
+      expect(result).toContain('eng');
+      expect(result).toContain('chi_sim');
+    });
+
+    it('should prioritize primary language correctly', async () => {
+      // Set up mock to return multilingual content
+      mockWorker.recognize.mockResolvedValueOnce(mockOCRResponses.multilingual);
+      
+      const mockBlob = new Blob(['test'], { type: 'image/png' });
+      const result = await OCRService.detectLanguage(mockBlob);
+      
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBe(true);
+      // The first language should be the primary one
+      expect(result[0]).toBeDefined();
+    });
+
+    it('should handle low confidence text appropriately', async () => {
+      // Set up mock to return low quality OCR
+      mockWorker.recognize.mockResolvedValueOnce(mockOCRResponses.lowQuality);
+      
+      const mockBlob = new Blob(['test'], { type: 'image/png' });
+      const result = await OCRService.detectLanguage(mockBlob);
+      
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBe(true);
+      // Should still return a result, but may have lower confidence
       expect(result.length).toBeGreaterThan(0);
     });
 

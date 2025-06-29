@@ -4,9 +4,12 @@ import { useComparison } from '../hooks/useComparison';
 import { TextInputPanel } from './TextInputPanel';
 import { RedlineOutput } from './RedlineOutput';
 import { ComparisonStats } from './ComparisonStats';
-import { TestSuite } from './TestSuite';
-import { AdvancedTestSuite } from '../testing/AdvancedTestSuite';
-import { ExtremeTestSuite } from '../testing/ExtremeTestSuite';
+// Test suites commented out for production build optimization
+// import { TestSuite } from './TestSuite';
+// import { AdvancedTestSuite } from '../testing/AdvancedTestSuite';
+// import { ExtremeTestSuite } from '../testing/ExtremeTestSuite';
+// STEP 3: Background Loading Status (Safe, Modular, Reversible)
+import { BackgroundLoadingStatus } from './BackgroundLoadingStatus';
 
 export const ComparisonInterface: React.FC = () => {
   const {
@@ -145,6 +148,13 @@ export const ComparisonInterface: React.FC = () => {
       {/* Extreme Test Suite - Ultra-Complex Testing Module - DISABLED FOR PRODUCTION */}
       {/* <ExtremeTestSuite onLoadTest={handleLoadTest} /> */}
 
+      {/* STEP 3b: Background Loading Status (Safe, Optional, Reversible) */}
+      <BackgroundLoadingStatus 
+        enabled={true} // ROLLBACK: Set to false to hide completely
+        compact={true} 
+        className="mb-4" 
+      />
+      
       {/* Enhanced OCR Feature Notice - Enhanced with glassmorphism */}
       <div className="glass-panel border border-theme-primary-200 rounded-lg p-4 mb-6 shadow-lg transition-all duration-300">
         <div className="flex items-start gap-3">
