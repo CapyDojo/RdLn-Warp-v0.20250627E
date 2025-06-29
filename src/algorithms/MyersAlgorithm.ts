@@ -1351,6 +1351,13 @@ export class MyersAlgorithm {
     
     // Convert to our format and calculate stats
     console.time('Result Processing');
+    console.log('📊 Post-processing performance tracking:', {
+      rawDiffLength: diff.length,
+      algorithmComplete: true,
+      startingPostProcessing: true
+    });
+    
+    console.time('Core Changes Mapping');
     let coreChanges: DiffChange[] = diff.map((change, index) => ({
       type: change.type as 'added' | 'removed' | 'unchanged' | 'changed',
       content: change.content,
@@ -1358,10 +1365,34 @@ export class MyersAlgorithm {
       revisedContent: change.revisedContent,
       index
     }));
+    console.timeEnd('Core Changes Mapping');
+    console.log('📊 Core changes created:', coreChanges.length);
     
     // PRIORITY 2.5: SSMR Reconstruct with combined paragraph and character trimming
+    console.time('Final Reconstruction');
     const finalChanges = this.reconstructWithCombinedTrimming(coreChanges, paragraphTrimResult, charTrimResult);
+    console.timeEnd('Final Reconstruction');
     console.timeEnd('Result Processing');
+    
+    console.log('📊 Final result size:', {
+      finalChangesLength: finalChanges.length,
+      totalCharacters: finalChanges.reduce((sum, change) => sum + (change.content?.length || 0), 0),
+      changeTypes: {
+        added: finalChanges.filter(c => c.type === 'added').length,
+        removed: finalChanges.filter(c => c.type === 'removed').length,
+        changed: finalChanges.filter(c => c.type === 'changed').length,
+        unchanged: finalChanges.filter(c => c.type === 'unchanged').length
+      }
+    });
+    
+    // EXTREME SIZE PROTECTION: Warn about very large result sets
+    if (finalChanges.length > 5000) {
+      console.warn('⚠️ LARGE RESULT SET:', {
+        changesCount: finalChanges.length,
+        recommendation: 'UI may experience lag during rendering',
+        suggestion: 'Consider using progressive rendering or result limiting'
+      });
+    }
     
     const stats = {
       additions: finalChanges.filter(c => c.type === 'added').length,
