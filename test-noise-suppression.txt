@@ -1,0 +1,27 @@
+TOKEN NOISE SUPPRESSION TEST
+
+✅ SUPPRESSED (should NOT appear in console):
+- 📝 Single capital ... - including period
+- 📝 Multi-part abbreviation ... - including period  
+- 📝 Complete abbreviation ... - including period
+- 📝 Single capital ... at word boundary - including period
+- 📝 Multi-letter abbreviation ... - including period
+- 📝 Token ... + period - NOT including period
+
+✅ PRESERVED (should STILL appear in console):
+- 🎯 MyersAlgorithm.compare called with progressCallback: true
+- 🔢 Token count analysis: {...}
+- 📊 Calling progressCallback(0, "Tokenizing text...")
+- 📊 Calling progressCallback(25, "Computing differences...")
+- 📊 Calling progressCallback(90, "Processing results...")
+- 📊 Calling progressCallback(100, "Complete")
+- 🧪 Starting comparison with progressCallback: true
+- 🔧 chunkingProgress.enabled: true
+- 🔄 CHUNKING PROGRESS: 25% - Computing differences...
+
+TESTING INSTRUCTIONS:
+1. Use the large text from test-chunking-logs.cjs
+2. Enable Auto-Compare (Zap button)
+3. Paste large text into both fields
+4. Check console - should see ONLY the preserved messages
+5. Should NOT see the token-level noise about periods and abbreviations

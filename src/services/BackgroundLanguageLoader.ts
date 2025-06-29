@@ -104,7 +104,9 @@ export class BackgroundLanguageLoader {
       return;
     }
 
-    console.log('🚀 Starting background language loading...');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🚀 Starting background language loading...');
+    }
     this.isLoading = true;
 
     // Initialize status for all languages
@@ -215,7 +217,9 @@ export class BackgroundLanguageLoader {
       this.loadingTimeouts.push(timeout);
     }
     
-    console.log(`📅 Scheduled ${this.config.loadingPriority.length} languages for background loading`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`📅 Scheduled ${this.config.loadingPriority.length} languages for background loading`);
+    }
   }
 
   /**
@@ -241,16 +245,20 @@ export class BackgroundLanguageLoader {
     }
 
     try {
-      console.log(`🔄 Background loading language: ${language}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🔄 Background loading language: ${language}`);
+      }
       
       // Update status to loading
       status.status = 'loading';
       status.loadStartTime = Date.now();
       this.notifyStatusCallbacks();
 
-      // Create worker for this language
+      // Create worker for this language with suppressed warnings
       const worker = await createWorker([language], 1, {
-        logger: () => {} // Silent loading
+        logger: () => {}, // Silent loading
+        // Suppress Tesseract WASM warnings
+        errorHandler: () => {}
       });
 
       // Update status to ready
@@ -261,7 +269,9 @@ export class BackgroundLanguageLoader {
       this.loadedWorkers.set(language, worker);
       
       const loadTime = status.loadEndTime - (status.loadStartTime || 0);
-      console.log(`✅ Background loaded ${language} in ${loadTime}ms`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`✅ Background loaded ${language} in ${loadTime}ms`);
+      }
       
       this.notifyStatusCallbacks();
       

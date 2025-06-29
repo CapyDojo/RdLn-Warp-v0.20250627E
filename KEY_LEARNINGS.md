@@ -159,13 +159,59 @@ As a legal professional with 20+ years in M&A and PE, diving into software devel
 
 ---
 
+## 🧠 **9. Performance Debugging: The Art of Finding Real Bottlenecks**
+
+**Learning**: Assumptions about performance are often wrong. Measurement beats intuition.
+
+**What I Discovered About React Performance**:
+- **React Strict Mode**: Causes duplicate function calls in development (normal behavior)
+- **State Management**: Moving complex operations outside setState causes stale state issues
+- **Production vs Development**: Performance characteristics can be dramatically different
+- **Real Bottlenecks**: Myers diff computation (8 seconds) vs tokenization (100ms)
+
+**Debug Infrastructure That Actually Helped**:
+- **Detailed Timing Logs**: Revealed where time was actually spent
+- **Token Count Tracking**: Input size validation showed real complexity
+- **State Tracking**: Auto-compare flag debugging revealed user flow issues
+- **Visual Confirmation**: Progress callbacks showed when functions actually executed
+
+**Key Insight**: *"In legal work, we investigate thoroughly before concluding. Same principle applies to performance debugging - measure, don't assume."*
+
+**Performance Wisdom from Experts** (Junio Hamano & Neil Fraser):
+1. **Early Equality Checks**: Quick wins before expensive operations
+2. **Common Prefix/Suffix Trimming**: Reduce problem size intelligently
+3. **Core Algorithm First**: Optimize the bottleneck before architectural changes
+4. **Tokenization Granularity**: Balance precision with performance
+
+---
+
+## 🔧 **10. React State Management: When "Best Practices" Don't Work**
+
+**Learning**: Sometimes the "correct" pattern doesn't work in your specific context.
+
+**The setState Functional Update Dilemma**:
+- **Standard Advice**: Move complex operations outside setState
+- **Reality**: Caused stale state issues in our comparison hook
+- **Working Solution**: Keep algorithm call inside setState (accepting duplicate calls in development)
+- **Production**: Duplicate calls disappear, performance is fine
+
+**State Management Insights**:
+- **Stale Closures**: Moving operations outside setState created timing issues
+- **React Strict Mode**: Double-invocation is intentional for finding side effects
+- **Development vs Production**: Different behavior patterns are normal
+- **Pragmatic Solutions**: Sometimes you accept development overhead for production stability
+
+**Legal Mind Application**: *"Like contract negotiations - sometimes the theoretically perfect clause doesn't work in practice. Pragmatic solutions that work reliably beat elegant solutions that fail edge cases."*
+
+---
+
 ## 📈 **What's Next: From MVP to Market**
 
-**Current Status**: Production-ready MVP with comprehensive testing
+**Current Status**: Production-ready MVP with comprehensive testing and performance optimization
 **Next Milestones**: 
 - Beta testing with legal professionals
 - User feedback integration
-- Performance optimization based on real usage
+- Core algorithm optimization (based on expert advice)
 - Feature roadmap based on market validation
 
 **The Bigger Picture**: 

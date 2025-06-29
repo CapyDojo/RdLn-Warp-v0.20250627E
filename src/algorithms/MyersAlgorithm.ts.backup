@@ -783,23 +783,36 @@ export class MyersAlgorithm {
     revisedText: string, 
     progressCallback?: (progress: number, stage: string) => void
   ): ComparisonResult {
-    debugLog('🐍 SIMPLE TEST - EXECUTE OR DIE - USING debugLog');
-    debugLog('🎯 MyersAlgorithm.compare called with progressCallback:', !!progressCallback);
+    // FORCE RECOMPILATION - THIS SHOULD APPEAR IN BROWSER CONSOLE
+    console.log('📌 FORCED RECOMPILATION TEST - NEW VERSION');
+    // AGGRESSIVE DEBUG: Multiple logs to trace the issue
+    console.log('🚨 COMPARE FUNCTION ENTRY POINT');
+    console.log('🎯 MyersAlgorithm.compare called with progressCallback:', !!progressCallback);
+    console.log('📋 Parameters:', { 
+      originalLength: originalText?.length, 
+      revisedLength: revisedText?.length, 
+      progressCallbackType: typeof progressCallback 
+    });
+    console.log('🔍 Stack trace:');
     console.trace('Who called MyersAlgorithm.compare?');
+    console.log('✅ After console.trace, about to check progressCallback');
     
-    // SAFE: Report initial progress (optional)
-    if (progressCallback) {
-      debugLog('📊 Calling progressCallback(0, "Tokenizing text...")');
-      progressCallback(0, 'Tokenizing text...');
+    try {
+      // SAFE: Report initial progress (optional)
+      if (progressCallback) {
+        console.log('📊 Calling progressCallback(0, "Tokenizing text...")');
+        progressCallback(0, 'Tokenizing text...');
+        console.log('✅ progressCallback(0) completed successfully');
+      } else {
+        console.log('❌ No progressCallback provided');
+      }
+      console.log('✅ Progress callback section completed');
+    } catch (error) {
+      console.error('💥 ERROR in progress callback section:', error);
     }
     
-    console.time('Tokenization - Original');
     const originalTokens = this.tokenize(originalText);
-    console.timeEnd('Tokenization - Original');
-
-    console.time('Tokenization - Revised');
     const revisedTokens = this.tokenize(revisedText);
-    console.timeEnd('Tokenization - Revised');
     
     debugLog('📝 Original tokens:', originalTokens.length);
     debugLog('📝 Revised tokens:', revisedTokens.length);
@@ -808,7 +821,7 @@ export class MyersAlgorithm {
     const totalTokens = originalTokens.length + revisedTokens.length;
     const shouldTrackProgress = totalTokens > 10 && progressCallback;
     
-    debugLog('🔢 Token count analysis:', {
+    console.log('🔢 Token count analysis:', {
       originalTokens: originalTokens.length,
       revisedTokens: revisedTokens.length,
       totalTokens,
@@ -818,13 +831,11 @@ export class MyersAlgorithm {
     });
     
     if (shouldTrackProgress) {
-      debugLog('📊 Calling progressCallback(25, "Computing differences...")');
+      console.log('📊 Calling progressCallback(25, "Computing differences...")');
       progressCallback!(25, 'Computing differences...');
     }
     
-    console.time('Myers Diff');
     const diff = this.myers(originalTokens, revisedTokens);
-    console.timeEnd('Myers Diff');
     
     if (shouldTrackProgress) {
       console.log('📊 Calling progressCallback(90, "Processing results...")');
@@ -832,7 +843,6 @@ export class MyersAlgorithm {
     }
     
     // Convert to our format and calculate stats
-    console.time('Result Processing');
     const changes: DiffChange[] = diff.map((change, index) => ({
       type: change.type as 'added' | 'removed' | 'unchanged' | 'changed',
       content: change.content,
@@ -840,7 +850,6 @@ export class MyersAlgorithm {
       revisedContent: change.revisedContent,
       index
     }));
-    console.timeEnd('Result Processing');
     
     const stats = {
       additions: changes.filter(c => c.type === 'added').length,

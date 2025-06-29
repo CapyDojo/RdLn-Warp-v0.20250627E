@@ -10,6 +10,8 @@ import { ComparisonStats } from './ComparisonStats';
 // import { ExtremeTestSuite } from '../testing/ExtremeTestSuite';
 // STEP 3: Background Loading Status (Safe, Modular, Reversible)
 import { BackgroundLoadingStatus } from './BackgroundLoadingStatus';
+// SSMR CHUNKING: Step 3 - Import chunking progress indicator
+import { ChunkingProgressIndicator } from './ChunkingProgressIndicator';
 
 export const ComparisonInterface: React.FC = () => {
   const {
@@ -23,8 +25,15 @@ export const ComparisonInterface: React.FC = () => {
     compareDocuments,
     resetComparison,
     quickCompareEnabled,
-    toggleQuickCompare
+    toggleQuickCompare,
+    // SSMR CHUNKING: Extract chunking progress state
+    chunkingProgress
   } = useComparison();
+
+  // CHUNKING DEBUG: Temporarily disabled to prevent infinite loops
+  // React.useEffect(() => {
+  //   console.log('🏗️ ComparisonInterface chunking state:', chunkingProgress);
+  // }, [chunkingProgress.progress, chunkingProgress.stage, chunkingProgress.isChunking, chunkingProgress.enabled]);
 
   const [copySuccess, setCopySuccess] = React.useState(false);
   const [autoCompareCountdown, setAutoCompareCountdown] = React.useState(0);
@@ -153,6 +162,15 @@ export const ComparisonInterface: React.FC = () => {
         enabled={true} // ROLLBACK: Set to false to hide completely
         compact={true} 
         className="mb-4" 
+      />
+      
+      {/* SSMR CHUNKING: Step 3 - Chunking Progress Indicator (Option 2: Separate from OCR) */}
+      <ChunkingProgressIndicator
+        progress={chunkingProgress.progress}
+        stage={chunkingProgress.stage}
+        isChunking={chunkingProgress.isChunking}
+        enabled={chunkingProgress.enabled} // ROLLBACK: Set to false to hide completely
+        className="mb-4"
       />
       
       {/* Enhanced OCR Feature Notice - Enhanced with glassmorphism */}

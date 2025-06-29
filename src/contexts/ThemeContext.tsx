@@ -34,7 +34,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     }
   }, []);
 
-  // Apply theme to document root
+  // Apply theme to document root (with dependency array optimization)
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', currentTheme);
     
@@ -140,7 +140,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('💼 Applied professional solid + noise (zero banding)');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('💼 Applied professional solid + noise (zero banding)');
+        }
         break;
       case 'bamboo':
         document.body.style.cssText = `
@@ -156,7 +158,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🌿 Applied bamboo solid + noise (zero banding)');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🌿 Applied bamboo solid + noise (zero banding)');
+        }
         break;
       case 'apple-light':
         document.body.style.cssText = `
@@ -172,7 +176,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🍎 Applied Apple Light solid + noise (zero banding)');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🍎 Applied Apple Light solid + noise (zero banding)');
+        }
         break;
       case 'apple-dark':
         document.body.style.cssText = `
@@ -188,7 +194,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🌙 Applied Apple Dark solid + noise (zero banding)');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🌙 Applied Apple Dark solid + noise (zero banding)');
+        }
         break;
       case 'kyoto':
         document.body.style.cssText = `
@@ -207,7 +215,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🍁 Applied Kyoto autumn garden background (maple & forest)');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🍁 Applied Kyoto autumn garden background (maple & forest)');
+        }
         break;
       case 'new-york':
         document.body.style.cssText = `
@@ -225,7 +235,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🏙️ Applied New York Night skyline + city glow (zero banding)');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🏙️ Applied New York Night skyline + city glow (zero banding)');
+        }
         break;
       default:
         // Fallback
@@ -238,7 +250,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           margin: 0 !important;
           padding: 0 !important;
         `;
-        console.log('🔄 Applied fallback background');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔄 Applied fallback background');
+        }
         break;
     }
   }, [currentTheme]);

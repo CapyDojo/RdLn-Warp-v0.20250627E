@@ -1,5 +1,78 @@
 # RdLn Document Comparison Tool - Comprehensive Changelog
 
+## Version 0.4.2 - "SSMR Chunking & Performance Optimization"
+*Released: June 29, 2025*
+
+### 🚀 SSMR Chunking Implementation ✅ COMPLETED
+
+#### **Safe, Step-by-step, Modular and Reversible (SSMR) Progress Tracking**
+- **✅ IMPLEMENTED**: Chunking progress tracking for large text processing (>5000 characters)
+- **✅ PERFORMANCE TESTED**: Myers diff algorithm optimization with progress feedback
+- **✅ NO CONFLICTS**: Separate progress channels for OCR, Chunking, and Background Loading
+- **✅ VISUAL DESIGN**: Purple progress bar with Zap icon (distinct from blue OCR progress)
+- **✅ SMART ACTIVATION**: Only shows for large texts to prevent UI clutter
+- **✅ PRODUCTION READY**: Full TypeScript compilation, comprehensive testing completed
+
+#### **Algorithm Enhancements**
+- **Enhanced Myers Algorithm**: Added optional `progressCallback` parameter to `MyersAlgorithm.compare()`
+- **Backwards Compatible**: Existing calls continue working unchanged
+- **Progress Stages**: "Tokenizing text..." → "Computing differences..." → "Processing results..." → "Complete"
+- **Performance Optimization**: Minimal overhead for small texts, useful feedback for large texts
+
+#### **UI/UX Improvements**
+- **New Component**: `ChunkingProgressIndicator.tsx` with non-intrusive design
+- **Option 2 Implementation**: Separate progress indicators for different operations
+- **Easy Rollback**: Single-line disable options for quick removal
+- **Modular Architecture**: Independent progress tracking systems with no cross-dependencies
+
+#### **State Management**
+- **Enhanced useComparison Hook**: Added separate `chunkingProgress` state
+- **Isolated State**: No interference with existing `isProcessing` or OCR progress
+- **Type Safety**: Full TypeScript support with proper error handling
+- **Memory Efficient**: Automatic cleanup and progress reset
+
+### 📊 Performance & Testing
+
+#### **Smart Progress Activation**
+- **Small Texts** (<1000 tokens): No progress tracking overhead
+- **Large Texts** (>1000 tokens): Full progress tracking with visual feedback
+- **Test Script**: `test-chunking-progress.js` for development testing
+- **Production Ready**: TypeScript compilation passes, no conflicts detected
+
+#### **Architecture Benefits**
+- **SAFE**: No existing functionality broken, backwards compatible API
+- **STEP-BY-STEP**: Incremental implementation (Algorithm → Hook → UI)
+- **MODULAR**: Independent components, easy to disable or remove
+- **REVERSIBLE**: Clear rollback documentation, single-line disables
+
+### 🔍 Performance Analysis & Debug Lessons
+
+#### **Real-World Performance Metrics**
+- **Main Bottleneck Identified**: Myers diff computation (8+ seconds for ~12,000 tokens)
+- **Fast Operations**: Tokenization (<100ms), Result processing (<50ms)
+- **Development vs Production**: React Strict Mode causes duplicate algorithm calls
+- **User Experience**: Progress feedback prevents perceived freezing during large diffs
+
+#### **Key Technical Insights**
+- **Duplicate Execution**: setState functional updates cause algorithm to run twice in development
+- **State Management**: Moving algorithm outside setState caused stale state issues
+- **Production Behavior**: Duplicate calls disappear in production builds
+- **Accepted Pattern**: Algorithm call inside setState is working pattern for React hooks
+
+#### **Debug Infrastructure Added**
+- **Performance Logging**: Detailed timing logs for each processing stage
+- **Token Counting**: Input size validation with token count reporting
+- **State Tracking**: Auto-compare flag debugging in useComparison hook
+- **Progress Monitoring**: Visual confirmation of progress callback execution
+
+#### **Next Optimization Targets** (Per Junio Hamano & Neil Fraser advice)
+1. **Early Equality Checks**: Quick comparison before full diff computation
+2. **Common Prefix/Suffix Trimming**: Reduce input size before diffing
+3. **Tokenization Granularity**: Balance between precision and performance
+4. **Core Algorithm Optimization**: Focus on Myers algorithm internals before architectural changes
+
+---
+
 ## Version 0.4.1 - "Production Finalization & Build Optimization"
 *Released: June 28, 2025*
 

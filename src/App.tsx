@@ -80,18 +80,14 @@ function AppContent() {
 }
 
 function App() {
-  // Conditional rendering for the logo test page
-  if (window.location.pathname === '/logo-test') {
-    return (
-      <ThemeProvider>
-        <LogoTestPage />
-      </ThemeProvider>
-    );
-  }
-
   return (
     <ThemeProvider>
-      <AppContent />
+      {/* Conditional rendering for the logo test page */}
+      {window.location.pathname === '/logo-test' ? (
+        <LogoTestPage />
+      ) : (
+        <AppContent />
+      )}
     </ThemeProvider>
   );
 }

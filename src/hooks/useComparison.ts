@@ -10,6 +10,16 @@ export const useComparison = () => {
     isProcessing: false,
     error: null
   });
+  
+  // SSMR CHUNKING: Add separate progress tracking for large text processing
+  // MODULAR: Separate from existing isProcessing state
+  // REVERSIBLE: Can be disabled by setting enabled=false
+  const [chunkingProgress, setChunkingProgress] = useState({
+    progress: 0,
+    stage: '',
+    isChunking: false,
+    enabled: true // ROLLBACK: Set to false to disable chunking progress
+  });
 
   // Auto-Compare settings
   const [quickCompareEnabled, setQuickCompareEnabled] = useState(() => {
@@ -58,6 +68,16 @@ export const useComparison = () => {
   }, []);
 
   const compareDocuments = useCallback(async (isAutoCompare = false, preserveFocus = true) => {
+    // PHASE 1 DEBUG: Track duplicate calls
+    const callId = Math.random().toString(36).substr(2, 9);
+    console.log(`🔍 CALL START [${callId}] compareDocuments called:`, {
+      isAutoCompare,
+      preserveFocus,
+      originalLength: state.originalText.length,
+      revisedLength: state.revisedText.length,
+      timestamp: new Date().toISOString()
+    });
+    
     // Capture current focus before comparison
     if (preserveFocus) {
       captureFocus();
@@ -77,8 +97,59 @@ export const useComparison = () => {
       // Shorter delay for auto-compare to feel more responsive
       await new Promise(resolve => setTimeout(resolve, isAutoCompare ? 50 : 100));
       
+      // SSMR CHUNKING: Progress callback for large text processing
+      // SAFE: Always create callback, use functional update to avoid stale closure
+      // MODULAR: Define callback to avoid closure issues
+      const progressCallback = (progress: number, stage: string) => {
+        console.log(`🔄 CHUNKING PROGRESS: ${progress}% - ${stage}`); // Debug log
+        setChunkingProgress(prev => {
+          console.log('🎯 Progress callback setState called:', { progress, stage, prevEnabled: prev.enabled });
+          if (!prev.enabled) {
+            console.log('⚠️ Progress callback called but chunking disabled');
+            return prev; // Don't update if disabled
+          }
+          const newState = {
+            ...prev,
+            progress,
+            stage,
+            isChunking: progress > 0 && progress < 100
+          };
+          console.log('🚀 Updating chunking progress state:', newState);
+          return newState;
+        });
+      };
+      
+      console.log('🧪 Starting comparison with progressCallback:', !!progressCallback); // Debug log
+      console.log('🔍 About to call MyersAlgorithm.compare with args:', {
+        originalLength: state.originalText.length,
+        revisedLength: state.revisedText.length,
+        hasProgressCallback: !!progressCallback
+      });
+      
       setState(prev => {
-        const result = MyersAlgorithm.compare(prev.originalText, prev.revisedText);
+        console.log('🔬 Inside setState, calling MyersAlgorithm.compare...'); // Debug log
+        const result = MyersAlgorithm.compare(prev.originalText, prev.revisedText, progressCallback);
+        console.log('✅ MyersAlgorithm.compare completed, result:', !!result); // Debug log
+        
+        // TESTING: Keep progress bar visible for debugging
+        // TODO: Restore auto-hide after testing
+        // Using functional update to access current chunking state
+        setChunkingProgress(prev => {
+          console.log('🔧 Post-comparison chunking state update:', prev);
+          if (prev.enabled) {
+            // Comment out auto-hide for testing
+            // setTimeout(() => {
+            //   setChunkingProgress({
+            //     progress: 0,
+            //     stage: '',
+            //     isChunking: false,
+            //     enabled: true
+            //   });
+            // }, 1500);
+          }
+          return prev; // No change for now
+        });
+        
         return {
           ...prev,
           result,
@@ -97,15 +168,30 @@ export const useComparison = () => {
         isProcessing: false
       }));
       
+      // SAFE: Reset chunking progress on error
+      setChunkingProgress(prev => {
+        if (prev.enabled) {
+          return {
+            progress: 0,
+            stage: '',
+            isChunking: false,
+            enabled: true
+          };
+        }
+        return prev;
+      });
+      
       // Restore focus even on error
       if (preserveFocus) {
         restoreFocus();
       }
     }
-  }, [captureFocus, restoreFocus]);
+  }, [captureFocus, restoreFocus]); // Removed chunkingProgress from dependencies to avoid stale closures
 
   // Simplified auto-compare trigger - handles all real-time updates when enabled
   const triggerAutoCompare = useCallback((originalText: string, revisedText: string, isPasteAction = false) => {
+    console.log('🔍 triggerAutoCompare called:', { quickCompareEnabled, originalLength: originalText.length, revisedLength: revisedText.length });
+    
     // Clear existing timeout
     if (autoCompareTimeoutRef.current) {
       clearTimeout(autoCompareTimeoutRef.current);
@@ -140,15 +226,19 @@ export const useComparison = () => {
   }, [compareDocuments, quickCompareEnabled]);
 
   const setOriginalText = useCallback((text: string, isPasteAction = false) => {
+    console.log('📝 setOriginalText called:', { textLength: text.length, isPasteAction, quickCompareEnabled });
     setState(prev => {
       const newState = { ...prev, originalText: text, error: null };
       
       // Trigger auto-compare for ALL changes when enabled (typing, pasting, OCR)
       if (quickCompareEnabled) {
+        console.log('⚡ Auto-compare enabled, triggering...');
         // Use setTimeout to ensure state is updated first
         setTimeout(() => {
           triggerAutoCompare(text, newState.revisedText || prev.revisedText, isPasteAction);
         }, 0);
+      } else {
+        console.log('❌ Auto-compare disabled');
       }
       
       return newState;
@@ -156,15 +246,19 @@ export const useComparison = () => {
   }, [quickCompareEnabled, triggerAutoCompare]);
 
   const setRevisedText = useCallback((text: string, isPasteAction = false) => {
+    console.log('📝 setRevisedText called:', { textLength: text.length, isPasteAction, quickCompareEnabled });
     setState(prev => {
       const newState = { ...prev, revisedText: text, error: null };
       
       // Trigger auto-compare for ALL changes when enabled (typing, pasting, OCR)
       if (quickCompareEnabled) {
+        console.log('⚡ Auto-compare enabled, triggering...');
         // Use setTimeout to ensure state is updated first
         setTimeout(() => {
           triggerAutoCompare(newState.originalText || prev.originalText, text, isPasteAction);
         }, 0);
+      } else {
+        console.log('❌ Auto-compare disabled');
       }
       
       return newState;
@@ -219,6 +313,14 @@ export const useComparison = () => {
     compareDocuments,
     resetComparison,
     quickCompareEnabled,
-    toggleQuickCompare
+    toggleQuickCompare,
+    // SSMR CHUNKING: Export chunking progress state
+    // MODULAR: Separate namespace to avoid conflicts
+    chunkingProgress: {
+      progress: chunkingProgress.progress,
+      stage: chunkingProgress.stage,
+      isChunking: chunkingProgress.isChunking,
+      enabled: chunkingProgress.enabled
+    }
   };
 };
