@@ -26,9 +26,19 @@ export const ComparisonInterface: React.FC = () => {
     resetComparison,
     quickCompareEnabled,
     toggleQuickCompare,
-    // SSMR CHUNKING: Extract chunking progress state
     chunkingProgress
   } = useComparison();
+  
+  // DEBUG: Log result changes
+  React.useEffect(() => {
+    console.log('🎨 ComparisonInterface - result changed:', {
+      hasResult: !!result,
+      resultType: typeof result,
+      hasChanges: !!(result?.changes),
+      changesLength: result?.changes?.length,
+      resultKeys: result ? Object.keys(result) : 'no result'
+    });
+  }, [result]);
 
   // CHUNKING DEBUG: Temporarily disabled to prevent infinite loops
   // React.useEffect(() => {
@@ -204,7 +214,7 @@ export const ComparisonInterface: React.FC = () => {
           <TextInputPanel
             title="Original Version"
             value={originalText}
-            onChange={setOriginalText}
+            onChange={(value: string, isPasteAction?: boolean) => setOriginalText(value, isPasteAction)}
             placeholder="Paste your original legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
             disabled={isProcessing}
             height={panelHeight}
@@ -213,7 +223,7 @@ export const ComparisonInterface: React.FC = () => {
           <TextInputPanel
             title="Revised Version"
             value={revisedText}
-            onChange={setRevisedText}
+            onChange={(value: string, isPasteAction?: boolean) => setRevisedText(value, isPasteAction)}
             placeholder="Paste your revised legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
             disabled={isProcessing}
             height={panelHeight}
@@ -278,6 +288,106 @@ export const ComparisonInterface: React.FC = () => {
           >
             <RotateCcw className="w-4 h-4" />
             New Comparison
+          </button>
+          
+          {/* Debug Test Button */}
+          <button
+            onClick={() => {
+              try {
+                console.log('🚨 BUTTON CLICKED - Handler executing!');
+                console.log('🚨 compareDocuments available:', !!compareDocuments);
+                console.log('🚨 compareDocuments type:', typeof compareDocuments);
+                
+                if (typeof compareDocuments === 'function') {
+                  console.log('🚨 Calling compareDocuments...');
+                  compareDocuments(false, false, 'This is the original test document.', 'This is the revised test document with changes.');
+                  console.log('🚨 compareDocuments call completed');
+                } else {
+                  console.error('🚨 compareDocuments is not a function!');
+                }
+              } catch (error) {
+                console.error('🚨 ERROR in button click handler:', error);
+              }
+            }}
+            className="enhanced-button flex items-center gap-2 px-4 py-2.5 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-all duration-200 shadow-lg"
+            title="Load test texts for debugging"
+          >
+            🚨 Test
+          </button>
+          
+          {/* Streaming Test Button */}
+          <button
+            onClick={async () => {
+              console.log('🌊 STREAMING TEST: Generating large documents to test streaming Myers algorithm');
+              
+              // Generate large documents (enough to exceed 20,000 tokens)
+              const generateLargeText = (baseText: string, multiplier: number) => {
+                const paragraphs = [];
+                for (let i = 0; i < multiplier; i++) {
+                  paragraphs.push(`Paragraph ${i + 1}: ${baseText} This paragraph contains various legal terms and clauses that are commonly found in complex legal documents, including provisions for intellectual property rights, confidentiality agreements, termination clauses, and dispute resolution mechanisms. The content is designed to create realistic token counts that would be found in actual legal document comparisons.`);
+                }
+                return paragraphs.join('\n\n');
+              };
+              
+              const originalLarge = generateLargeText('This is the original legal document with comprehensive clauses', 300);
+              const revisedLarge = generateLargeText('This is the revised legal document with updated comprehensive clauses and additional provisions', 300);
+              
+              console.log('🌊 Generated large documents:', {
+                originalLength: originalLarge.length,
+                revisedLength: revisedLarge.length,
+                estimatedTokens: Math.floor((originalLarge.length + revisedLarge.length) / 4) // Rough estimate
+              });
+              
+              // Set the large texts and trigger comparison
+              setOriginalText(originalLarge);
+              setRevisedText(revisedLarge);
+              
+              // Trigger comparison with streaming
+              setTimeout(() => {
+                console.log('🌊 Triggering streaming comparison...');
+                compareDocuments(false, false, originalLarge, revisedLarge);
+              }, 100);
+            }}
+            className="enhanced-button flex items-center gap-2 px-4 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 shadow-lg"
+            title="Test streaming algorithm with large documents"
+          >
+            🌊 Stream
+          </button>
+          
+          {/* Isolated Algorithm Test Button */}
+          <button
+            onClick={async () => {
+              console.log('🔍 ISOLATED TEST: Testing MyersAlgorithm directly AND setting result in UI');
+              const { MyersAlgorithm } = await import('../algorithms/MyersAlgorithm');
+              const testOriginal = "This is the original test text.";
+              const testRevised = "This is the revised test text with changes.";
+              console.log('🔍 Testing with:', { testOriginal, testRevised });
+              
+              try {
+                const result = await MyersAlgorithm.compare(testOriginal, testRevised);
+                console.log('✅ ISOLATED TEST SUCCESS:', result);
+                
+                // CRITICAL: Set the texts and result in state so UI shows the diff
+                console.log('🔍 Setting test texts in state...');
+                setOriginalText(testOriginal);
+                setRevisedText(testRevised);
+                
+                // Since useComparison hook manages the result state, we need to use compareDocuments
+                // But we can't directly set the result, so let's trigger a proper comparison
+                setTimeout(() => {
+                  console.log('🔍 Triggering compareDocuments to set result in state...');
+                  compareDocuments(false, false, testOriginal, testRevised);
+                }, 100);
+                
+              } catch (error) {
+                console.error('❌ ISOLATED TEST FAILED:', error);
+                alert('Isolated test failed! Check console for details.');
+              }
+            }}
+            className="enhanced-button flex items-center gap-2 px-4 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200 shadow-lg"
+            title="Test algorithm directly without state"
+          >
+            🔍 Direct
           </button>
           
           {/* Auto-Compare Toggle */}

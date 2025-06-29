@@ -773,33 +773,538 @@ export class MyersAlgorithm {
   }
 
   /**
+   * PRIORITY 1 OPTIMIZATION: Trim common prefix and suffix
+   * Reduces the input size before running Myers algorithm
+   */
+  private static trimCommonPrefixSuffix(originalText: string, revisedText: string): {
+    commonPrefix: string;
+    commonSuffix: string;
+    originalCore: string;
+    revisedCore: string;
+  } {
+    const startTime = performance.now();
+    
+    // Find common prefix
+    let prefixLength = 0;
+    const minLength = Math.min(originalText.length, revisedText.length);
+    
+    while (prefixLength < minLength && 
+           originalText[prefixLength] === revisedText[prefixLength]) {
+      prefixLength++;
+    }
+    
+    // Find common suffix (from the remaining text after prefix)
+    let suffixLength = 0;
+    const originalRemaining = originalText.length - prefixLength;
+    const revisedRemaining = revisedText.length - prefixLength;
+    const maxSuffixLength = Math.min(originalRemaining, revisedRemaining);
+    
+    while (suffixLength < maxSuffixLength &&
+           originalText[originalText.length - 1 - suffixLength] === 
+           revisedText[revisedText.length - 1 - suffixLength]) {
+      suffixLength++;
+    }
+    
+    const commonPrefix = originalText.slice(0, prefixLength);
+    const commonSuffix = originalText.slice(originalText.length - suffixLength);
+    
+    const originalCore = originalText.slice(prefixLength, originalText.length - suffixLength);
+    const revisedCore = revisedText.slice(prefixLength, revisedText.length - suffixLength);
+    
+    const endTime = performance.now();
+    debugLog(`⚡ Prefix/suffix trimming completed in ${(endTime - startTime).toFixed(2)}ms`);
+    
+    return {
+      commonPrefix,
+      commonSuffix,
+      originalCore,
+      revisedCore
+    };
+  }
+
+  /**
+   * PRIORITY 1 OPTIMIZATION: Reconstruct final result with prefix and suffix
+   * Adds back the common prefix and suffix that were trimmed for efficiency
+   */
+  private static reconstructWithPrefixSuffix(
+    coreChanges: DiffChange[],
+    trimResult: {
+      commonPrefix: string;
+      commonSuffix: string;
+      originalCore: string;
+      revisedCore: string;
+    }
+  ): DiffChange[] {
+    const startTime = performance.now();
+    const finalChanges: DiffChange[] = [];
+    let currentIndex = 0;
+    
+    // Add common prefix as unchanged if it exists
+    if (trimResult.commonPrefix.length > 0) {
+      finalChanges.push({
+        type: 'unchanged',
+        content: trimResult.commonPrefix,
+        index: currentIndex++
+      });
+    }
+    
+    // Add core changes with updated indices
+    coreChanges.forEach(change => {
+      finalChanges.push({
+        ...change,
+        index: currentIndex++
+      });
+    });
+    
+    // Add common suffix as unchanged if it exists
+    if (trimResult.commonSuffix.length > 0) {
+      finalChanges.push({
+        type: 'unchanged',
+        content: trimResult.commonSuffix,
+        index: currentIndex++
+      });
+    }
+    
+    const endTime = performance.now();
+    debugLog(`⚡ Result reconstruction completed in ${(endTime - startTime).toFixed(2)}ms`);
+    
+    return finalChanges;
+  }
+
+  /**
+   * PRIORITY 2.5: SSMR Paragraph-level prefix/suffix trimming
+   * SAFE: No breaking changes, operates before existing character-level trimming
+   * STEP-BY-STEP: Separate method, independent implementation
+   * MODULAR: Can be enabled/disabled via feature flag
+   * REVERSIBLE: Easy to disable by setting enableParagraphTrimming = false
+   */
+  private static trimCommonParagraphs(
+    originalText: string, 
+    revisedText: string,
+    enableParagraphTrimming: boolean = true // ROLLBACK: Set to false to disable
+  ): {
+    commonPrefixParagraphs: string;
+    commonSuffixParagraphs: string;
+    originalCoreParagraphs: string;
+    revisedCoreParagraphs: string;
+    paragraphReductionRatio: number;
+  } {
+    const startTime = performance.now();
+    
+    // SAFE: Feature flag for easy disable
+    if (!enableParagraphTrimming) {
+      debugLog('📋 Paragraph trimming disabled - using original texts');
+      return {
+        commonPrefixParagraphs: '',
+        commonSuffixParagraphs: '',
+        originalCoreParagraphs: originalText,
+        revisedCoreParagraphs: revisedText,
+        paragraphReductionRatio: 0
+      };
+    }
+    
+    // Split into paragraphs using multiple paragraph separators
+    const originalParagraphs = this.splitIntoParagraphs(originalText);
+    const revisedParagraphs = this.splitIntoParagraphs(revisedText);
+    
+    debugLog('📋 Paragraph analysis:', {
+      originalParagraphs: originalParagraphs.length,
+      revisedParagraphs: revisedParagraphs.length
+    });
+    
+    // Find common prefix paragraphs
+    let prefixParagraphCount = 0;
+    const minParagraphs = Math.min(originalParagraphs.length, revisedParagraphs.length);
+    
+    while (prefixParagraphCount < minParagraphs && 
+           originalParagraphs[prefixParagraphCount].trim() === revisedParagraphs[prefixParagraphCount].trim()) {
+      prefixParagraphCount++;
+    }
+    
+    // Find common suffix paragraphs (from remaining paragraphs after prefix)
+    let suffixParagraphCount = 0;
+    const originalRemaining = originalParagraphs.length - prefixParagraphCount;
+    const revisedRemaining = revisedParagraphs.length - prefixParagraphCount;
+    const maxSuffixParagraphs = Math.min(originalRemaining, revisedRemaining);
+    
+    while (suffixParagraphCount < maxSuffixParagraphs &&
+           originalParagraphs[originalParagraphs.length - 1 - suffixParagraphCount].trim() === 
+           revisedParagraphs[revisedParagraphs.length - 1 - suffixParagraphCount].trim()) {
+      suffixParagraphCount++;
+    }
+    
+    // Reconstruct text sections
+    const commonPrefixParagraphs = originalParagraphs.slice(0, prefixParagraphCount).join('');
+    const commonSuffixParagraphs = originalParagraphs.slice(originalParagraphs.length - suffixParagraphCount).join('');
+    
+    const originalCoreParagraphs = originalParagraphs.slice(
+      prefixParagraphCount, 
+      originalParagraphs.length - suffixParagraphCount
+    ).join('');
+    
+    const revisedCoreParagraphs = revisedParagraphs.slice(
+      prefixParagraphCount, 
+      revisedParagraphs.length - suffixParagraphCount
+    ).join('');
+    
+    // Calculate reduction ratio
+    const originalTotalLength = originalText.length + revisedText.length;
+    const coreLength = originalCoreParagraphs.length + revisedCoreParagraphs.length;
+    const paragraphReductionRatio = originalTotalLength > 0 ? 
+      ((originalTotalLength - coreLength) / originalTotalLength * 100) : 0;
+    
+    const endTime = performance.now();
+    
+    debugLog(`📋 Paragraph trimming completed in ${(endTime - startTime).toFixed(2)}ms`);
+    debugLog('📋 Paragraph trimming results:', {
+      prefixParagraphs: prefixParagraphCount,
+      suffixParagraphs: suffixParagraphCount,
+      originalCoreParagraphs: originalCoreParagraphs.length,
+      revisedCoreParagraphs: revisedCoreParagraphs.length,
+      paragraphReductionRatio: paragraphReductionRatio.toFixed(1) + '%'
+    });
+    
+    return {
+      commonPrefixParagraphs,
+      commonSuffixParagraphs,
+      originalCoreParagraphs,
+      revisedCoreParagraphs,
+      paragraphReductionRatio
+    };
+  }
+
+  /**
+   * PRIORITY B: SSMR Single-Pass Paragraph Splitting (Hamano's optimization)
+   * SAFE: Returns same format as before, but more efficient
+   * STEP-BY-STEP: Replaces multi-pass approach with single state machine
+   * MODULAR: Can be disabled by setting useSinglePassSplitting = false
+   * REVERSIBLE: Falls back to original method if disabled
+   */
+  private static splitIntoParagraphs(
+    text: string, 
+    useSinglePassSplitting: boolean = true // ROLLBACK: Set to false for original method
+  ): string[] {
+    // SAFE: Feature flag for rollback
+    if (!useSinglePassSplitting) {
+      return this.splitIntoParagraphsOriginal(text);
+    }
+    
+    return this.splitIntoParagraphsSinglePass(text);
+  }
+
+  /**
+   * PRIORITY B: Hamano's single-pass paragraph detection state machine
+   * Reads document once, identifies ALL paragraph patterns simultaneously
+   */
+  private static splitIntoParagraphsSinglePass(text: string): string[] {
+    const startTime = performance.now();
+    const paragraphs: string[] = [];
+    let currentParagraphStart = 0;
+    let i = 0;
+    
+    debugLog('🔧 Using single-pass paragraph splitting (Hamano optimization)');
+    
+    while (i < text.length) {
+      const char = text[i];
+      
+      if (char === '\n') {
+        // Look ahead to determine paragraph break type
+        const lookAhead = this.analyzeParagraphBreak(text, i);
+        
+        if (lookAhead.isParagraphBreak) {
+          // Complete current paragraph (including the newline)
+          const paragraphContent = text.slice(currentParagraphStart, i + 1);
+          if (paragraphContent.trim().length > 0) {
+            paragraphs.push(paragraphContent);
+          }
+          
+          // Skip to start of next paragraph
+          i = lookAhead.nextParagraphStart;
+          currentParagraphStart = i;
+          continue;
+        }
+      }
+      
+      i++;
+    }
+    
+    // Add final paragraph if exists
+    if (currentParagraphStart < text.length) {
+      const finalParagraph = text.slice(currentParagraphStart);
+      if (finalParagraph.trim().length > 0) {
+        paragraphs.push(finalParagraph);
+      }
+    }
+    
+    const endTime = performance.now();
+    debugLog(`🔧 Single-pass splitting completed in ${(endTime - startTime).toFixed(2)}ms, found ${paragraphs.length} paragraphs`);
+    
+    return paragraphs;
+  }
+
+  /**
+   * PRIORITY B: Analyze text at newline position to determine if it's a paragraph break
+   */
+  private static analyzeParagraphBreak(text: string, newlineIndex: number): {
+    isParagraphBreak: boolean;
+    nextParagraphStart: number;
+  } {
+    let i = newlineIndex + 1;
+    
+    // Skip whitespace after newline
+    while (i < text.length && /[ \t]/.test(text[i])) {
+      i++;
+    }
+    
+    // Check for double newline (most common paragraph break)
+    if (i < text.length && text[i] === '\n') {
+      // Found double newline - definite paragraph break
+      i++; // Skip second newline
+      // Skip any additional whitespace
+      while (i < text.length && /\s/.test(text[i])) {
+        i++;
+      }
+      return { isParagraphBreak: true, nextParagraphStart: i };
+    }
+    
+    // Check for legal document patterns after single newline
+    const remainingText = text.slice(i);
+    
+    // Numbered clauses: "1.", "12.", "(a)", "(iv)"
+    if (/^\d+\./.test(remainingText) || /^\([a-z]+\)/.test(remainingText) || /^\([ivx]+\)/.test(remainingText)) {
+      return { isParagraphBreak: true, nextParagraphStart: i };
+    }
+    
+    // Bullet points: "•", "*", "-"
+    if (/^[•*-]\s/.test(remainingText)) {
+      return { isParagraphBreak: true, nextParagraphStart: i };
+    }
+    
+    // Significant indentation (4+ spaces or tab)
+    if (/^(\s{4,}|\t)/.test(remainingText)) {
+      return { isParagraphBreak: true, nextParagraphStart: i };
+    }
+    
+    // Not a paragraph break
+    return { isParagraphBreak: false, nextParagraphStart: i };
+  }
+
+  /**
+   * PRIORITY B: Original multi-pass method (kept for rollback)
+   * SAFE: Preserves original behavior if single-pass is disabled
+   */
+  private static splitIntoParagraphsOriginal(text: string): string[] {
+    debugLog('🔧 Using original multi-pass paragraph splitting (fallback)');
+    
+    // Split on double newlines (most common paragraph separator)
+    let paragraphs = text.split(/\n\s*\n/);
+    
+    // If we only get one paragraph, try single newlines (for legal docs with numbered clauses)
+    if (paragraphs.length === 1) {
+      // Look for numbered clauses, bullet points, or significant indentation changes
+      paragraphs = text.split(/\n(?=\s*(?:\d+\.|\w+\)|•|\*|\s{4,}|\t))/)
+        .filter(p => p.trim().length > 0);
+    }
+    
+    // If still only one paragraph, split on any newline (fallback)
+    if (paragraphs.length === 1) {
+      paragraphs = text.split(/\n/)
+        .filter(p => p.trim().length > 0);
+    }
+    
+    // Ensure we preserve the original separators for reconstruction
+    const result: string[] = [];
+    let currentIndex = 0;
+    
+    for (let i = 0; i < paragraphs.length; i++) {
+      const paragraph = paragraphs[i];
+      const startIndex = text.indexOf(paragraph, currentIndex);
+      
+      if (i > 0) {
+        // Include the separator between this and previous paragraph
+        const separator = text.slice(currentIndex, startIndex);
+        if (separator && result.length > 0) {
+          result[result.length - 1] += separator;
+        }
+      }
+      
+      result.push(paragraph);
+      currentIndex = startIndex + paragraph.length;
+    }
+    
+    return result;
+  }
+
+  /**
+   * PRIORITY 2.5: SSMR Combined reconstruction with paragraph and character trimming
+   * Reconstructs the final result by adding back both paragraph-level and character-level common parts
+   */
+  private static reconstructWithCombinedTrimming(
+    coreChanges: DiffChange[],
+    paragraphTrimResult: {
+      commonPrefixParagraphs: string;
+      commonSuffixParagraphs: string;
+      originalCoreParagraphs: string;
+      revisedCoreParagraphs: string;
+      paragraphReductionRatio: number;
+    },
+    charTrimResult: {
+      commonPrefix: string;
+      commonSuffix: string;
+      originalCore: string;
+      revisedCore: string;
+    }
+  ): DiffChange[] {
+    const startTime = performance.now();
+    const finalChanges: DiffChange[] = [];
+    let currentIndex = 0;
+    
+    // PRIORITY B: Fraser's lazy reconstruction - build strings only once at the end
+    // Step 1: Add common paragraph prefix if it exists
+    if (paragraphTrimResult.commonPrefixParagraphs.length > 0) {
+      finalChanges.push({
+        type: 'unchanged',
+        content: paragraphTrimResult.commonPrefixParagraphs,
+        index: currentIndex++
+      });
+    }
+    
+    // Step 2: Add character-level prefix (from the paragraph-trimmed content) if it exists
+    if (charTrimResult.commonPrefix.length > 0) {
+      finalChanges.push({
+        type: 'unchanged',
+        content: charTrimResult.commonPrefix,
+        index: currentIndex++
+      });
+    }
+    
+    // Step 3: Add core changes with updated indices (no string manipulation here)
+    coreChanges.forEach(change => {
+      finalChanges.push({
+        ...change,
+        index: currentIndex++
+      });
+    });
+    
+    // Step 4: Add character-level suffix (from the paragraph-trimmed content) if it exists
+    if (charTrimResult.commonSuffix.length > 0) {
+      finalChanges.push({
+        type: 'unchanged',
+        content: charTrimResult.commonSuffix,
+        index: currentIndex++
+      });
+    }
+    
+    // Step 5: Add common paragraph suffix if it exists
+    if (paragraphTrimResult.commonSuffixParagraphs.length > 0) {
+      finalChanges.push({
+        type: 'unchanged',
+        content: paragraphTrimResult.commonSuffixParagraphs,
+        index: currentIndex++
+      });
+    }
+    
+    
+    const endTime = performance.now();
+    debugLog(`🔄 Combined result reconstruction completed in ${(endTime - startTime).toFixed(2)}ms`);
+    
+    return finalChanges;
+  }
+
+  /**
    * SSMR CHUNKING: Enhanced compare function with optional progress tracking
    * SAFE: Backwards compatible - existing calls work unchanged
    * MODULAR: Progress callback is optional
    * REVERSIBLE: Can be disabled by not passing progressCallback
    */
-  public static compare(
+  public static async compare(
     originalText: string, 
     revisedText: string, 
     progressCallback?: (progress: number, stage: string) => void
-  ): ComparisonResult {
-    debugLog('🐍 SIMPLE TEST - EXECUTE OR DIE - USING debugLog');
+  ): Promise<ComparisonResult> {
     debugLog('🎯 MyersAlgorithm.compare called with progressCallback:', !!progressCallback);
-    console.trace('Who called MyersAlgorithm.compare?');
+    
+    // DEBUG: Log text details for debugging false equality
+    debugLog('🔍 TEXT COMPARISON DEBUG:', {
+      originalLength: originalText.length,
+      revisedLength: revisedText.length,
+      originalFirst50: originalText.substring(0, 50),
+      revisedFirst50: revisedText.substring(0, 50),
+      originalLast50: originalText.substring(Math.max(0, originalText.length - 50)),
+      revisedLast50: revisedText.substring(Math.max(0, revisedText.length - 50)),
+      areTextsIdentical: originalText === revisedText
+    });
+    
+    // PRIORITY 1 OPTIMIZATION: Early equality check
+    if (originalText === revisedText) {
+      debugLog('⚡ Early equality detected - texts are identical');
+      debugLog('🚨 WARNING: If you see this with different texts, there is a bug in the input handling!');
+      if (progressCallback) {
+        progressCallback(100, 'Texts are identical');
+      }
+      return {
+        changes: [{ type: 'unchanged', content: originalText, index: 0 }],
+        stats: { additions: 0, deletions: 0, unchanged: 1, changed: 0, totalChanges: 0 }
+      };
+    }
+    
+    // PRIORITY 1 OPTIMIZATION: Input size validation
+    const originalLength = originalText.length;
+    const revisedLength = revisedText.length;
+    const totalLength = originalLength + revisedLength;
+    
+    if (totalLength > 500000) { // 500KB threshold
+      debugLog('⚠️ Large input detected:', { originalLength, revisedLength, totalLength });
+      if (progressCallback) {
+        progressCallback(0, 'Processing large document...');
+      }
+    }
+    
+    // PRIORITY 2.5: SSMR Paragraph-level prefix/suffix trimming (NEW!)
+    const paragraphTrimResult = this.trimCommonParagraphs(originalText, revisedText);
+    
+    // Use paragraph-trimmed content for character-level trimming (cascading optimization)
+    const originalAfterParagraphTrim = paragraphTrimResult.originalCoreParagraphs;
+    const revisedAfterParagraphTrim = paragraphTrimResult.revisedCoreParagraphs;
+    
+    // PRIORITY 1 OPTIMIZATION: Common prefix/suffix trimming (now on paragraph-trimmed content)
+    const charTrimResult = this.trimCommonPrefixSuffix(originalAfterParagraphTrim, revisedAfterParagraphTrim);
+    debugLog('✂️ Character-level trimming results (after paragraph trimming):', {
+      prefixLength: charTrimResult.commonPrefix.length,
+      suffixLength: charTrimResult.commonSuffix.length,
+      originalReduced: charTrimResult.originalCore.length,
+      revisedReduced: charTrimResult.revisedCore.length,
+      charReductionRatio: ((originalAfterParagraphTrim.length + revisedAfterParagraphTrim.length - charTrimResult.originalCore.length - charTrimResult.revisedCore.length) / (originalAfterParagraphTrim.length + revisedAfterParagraphTrim.length) * 100).toFixed(1) + '%'
+    });
+    
+    // Calculate total reduction from both optimizations
+    const totalReductionRatio = ((originalLength + revisedLength - charTrimResult.originalCore.length - charTrimResult.revisedCore.length) / totalLength * 100);
+    
+    debugLog('🎯 COMBINED optimization results:', {
+      paragraphReduction: paragraphTrimResult.paragraphReductionRatio.toFixed(1) + '%',
+      totalReduction: totalReductionRatio.toFixed(1) + '%',
+      finalCoreSize: charTrimResult.originalCore.length + charTrimResult.revisedCore.length,
+      originalSize: totalLength
+    });
+    
+    // Use fully trimmed content for diff computation
+    const originalCore = charTrimResult.originalCore;
+    const revisedCore = charTrimResult.revisedCore;
     
     // SAFE: Report initial progress (optional)
     if (progressCallback) {
-      debugLog('📊 Calling progressCallback(0, "Tokenizing text...")');
-      progressCallback(0, 'Tokenizing text...');
+      debugLog('📊 Starting tokenization...');
+      progressCallback(5, 'Tokenizing text...');
     }
     
-    console.time('Tokenization - Original');
-    const originalTokens = this.tokenize(originalText);
-    console.timeEnd('Tokenization - Original');
+    // Tokenize the trimmed core content for efficiency
+    console.time('Tokenization - Original Core');
+    const originalTokens = this.tokenize(originalCore);
+    console.timeEnd('Tokenization - Original Core');
 
-    console.time('Tokenization - Revised');
-    const revisedTokens = this.tokenize(revisedText);
-    console.timeEnd('Tokenization - Revised');
+    console.time('Tokenization - Revised Core');
+    const revisedTokens = this.tokenize(revisedCore);
+    console.timeEnd('Tokenization - Revised Core');
     
     debugLog('📝 Original tokens:', originalTokens.length);
     debugLog('📝 Revised tokens:', revisedTokens.length);
@@ -822,8 +1327,21 @@ export class MyersAlgorithm {
       progressCallback!(25, 'Computing differences...');
     }
     
+    // PRIORITY 3A: Fraser's Streaming Implementation for Large Documents
+    const STREAMING_THRESHOLD = 20000; // Tokens (configurable)
+    const enableStreaming = true; // ROLLBACK: Set to false to disable streaming
+    
     console.time('Myers Diff');
-    const diff = this.myers(originalTokens, revisedTokens);
+    let diff: any[];
+    
+    if (enableStreaming && totalTokens > STREAMING_THRESHOLD) {
+      debugLog(`🌊 Large document detected (${totalTokens} tokens), using streaming Myers algorithm`);
+      diff = await this.streamingMyers(originalTokens, revisedTokens, progressCallback);
+    } else {
+      debugLog(`⚡ Normal document size (${totalTokens} tokens), using standard Myers algorithm`);
+      diff = this.myers(originalTokens, revisedTokens);
+    }
+    
     console.timeEnd('Myers Diff');
     
     if (shouldTrackProgress) {
@@ -833,22 +1351,34 @@ export class MyersAlgorithm {
     
     // Convert to our format and calculate stats
     console.time('Result Processing');
-    const changes: DiffChange[] = diff.map((change, index) => ({
+    let coreChanges: DiffChange[] = diff.map((change, index) => ({
       type: change.type as 'added' | 'removed' | 'unchanged' | 'changed',
       content: change.content,
       originalContent: change.originalContent,
       revisedContent: change.revisedContent,
       index
     }));
+    
+    // PRIORITY 2.5: SSMR Reconstruct with combined paragraph and character trimming
+    const finalChanges = this.reconstructWithCombinedTrimming(coreChanges, paragraphTrimResult, charTrimResult);
     console.timeEnd('Result Processing');
     
     const stats = {
-      additions: changes.filter(c => c.type === 'added').length,
-      deletions: changes.filter(c => c.type === 'removed').length,
-      unchanged: changes.filter(c => c.type === 'unchanged').length,
-      changed: changes.filter(c => c.type === 'changed').length,
-      totalChanges: changes.filter(c => c.type !== 'unchanged').length
+      additions: finalChanges.filter(c => c.type === 'added').length,
+      deletions: finalChanges.filter(c => c.type === 'removed').length,
+      unchanged: finalChanges.filter(c => c.type === 'unchanged').length,
+      changed: finalChanges.filter(c => c.type === 'changed').length,
+      totalChanges: finalChanges.filter(c => c.type !== 'unchanged').length
     };
+    
+    debugLog('🔄 Final result:', {
+      totalChanges: finalChanges.length,
+      paragraphPrefixLength: paragraphTrimResult.commonPrefixParagraphs.length,
+      paragraphSuffixLength: paragraphTrimResult.commonSuffixParagraphs.length,
+      charPrefixLength: charTrimResult.commonPrefix.length,
+      charSuffixLength: charTrimResult.commonSuffix.length,
+      totalReductionAchieved: totalReductionRatio.toFixed(1) + '%'
+    });
     
     // SAFE: Report completion
     if (progressCallback) {
@@ -856,6 +1386,133 @@ export class MyersAlgorithm {
       progressCallback(100, 'Complete');
     }
     
-    return { changes, stats };
+    return { changes: finalChanges, stats };
+  }
+
+  /**
+   * PRIORITY 3A: Fraser's Streaming Myers Algorithm for Large Documents
+   * SAFE: Only used for documents >20,000 tokens, falls back to standard Myers
+   * STEP-BY-STEP: Processes tokens in chunks with UI yield points
+   * MODULAR: Independent implementation, doesn't affect existing algorithm
+   * REVERSIBLE: Feature flag can disable streaming entirely
+   */
+  private static async streamingMyers(
+    originalTokens: string[],
+    revisedTokens: string[],
+    progressCallback?: (progress: number, stage: string) => void,
+    enableStreaming: boolean = true // ROLLBACK: Set to false to disable streaming
+  ): Promise<any[]> {
+    const startTime = performance.now();
+    const totalTokens = originalTokens.length + revisedTokens.length;
+    
+    // SAFE: Feature flag check
+    if (!enableStreaming) {
+      debugLog('🌊 Streaming disabled, falling back to standard Myers');
+      return this.myers(originalTokens, revisedTokens);
+    }
+    
+    debugLog('🌊 Starting streaming Myers algorithm for', totalTokens, 'tokens');
+    
+    // Configuration for streaming (tunable based on performance testing)
+    const CHUNK_SIZE = 2000; // Process 2000 tokens per chunk
+    const YIELD_INTERVAL = 0; // 0ms yield (just let UI update)
+    const BASE_PROGRESS = 25; // Start progress from 25% (after tokenization)
+    const PROGRESS_RANGE = 65; // Use 65% of progress bar for streaming (25% -> 90%)
+    
+    const chunks: any[] = [];
+    const maxLength = Math.max(originalTokens.length, revisedTokens.length);
+    
+    // Process in chunks with progress updates
+    for (let i = 0; i < maxLength; i += CHUNK_SIZE) {
+      const chunkStartTime = performance.now();
+      
+      // Extract chunk from both token arrays
+      const originalChunk = originalTokens.slice(i, Math.min(i + CHUNK_SIZE, originalTokens.length));
+      const revisedChunk = revisedTokens.slice(i, Math.min(i + CHUNK_SIZE, revisedTokens.length));
+      
+      // Skip empty chunks
+      if (originalChunk.length === 0 && revisedChunk.length === 0) {
+        continue;
+      }
+      
+      // Process chunk using standard Myers algorithm
+      const chunkResult = this.myers(originalChunk, revisedChunk);
+      chunks.push({
+        startIndex: i,
+        result: chunkResult,
+        originalLength: originalChunk.length,
+        revisedLength: revisedChunk.length
+      });
+      
+      // Calculate and report progress
+      const chunkProgress = Math.min((i + CHUNK_SIZE) / maxLength, 1.0);
+      const overallProgress = BASE_PROGRESS + (chunkProgress * PROGRESS_RANGE);
+      const chunkNumber = Math.floor(i / CHUNK_SIZE) + 1;
+      const totalChunks = Math.ceil(maxLength / CHUNK_SIZE);
+      
+      const chunkEndTime = performance.now();
+      debugLog(`🌊 Chunk ${chunkNumber}/${totalChunks} processed in ${(chunkEndTime - chunkStartTime).toFixed(2)}ms`);
+      
+      if (progressCallback) {
+        progressCallback(
+          Math.floor(overallProgress), 
+          `Processing chunk ${chunkNumber} of ${totalChunks}...`
+        );
+      }
+      
+      // CRITICAL: Yield control to UI (Fraser's key insight)
+      await new Promise(resolve => setTimeout(resolve, YIELD_INTERVAL));
+    }
+    
+    // Combine chunk results into final result
+    if (progressCallback) {
+      progressCallback(90, 'Combining results...');
+    }
+    
+    const combinedResult = this.combineChunkResults(chunks, originalTokens.length, revisedTokens.length);
+    
+    const endTime = performance.now();
+    debugLog(`🌊 Streaming Myers completed in ${(endTime - startTime).toFixed(2)}ms for ${totalTokens} tokens`);
+    
+    return combinedResult;
+  }
+
+  /**
+   * PRIORITY 3A: Combine chunk results into final diff result
+   * Helper method for streaming Myers algorithm
+   */
+  private static combineChunkResults(
+    chunks: any[], 
+    originalLength: number, 
+    revisedLength: number
+  ): any[] {
+    const startTime = performance.now();
+    
+    // For now, use a simple combination strategy
+    // In a production implementation, this would need more sophisticated merging
+    // but for the MVP, we can process the entire token set as chunks and combine
+    
+    let combinedDiff: any[] = [];
+    let currentOriginalIndex = 0;
+    let currentRevisedIndex = 0;
+    
+    for (const chunk of chunks) {
+      // Adjust indices in chunk results based on position in overall document
+      const adjustedChunkResult = chunk.result.map((change: any) => ({
+        ...change,
+        // Adjust indices to account for previous chunks
+        originalIndex: currentOriginalIndex + (change.originalIndex || 0),
+        revisedIndex: currentRevisedIndex + (change.revisedIndex || 0)
+      }));
+      
+      combinedDiff = combinedDiff.concat(adjustedChunkResult);
+      currentOriginalIndex += chunk.originalLength;
+      currentRevisedIndex += chunk.revisedLength;
+    }
+    
+    const endTime = performance.now();
+    debugLog(`🌊 Chunk combination completed in ${(endTime - startTime).toFixed(2)}ms`);
+    
+    return combinedDiff;
   }
 }

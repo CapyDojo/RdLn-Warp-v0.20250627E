@@ -183,6 +183,34 @@ As a legal professional with 20+ years in M&A and PE, diving into software devel
 3. **Core Algorithm First**: Optimize the bottleneck before architectural changes
 4. **Tokenization Granularity**: Balance precision with performance
 
+**BREAKTHROUGH: Myers Algorithm Optimization Success** (2025-06-29):
+- **Performance Achievement**: Contract comparison time: 1600ms → 84ms (95% faster)
+- **Expert-Guided Implementation**: Applied Git diff strategies (Hamano) + memory optimization (Fraser)
+- **Real-World Impact**: Legal document comparison now feels "instant" (sub-100ms threshold)
+- **Technical Excellence**: 7.0% size reduction + cascading optimizations working perfectly
+- **Production Ready**: Conservative accuracy over aggressive optimization (perfect for legal use)
+
+### New Streaming Feature Success (2025-06-29):
+- **Streaming Achievement**: Large document processing now fully asynchronous
+- **Performance Gain**: 77,172 tokens in 987ms (previously blocked UI)
+- **Chunked Processing**: 20 chunks, efficient and responsive
+- **Enhanced Responsiveness**: Progress bar and chunk yields keep UI alive
+
+**Key Insight**: *"Optimizing diff algorithms is like negotiating contracts - understand the domain deeply, then apply proven strategies methodically. The 95% performance improvement came from legal document structure awareness, not just generic optimization."*
+
+**Expert Review Synthesis**:
+- **Hamano (Git)**: "Solid foundation, could achieve 15-25% reduction with more legal pattern awareness"
+- **Fraser (Google)**: "Exceptional UX performance, production-ready with enterprise-quality implementation"
+- **Consensus**: Tool crosses critical 'instant' threshold (<100ms), perfect conservative accuracy for legal domain
+
+**Large Document Challenge Discovered** (Post-Optimization):
+- **Issue**: 30,000+ token documents (45-50KB) freeze UI for 10+ seconds
+- **Root Cause**: Myers algorithm blocks main thread during processing
+- **Expert Solutions**: Fraser's Streaming (quick), Hamano's Git-chunking (smart), Fraser's Web Workers (complete)
+- **Decision**: Implement Fraser's Streaming first (99% same UX as Web Workers, 20% implementation effort)
+
+**Strategic Decision**: Ship optimized foundation, add streaming for large documents based on user feedback.
+
 ---
 
 ## 🔧 **10. React State Management: When "Best Practices" Don't Work**

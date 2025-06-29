@@ -11,6 +11,9 @@ export const useComparison = () => {
     error: null
   });
   
+  // Flag to prevent auto-compare interference during manual operations
+  const manualOperationRef = useRef(false);
+  
   // SSMR CHUNKING: Add separate progress tracking for large text processing
   // MODULAR: Separate from existing isProcessing state
   // REVERSIBLE: Can be disabled by setting enabled=false
@@ -67,7 +70,18 @@ export const useComparison = () => {
     }
   }, []);
 
-  const compareDocuments = useCallback(async (isAutoCompare = false, preserveFocus = true) => {
+  const compareDocuments = useCallback(async (isAutoCompare = false, preserveFocus = true, overrideOriginal?: string, overrideRevised?: string) => {
+    // Prevent concurrent operations
+    if (isAutoCompare && manualOperationRef.current) {
+      console.log('⚠️ Auto-compare blocked - manual operation in progress');
+      return;
+    }
+    
+    // Set manual operation flag if overrides are provided
+    if (overrideOriginal || overrideRevised) {
+      manualOperationRef.current = true;
+      console.log('🔒 Manual operation started - blocking auto-compare');
+    }
     // PHASE 1 DEBUG: Track duplicate calls
     const callId = Math.random().toString(36).substr(2, 9);
     console.log(`🔍 CALL START [${callId}] compareDocuments called:`, {
@@ -78,12 +92,32 @@ export const useComparison = () => {
       timestamp: new Date().toISOString()
     });
     
+    // Use override texts if provided, otherwise use state
+    const actualOriginal = overrideOriginal ?? state.originalText;
+    const actualRevised = overrideRevised ?? state.revisedText;
+    
+    // DEBUG: Critical state validation at start of comparison
+    console.log('🚨 CRITICAL STATE DEBUG at compareDocuments start:', {
+      stateOriginalLength: state.originalText.length,
+      stateRevisedLength: state.revisedText.length,
+      actualOriginalLength: actualOriginal.length,
+      actualRevisedLength: actualRevised.length,
+      overrideOriginal: !!overrideOriginal,
+      overrideRevised: !!overrideRevised,
+      stateOriginalFirst100: state.originalText.substring(0, 100),
+      stateRevisedFirst100: state.revisedText.substring(0, 100),
+      actualOriginalFirst100: actualOriginal.substring(0, 100),
+      actualRevisedFirst100: actualRevised.substring(0, 100),
+      stateExists: !!state,
+      stateKeys: Object.keys(state)
+    });
+    
     // Capture current focus before comparison
     if (preserveFocus) {
       captureFocus();
     }
     setState(prev => {
-      if (!prev.originalText.trim() || !prev.revisedText.trim()) {
+      if (!actualOriginal.trim() || !actualRevised.trim()) {
         return { 
           ...prev, 
           error: 'Please enter both original and revised text to compare.' 
@@ -126,10 +160,48 @@ export const useComparison = () => {
         hasProgressCallback: !!progressCallback
       });
       
+      // PRIORITY 3A: Handle async MyersAlgorithm.compare for streaming support
+      console.log('🔬 About to call async MyersAlgorithm.compare...'); // Debug log
+      
+      // DEBUG: Log the exact texts being compared
+      console.log('🔍 USECOMPARISON DEBUG - Texts being passed to algorithm:', {
+        originalLength: actualOriginal.length,
+        revisedLength: actualRevised.length,
+        originalFirst50: actualOriginal.substring(0, 50),
+        revisedFirst50: actualRevised.substring(0, 50),
+        originalLast50: actualOriginal.substring(Math.max(0, actualOriginal.length - 50)),
+        revisedLast50: actualRevised.substring(Math.max(0, actualRevised.length - 50)),
+        areTextsIdentical: actualOriginal === actualRevised
+      });
+      
+      // Use actual texts for comparison (either from state or overrides)
+      const result = await MyersAlgorithm.compare(actualOriginal, actualRevised, progressCallback);
+      console.log('✅ MyersAlgorithm.compare completed, result:', result);
+      console.log('🔍 Result structure:', {
+        hasResult: !!result,
+        hasChanges: !!(result?.changes),
+        changesLength: result?.changes?.length,
+        hasStats: !!(result?.stats),
+        resultKeys: result ? Object.keys(result) : 'no result',
+        fullResult: result
+      });
+      
+      // CRITICAL: Test if result is valid for UI
+      if (result && result.changes && result.changes.length > 0) {
+        console.log('✅ RESULT IS VALID FOR UI - has changes:', result.changes.length);
+        console.log('✅ First few changes:', result.changes.slice(0, 3));
+      } else {
+        console.log('❌ RESULT IS NOT VALID FOR UI:', {
+          hasResult: !!result,
+          hasChanges: !!(result?.changes),
+          changesLength: result?.changes?.length
+        });
+      }
+      
       setState(prev => {
-        console.log('🔬 Inside setState, calling MyersAlgorithm.compare...'); // Debug log
-        const result = MyersAlgorithm.compare(prev.originalText, prev.revisedText, progressCallback);
-        console.log('✅ MyersAlgorithm.compare completed, result:', !!result); // Debug log
+        console.log('🔬 Inside setState, updating with result...');
+        console.log('🔍 Previous state result:', !!prev.result);
+        console.log('🔍 New result being set:', !!result);
         
         // TESTING: Keep progress bar visible for debugging
         // TODO: Restore auto-hide after testing
@@ -150,16 +222,32 @@ export const useComparison = () => {
           return prev; // No change for now
         });
         
-        return {
+        const newState = {
           ...prev,
           result,
           isProcessing: false
         };
+        
+        console.log('🔍 New state being returned:', {
+          hasResult: !!newState.result,
+          isProcessing: newState.isProcessing,
+          error: newState.error
+        });
+        
+        return newState;
       });
       
       // Restore focus after comparison completes
       if (preserveFocus) {
         restoreFocus();
+      }
+      
+      // Clear manual operation flag after completion
+      if (overrideOriginal || overrideRevised) {
+        setTimeout(() => {
+          manualOperationRef.current = false;
+          console.log('🔓 Manual operation completed - auto-compare re-enabled');
+        }, 500); // Give enough time for any pending auto-compare calls to be blocked
       }
     } catch (error) {
       setState(prev => ({
@@ -185,12 +273,24 @@ export const useComparison = () => {
       if (preserveFocus) {
         restoreFocus();
       }
+      
+      // Clear manual operation flag even on error
+      if (overrideOriginal || overrideRevised) {
+        manualOperationRef.current = false;
+        console.log('🔓 Manual operation failed - auto-compare re-enabled');
+      }
     }
-  }, [captureFocus, restoreFocus]); // Removed chunkingProgress from dependencies to avoid stale closures
+  }, [state, captureFocus, restoreFocus]); // Added state to dependencies to ensure fresh state is captured
 
   // Simplified auto-compare trigger - handles all real-time updates when enabled
   const triggerAutoCompare = useCallback((originalText: string, revisedText: string, isPasteAction = false) => {
     console.log('🔍 triggerAutoCompare called:', { quickCompareEnabled, originalLength: originalText.length, revisedLength: revisedText.length });
+    
+    // Don't trigger auto-compare if manual operation is in progress
+    if (manualOperationRef.current) {
+      console.log('⚠️ Auto-compare blocked by manual operation');
+      return;
+    }
     
     // Clear existing timeout
     if (autoCompareTimeoutRef.current) {
@@ -207,12 +307,19 @@ export const useComparison = () => {
       const delay = 200; // Fast response for all input types
       
       autoCompareTimeoutRef.current = setTimeout(() => {
+        // Double-check that manual operation isn't in progress when timeout fires
+        if (manualOperationRef.current) {
+          console.log('⚠️ Auto-compare timeout blocked by manual operation');
+          return;
+        }
+        
         lastCompareInputRef.current = currentInput;
         
         // Handle different scenarios:
         if (original && revised && original.length > 1 && revised.length > 1) {
-          // Both fields have meaningful content - do comparison
-          compareDocuments(true);
+          // Both fields have meaningful content - do comparison with explicit texts
+          // CRITICAL: Pass the explicit texts to avoid stale state closure issues
+          compareDocuments(true, true, originalText, revisedText);
         } else {
           // One or both fields are empty/too short - clear results
           setState(prev => ({
@@ -227,8 +334,17 @@ export const useComparison = () => {
 
   const setOriginalText = useCallback((text: string, isPasteAction = false) => {
     console.log('📝 setOriginalText called:', { textLength: text.length, isPasteAction, quickCompareEnabled });
+    console.log('📝 setOriginalText - text preview:', text.substring(0, 100));
     setState(prev => {
+      console.log('📝 setOriginalText - prev state:', {
+        prevOriginalLength: prev.originalText.length,
+        prevRevisedLength: prev.revisedText.length
+      });
       const newState = { ...prev, originalText: text, error: null };
+      console.log('📝 setOriginalText - new state:', {
+        newOriginalLength: newState.originalText.length,
+        newRevisedLength: newState.revisedText.length
+      });
       
       // Trigger auto-compare for ALL changes when enabled (typing, pasting, OCR)
       if (quickCompareEnabled) {
@@ -247,8 +363,17 @@ export const useComparison = () => {
 
   const setRevisedText = useCallback((text: string, isPasteAction = false) => {
     console.log('📝 setRevisedText called:', { textLength: text.length, isPasteAction, quickCompareEnabled });
+    console.log('📝 setRevisedText - text preview:', text.substring(0, 100));
     setState(prev => {
+      console.log('📝 setRevisedText - prev state:', {
+        prevOriginalLength: prev.originalText.length,
+        prevRevisedLength: prev.revisedText.length
+      });
       const newState = { ...prev, revisedText: text, error: null };
+      console.log('📝 setRevisedText - new state:', {
+        newOriginalLength: newState.originalText.length,
+        newRevisedLength: newState.revisedText.length
+      });
       
       // Trigger auto-compare for ALL changes when enabled (typing, pasting, OCR)
       if (quickCompareEnabled) {
