@@ -1394,6 +1394,18 @@ export class MyersAlgorithm {
       });
     }
     
+    // CRITICAL FIX: Prevent UI crashes with massive result sets
+    const MAX_CHANGES_FOR_UI = 50000; // Reasonable limit for browser rendering
+    if (finalChanges.length > MAX_CHANGES_FOR_UI) {
+      console.error('🚨 RESULT SET TOO LARGE FOR UI:', {
+        changesCount: finalChanges.length,
+        maxAllowed: MAX_CHANGES_FOR_UI,
+        action: 'Rejecting to prevent browser crash'
+      });
+      
+      throw new Error(`Document comparison resulted in ${finalChanges.length} changes, which exceeds the UI limit of ${MAX_CHANGES_FOR_UI}. This typically indicates the documents are too different or too large for effective comparison.`);
+    }
+    
     const stats = {
       additions: finalChanges.filter(c => c.type === 'added').length,
       deletions: finalChanges.filter(c => c.type === 'removed').length,

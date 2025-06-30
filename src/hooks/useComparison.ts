@@ -267,9 +267,24 @@ export const useComparison = () => {
         }, 500); // Give enough time for any pending auto-compare calls to be blocked
       }
     } catch (error) {
+      console.error('🚨 COMPARISON ERROR:', error);
+      
+      // Provide specific error message for different types of failures
+      let errorMessage = 'An error occurred while comparing documents.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('exceeds the UI limit')) {
+          errorMessage = 'The documents are too different or contain too many changes to display effectively. This typically happens with documents that have been extensively rewritten or are fundamentally different in structure. Try comparing smaller sections or documents with fewer changes.';
+        } else if (error.message.includes('memory') || error.message.includes('Maximum')) {
+          errorMessage = 'The documents are too large to process. Please try with smaller documents or break them into smaller sections.';
+        } else {
+          errorMessage = `Comparison failed: ${error.message}`;
+        }
+      }
+      
       setState(prev => ({
         ...prev,
-        error: 'An error occurred while comparing documents. Please try again.',
+        error: errorMessage,
         isProcessing: false
       }));
       
