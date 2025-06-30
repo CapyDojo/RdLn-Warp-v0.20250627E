@@ -7,6 +7,38 @@ const DEBUG_MODE = true;
 const debugLog = DEBUG_MODE ? console.log : () => {};
 
 export class MyersAlgorithm {
+  // SSMR: Feature flags for progressive implementation
+  private static readonly FEATURE_FLAGS = {
+    USE_OPTIMIZED_BOUNDARIES: true,    // Step 1: Regex-free boundary detection
+    USE_PROGRESSIVE_SECTIONS: true,    // Step 2: Progressive section streaming  
+    USE_CANCELLATION: true             // Step 3: Cancellation capability
+  };
+
+  // SSMR: Progressive section configuration
+  private static readonly SECTION_CONFIG = {
+    TARGET_SIZE: 3000,        // Target changes per section
+    MIN_SIZE: 1000,          // Minimum section size
+    MAX_SIZE: 8000,          // Maximum section size (performance guardrail)
+  };
+
+  // SSMR: Optimized lookup tables for fast sentence boundary detection
+  private static readonly ABBREVIATIONS = new Set([
+    // Legal entities
+    'inc.', 'corp.', 'llc.', 'ltd.', 'co.', 'lp.', 'llp.', 'pc.', 'pa.', 'pllc.',
+    'plc.', 'gmbh.', 'ag.', 'sa.', 'sas.', 'sarl.', 'bv.', 'nv.',
+    // Titles and names
+    'mr.', 'mrs.', 'ms.', 'dr.', 'prof.', 'sr.', 'jr.',
+    // Address abbreviations
+    'st.', 'ave.', 'blvd.', 'rd.', 'dr.', 'ln.', 'ct.', 'pl.',
+    // Dates and time
+    'jan.', 'feb.', 'mar.', 'apr.', 'may.', 'jun.', 'jul.', 'aug.', 'sep.', 'oct.', 'nov.', 'dec.',
+    'mon.', 'tue.', 'wed.', 'thu.', 'fri.', 'sat.', 'sun.',
+    // Common abbreviations
+    'etc.', 'vs.', 'ie.', 'eg.', 'cf.', 'al.', 'et.',
+    // Legal-specific
+    'sec.', 'para.', 'art.', 'ch.', 'subch.', 'pt.', 'subpt.'
+  ]);
+
   private static tokenize(text: string): string[] {
     // Enhanced tokenization that preserves meaningful units and handles abbreviations
     const tokens: string[] = [];
@@ -731,9 +763,19 @@ export class MyersAlgorithm {
   }
 
   /**
-   * ENHANCED: Sentence boundary detection with better abbreviation handling
+   * SSMR: Optimized sentence boundary detection with feature flags
    */
   private static containsSentenceBoundary(content: string): boolean {
+    if (this.FEATURE_FLAGS.USE_OPTIMIZED_BOUNDARIES) {
+      return this.optimizedBoundaryDetection(content);
+    }
+    return this.containsSentenceBoundaryLegacy(content);
+  }
+
+  /**
+   * Legacy regex-based sentence boundary detection (kept for rollback)
+   */
+  private static containsSentenceBoundaryLegacy(content: string): boolean {
     // Check for paragraph boundaries (double newlines)
     if (content.includes('\n\n')) {
       return true;
@@ -747,6 +789,40 @@ export class MyersAlgorithm {
     // ENHANCED: Period followed by space and capital letter (but not abbreviations)
     if (/\.\s+[A-Z]/.test(content) && !this.endsWithAbbreviation(content)) {
       return true;
+    }
+    
+    return false;
+  }
+
+  /**
+   * SSMR: New optimized boundary detection without regex
+   */
+  private static optimizedBoundaryDetection(content: string): boolean {
+    // Check for paragraph boundaries first (most common)
+    if (content.includes('\n\n')) {
+      return true;
+    }
+    
+    // Scan character by character for sentence boundaries
+    for (let i = 0; i < content.length - 1; i++) {
+      if (content[i] === '.' && content[i + 1] === ' ') {
+        // Check if this is multiple spaces (double space indicates sentence end)
+        if (i + 2 < content.length && content[i + 2] === ' ') {
+          return true;
+        }
+        
+        // Check if followed by capital letter
+        if (i + 2 < content.length && /[A-Z]/.test(content[i + 2])) {
+          // Extract the word ending with this period
+          const wordStart = content.lastIndexOf(' ', i - 1) + 1;
+          const word = content.slice(wordStart, i + 1).toLowerCase();
+          
+          // Check if it's NOT a known abbreviation
+          if (!this.ABBREVIATIONS.has(word)) {
+            return true;
+          }
+        }
+      }
     }
     
     return false;
@@ -1336,9 +1412,14 @@ export class MyersAlgorithm {
     
     if (enableStreaming && totalTokens > STREAMING_THRESHOLD) {
       debugLog(`🌊 Large document detected (${totalTokens} tokens), using streaming Myers algorithm`);
-      diff = await this.streamingMyers(originalTokens, revisedTokens, progressCallback);
+      // SSMR: Pass AbortSignal to streaming algorithm
+      diff = await this.streamingMyers(originalTokens, revisedTokens, progressCallback, enableStreaming, (globalThis as any).currentAbortSignal);
     } else {
       debugLog(`⚡ Normal document size (${totalTokens} tokens), using standard Myers algorithm`);
+      // SSMR: Check for cancellation even in standard algorithm
+      if ((globalThis as any).currentAbortSignal?.aborted) {
+        throw new Error('Operation cancelled by user');
+      }
       diff = this.myers(originalTokens, revisedTokens);
     }
     
@@ -1394,7 +1475,27 @@ export class MyersAlgorithm {
       });
     }
     
-    // CRITICAL FIX: Prevent UI crashes with massive result sets
+    // Calculate stats before using in progressive sections
+    const stats = {
+      additions: finalChanges.filter(c => c.type === 'added').length,
+      deletions: finalChanges.filter(c => c.type === 'removed').length,
+      unchanged: finalChanges.filter(c => c.type === 'unchanged').length,
+      changed: finalChanges.filter(c => c.type === 'changed').length,
+      totalChanges: finalChanges.filter(c => c.type !== 'unchanged').length
+    };
+
+    // SSMR: Progressive section streaming for large result sets
+    if (this.FEATURE_FLAGS.USE_PROGRESSIVE_SECTIONS && finalChanges.length > this.SECTION_CONFIG.TARGET_SIZE) {
+      console.log('🔄 Large result set detected, using progressive section streaming:', {
+        changesCount: finalChanges.length,
+        targetSectionSize: this.SECTION_CONFIG.TARGET_SIZE
+      });
+      
+      // Stream sections progressively instead of rejecting
+      return this.createProgressiveSectionResult(finalChanges, stats, progressCallback);
+    }
+    
+    // CRITICAL FIX: Prevent UI crashes with massive result sets (legacy fallback)
     const MAX_CHANGES_FOR_UI = 50000; // Reasonable limit for browser rendering
     if (finalChanges.length > MAX_CHANGES_FOR_UI) {
       console.error('🚨 RESULT SET TOO LARGE FOR UI:', {
@@ -1405,14 +1506,6 @@ export class MyersAlgorithm {
       
       throw new Error(`Document comparison resulted in ${finalChanges.length} changes, which exceeds the UI limit of ${MAX_CHANGES_FOR_UI}. This typically indicates the documents are too different or too large for effective comparison.`);
     }
-    
-    const stats = {
-      additions: finalChanges.filter(c => c.type === 'added').length,
-      deletions: finalChanges.filter(c => c.type === 'removed').length,
-      unchanged: finalChanges.filter(c => c.type === 'unchanged').length,
-      changed: finalChanges.filter(c => c.type === 'changed').length,
-      totalChanges: finalChanges.filter(c => c.type !== 'unchanged').length
-    };
     
     debugLog('🔄 Final result:', {
       totalChanges: finalChanges.length,
@@ -1462,7 +1555,8 @@ export class MyersAlgorithm {
     originalTokens: string[],
     revisedTokens: string[],
     progressCallback?: (progress: number, stage: string) => void,
-    enableStreaming: boolean = true // ROLLBACK: Set to false to disable streaming
+    enableStreaming: boolean = true, // ROLLBACK: Set to false to disable streaming
+    abortSignal?: AbortSignal // SSMR: Add cancellation support
   ): Promise<any[]> {
     const startTime = performance.now();
     const totalTokens = originalTokens.length + revisedTokens.length;
@@ -1486,6 +1580,12 @@ const CHUNK_SIZE = 1800; // Process 1800 tokens per chunk (adjustable)
     
     // Process in chunks with progress updates
     for (let i = 0; i < maxLength; i += CHUNK_SIZE) {
+      // SSMR: Check for cancellation at start of each chunk
+      if (abortSignal?.aborted) {
+        console.log('🚫 Streaming Myers algorithm cancelled at chunk', Math.floor(i / CHUNK_SIZE) + 1);
+        throw new Error('Operation cancelled by user');
+      }
+      
       const chunkStartTime = performance.now();
       
       // Extract chunk from both token arrays
@@ -1495,6 +1595,12 @@ const CHUNK_SIZE = 1800; // Process 1800 tokens per chunk (adjustable)
       // Skip empty chunks
       if (originalChunk.length === 0 && revisedChunk.length === 0) {
         continue;
+      }
+      
+      // SSMR: Check for cancellation before processing chunk
+      if (abortSignal?.aborted) {
+        console.log('🚫 Streaming Myers algorithm cancelled before processing chunk');
+        throw new Error('Operation cancelled by user');
       }
       
       // Process chunk using standard Myers algorithm
@@ -1520,6 +1626,12 @@ const CHUNK_SIZE = 1800; // Process 1800 tokens per chunk (adjustable)
           Math.floor(overallProgress), 
           `Processing chunk ${chunkNumber} of ${totalChunks}...`
         );
+      }
+      
+      // SSMR: Check for cancellation before yielding
+      if (abortSignal?.aborted) {
+        console.log('🚫 Streaming Myers algorithm cancelled before yield');
+        throw new Error('Operation cancelled by user');
       }
       
       // CRITICAL: Yield control to UI (Fraser's key insight)
@@ -1576,5 +1688,73 @@ const CHUNK_SIZE = 1800; // Process 1800 tokens per chunk (adjustable)
     debugLog(`🌊 Chunk combination completed in ${(endTime - startTime).toFixed(2)}ms`);
     
     return combinedDiff;
+  }
+
+  /**
+   * SSMR: Create progressive section result for large change sets
+   * Streams sections progressively with semantic boundary respect
+   */
+  private static async createProgressiveSectionResult(
+    changes: DiffChange[],
+    stats: any,
+    progressCallback?: (progress: number, stage: string) => void
+  ): Promise<ComparisonResult> {
+    if (progressCallback) {
+      progressCallback(90, 'Creating progressive sections...');
+    }
+
+    // For now, return a special result that indicates progressive processing
+    // The UI layer will handle the progressive streaming
+    const result: ComparisonResult = {
+      changes,
+      stats,
+      // Add metadata for progressive handling
+      _progressive: {
+        enabled: true,
+        totalSections: Math.ceil(changes.length / this.SECTION_CONFIG.TARGET_SIZE),
+        sectionSize: this.SECTION_CONFIG.TARGET_SIZE
+      }
+    };
+
+    if (progressCallback) {
+      progressCallback(100, 'Progressive sections ready');
+    }
+
+    return result;
+  }
+
+  /**
+   * SSMR: Find next semantic section boundary
+   * Respects sentence and paragraph boundaries for clean sections
+   */
+  private static findNextSectionBoundary(
+    changes: DiffChange[], 
+    startIndex: number, 
+    targetSize: number
+  ): number {
+    let currentSize = 0;
+    let lastGoodBoundary = startIndex;
+    const maxSize = this.SECTION_CONFIG.MAX_SIZE;
+    
+    for (let i = startIndex; i < changes.length && currentSize < maxSize; i++) {
+      const change = changes[i];
+      currentSize++;
+      
+      // Check if this change contains a semantic boundary
+      if (change.content && (
+        change.content.includes('\n\n') ||  // Paragraph break
+        this.containsSentenceBoundary(change.content)  // Real sentence break
+      )) {
+        lastGoodBoundary = i + 1; // Include the change with the boundary
+      }
+      
+      // If we're past minimum size and found a boundary, use it
+      if (currentSize >= targetSize && lastGoodBoundary > startIndex) {
+        return lastGoodBoundary;
+      }
+    }
+    
+    // Fallback: Return where we are (performance guardrail)
+    return Math.min(startIndex + targetSize, changes.length);
   }
 }

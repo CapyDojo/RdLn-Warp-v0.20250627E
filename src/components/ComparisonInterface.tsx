@@ -26,7 +26,13 @@ export const ComparisonInterface: React.FC = () => {
     resetComparison,
     quickCompareEnabled,
     toggleQuickCompare,
-    chunkingProgress
+    chunkingProgress,
+    // SSMR: Cancellation support
+    cancelComparison,
+    isCancelling,
+    // System Protection for stress testing
+    systemProtectionEnabled,
+    toggleSystemProtection
   } = useComparison();
   
   // DEBUG: Log result changes
@@ -62,18 +68,31 @@ export const ComparisonInterface: React.FC = () => {
   const minHeight = 200;
   const minOutputHeight = 300;
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts and global cancellation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Global ESC key cancellation - highest priority
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isProcessing && !isCancelling) {
+          console.log('🚫 ESC key cancellation triggered');
+          cancelComparison();
+        }
+        return;
+      }
+      
+      // Ctrl+Enter comparison shortcut
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
         compareDocuments();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [compareDocuments]);
+    // Use capture phase for ESC to ensure it works regardless of focus
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [compareDocuments, isProcessing, isCancelling, cancelComparison]);
 
   const handleCopy = () => {
     setCopySuccess(true);
@@ -81,13 +100,30 @@ export const ComparisonInterface: React.FC = () => {
   };
 
   const handleLoadTest = (originalText: string, revisedText: string) => {
-    setOriginalText(originalText);
-    setRevisedText(revisedText);
+    // SSMR: Clear inputs first to prevent persistence issues
+    console.log('🧹 Clearing existing content before loading test case...');
+    setOriginalText('');
+    setRevisedText('');
     
-    // Auto-compare if enabled
-    if (quickCompareEnabled) {
-      setTimeout(() => compareDocuments(), 100);
+    // Cancel any ongoing operations
+    if (isProcessing) {
+      cancelComparison();
     }
+    
+    // Use setTimeout to ensure state is cleared before loading new content
+    setTimeout(() => {
+      console.log('📝 Loading new test case content...');
+      setOriginalText(originalText);
+      setRevisedText(revisedText);
+      
+      // Auto-compare if enabled - use manual operation flag to ensure cancellation works
+      if (quickCompareEnabled) {
+        setTimeout(() => {
+          console.log('🚀 Test auto-compare triggered');
+          compareDocuments(false, true, originalText, revisedText);
+        }, 200);
+      }
+    }, 100);
   };
 
   // Mock document generation functions for testing different scenarios
@@ -429,6 +465,44 @@ export const ComparisonInterface: React.FC = () => {
               Auto-Compare {quickCompareEnabled ? 'On' : 'Off'}
             </span>
           </button>
+          
+          {/* System Protection Toggle for stress testing */}
+          <button
+            onClick={toggleSystemProtection}
+            className={`enhanced-button flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-200 shadow-lg ${
+              systemProtectionEnabled 
+                ? 'bg-green-600 text-white hover:bg-green-700' 
+                : 'bg-red-600 text-white hover:bg-red-700'
+            }`}
+            title={systemProtectionEnabled ? 'System protection enabled - safe mode with resource limits' : 'System protection disabled - stress testing mode (may crash browser!)'}
+          >
+            <span className="text-sm">🛡️</span>
+            <span className="hidden sm:inline text-sm">
+              {systemProtectionEnabled ? 'Safe' : 'Test'}
+            </span>
+          </button>
+          
+          {/* Cancel Button - Enhanced visibility and robustness */}
+          {(isProcessing || isCancelling) && (
+            <button
+              onClick={cancelComparison}
+              disabled={isCancelling}
+              className="enhanced-button flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-red-700 disabled:cursor-not-allowed transition-all duration-200 shadow-lg animate-pulse"
+              title={isCancelling ? "Cancelling comparison..." : "Cancel the current comparison operation (or press ESC)"}
+            >
+              {isCancelling ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span className="hidden sm:inline">Cancelling...</span>
+                </>
+              ) : (
+                <>
+                  <span>✕</span>
+                  <span className="hidden sm:inline">Cancel</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
         
         <div className="text-sm text-theme-neutral-600 text-center">
@@ -525,7 +599,7 @@ export const ComparisonInterface: React.FC = () => {
         </div>
       )}
 
-      {/* Results Section - Enhanced with glassmorphism */}
+/* Results Section - Enhanced with glassmorphism */
       {result && (
         <>
           <div className="mb-6">
@@ -533,6 +607,8 @@ export const ComparisonInterface: React.FC = () => {
               changes={result.changes} 
               onCopy={handleCopy}
               height={outputHeight}
+              isProcessing={chunkingProgress.isChunking}
+              processingStatus={chunkingProgress.stage}
             />
             
             {/* Output Resize Handle - Positioned at bottom center of output */}
@@ -554,10 +630,10 @@ export const ComparisonInterface: React.FC = () => {
         </>
       )}
 
-      {/* Processing Indicator */}
+      {/* Processing Indicator - Simplified without duplicate cancel button */}
       {isProcessing && (
-        <div className="flex items-center justify-center py-12">
-          <div className="flex items-center gap-3 text-theme-primary-600">
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="flex items-center gap-3 text-theme-primary-600 mb-4">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-theme-primary-600"></div>
             <span className="text-lg font-medium">Processing comparison...</span>
           </div>

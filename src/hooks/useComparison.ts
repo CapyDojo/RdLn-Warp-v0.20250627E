@@ -2,6 +2,64 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { MyersAlgorithm } from '../algorithms/MyersAlgorithm';
 import { ComparisonState } from '../types';
 
+// System resource guardrails to prevent browser crashes
+const checkSystemResources = (originalText: string, revisedText: string) => {
+  const totalLength = originalText.length + revisedText.length;
+  const estimatedChanges = Math.min(originalText.length, revisedText.length);
+  
+  // Check available memory (approximate)
+  const memoryInfo = (performance as any)?.memory;
+  const availableMemory = memoryInfo ? memoryInfo.jsHeapSizeLimit - memoryInfo.usedJSHeapSize : null;
+  
+  console.log('🔍 System resource check:', {
+    totalLength,
+    estimatedChanges,
+    availableMemory: availableMemory ? `${(availableMemory / 1024 / 1024).toFixed(1)}MB` : 'unknown',
+    usedMemory: memoryInfo ? `${(memoryInfo.usedJSHeapSize / 1024 / 1024).toFixed(1)}MB` : 'unknown'
+  });
+  
+  // Extreme size protection (over 1M characters total)
+  if (totalLength > 1000000) {
+    return {
+      canProceed: false,
+      reason: 'Documents too large (>1M characters). Please break into smaller sections to prevent system crashes.'
+    };
+  }
+  
+  // High complexity protection (large docs with many potential changes)
+  if (totalLength > 500000 && estimatedChanges > 100000) {
+    return {
+      canProceed: false,
+      reason: 'Document combination too complex. Try smaller documents or documents with fewer differences.'
+    };
+  }
+  
+  // Memory pressure protection (if memory info available)
+  if (availableMemory && availableMemory < 100 * 1024 * 1024) { // Less than 100MB available
+    return {
+      canProceed: false,
+      reason: 'System memory low. Please close other browser tabs and try again.'
+    };
+  }
+  
+  // Successive operation protection - check for rapid consecutive large operations
+  const now = Date.now();
+  const lastLargeOperation = (globalThis as any).lastLargeOperation || 0;
+  if (totalLength > 200000 && (now - lastLargeOperation) < 5000) { // 5 second cooldown for large docs
+    return {
+      canProceed: false,
+      reason: 'Please wait a moment before processing another large document to prevent system overload.'
+    };
+  }
+  
+  // Record this operation if it's large
+  if (totalLength > 200000) {
+    (globalThis as any).lastLargeOperation = now;
+  }
+  
+  return { canProceed: true, reason: null };
+};
+
 export const useComparison = () => {
   const [state, setState] = useState<ComparisonState>({
     originalText: '',
@@ -24,10 +82,21 @@ export const useComparison = () => {
     enabled: true // ROLLBACK: Set to false to disable chunking progress
   });
 
+  // SSMR: Cancellation support with AbortController
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
+
   // Auto-Compare settings
   const [quickCompareEnabled, setQuickCompareEnabled] = useState(() => {
     // Default to enabled for better UX, but respect user preference if stored
     const stored = localStorage.getItem('rdln-auto-compare-enabled');
+    return stored === null ? true : stored === 'true';
+  });
+  
+  // System Protection Toggle for stress testing
+  const [systemProtectionEnabled, setSystemProtectionEnabled] = useState(() => {
+    // Default to enabled for safety, but allow disabling for stress testing
+    const stored = localStorage.getItem('rdln-system-protection-enabled');
     return stored === null ? true : stored === 'true';
   });
   
@@ -70,12 +139,96 @@ export const useComparison = () => {
     }
   }, []);
 
+  // SSMR: Enhanced cancellation function with same robustness as ESC key
+  const cancelComparison = useCallback(() => {
+    // Check if there's any processing to cancel
+    if (!state.isProcessing && !isCancelling) {
+      console.log('⚠️ No active operation to cancel');
+      return;
+    }
+    
+    console.log('🚫 Cancelling comparison operation...');
+    setIsCancelling(true);
+    
+    // Cancel any AbortController
+    if (abortControllerRef.current) {
+      try {
+        abortControllerRef.current.abort();
+      } catch (error) {
+        console.warn('AbortController.abort() failed:', error);
+      }
+      abortControllerRef.current = null;
+    }
+    
+    // Clear any pending auto-compare timers
+    if (autoCompareTimeoutRef.current) {
+      clearTimeout(autoCompareTimeoutRef.current);
+      autoCompareTimeoutRef.current = null;
+    }
+    
+    // Reset processing states immediately
+    setState(prev => ({
+      ...prev,
+      isProcessing: false,
+      error: 'Comparison cancelled by user'
+    }));
+    
+    // Reset chunking progress
+    setChunkingProgress({
+      progress: 0,
+      stage: 'Cancelled',
+      isChunking: false,
+      enabled: true
+    });
+    
+    // Clear global abort signal
+    try {
+      (globalThis as any).currentAbortSignal = null;
+    } catch (error) {
+      console.warn('Failed to clear global abort signal:', error);
+    }
+    
+    // Reset manual operation flag to allow auto-compare again
+    manualOperationRef.current = false;
+    
+    // Reset cancelling state after a brief delay to show feedback
+    setTimeout(() => {
+      setIsCancelling(false);
+      console.log('✅ Cancellation completed');
+    }, 1000);
+  }, [state.isProcessing, isCancelling]);
+
   const compareDocuments = useCallback(async (isAutoCompare = false, preserveFocus = true, overrideOriginal?: string, overrideRevised?: string) => {
+    // System resource guardrails - only check if protection is enabled
+    if (systemProtectionEnabled) {
+      const systemCheck = checkSystemResources(overrideOriginal ?? state.originalText, overrideRevised ?? state.revisedText);
+      if (!systemCheck.canProceed) {
+        console.warn('🚨 System resource guardrail triggered:', systemCheck.reason);
+        setState(prev => ({ ...prev, error: `System protection: ${systemCheck.reason}` }));
+        return;
+      }
+    } else {
+      console.log('🔥 System protection disabled - allowing unrestricted processing for stress testing');
+    }
+    
     // Prevent concurrent operations
     if (isAutoCompare && manualOperationRef.current) {
       console.log('⚠️ Auto-compare blocked - manual operation in progress');
       return;
     }
+    
+    // Additional safety check for processing state
+    if (state.isProcessing && !abortControllerRef.current) {
+      console.log('⚠️ Operation blocked - processing state inconsistent');
+      return;
+    }
+    
+    // SSMR: Create new AbortController for cancellation
+    abortControllerRef.current = new AbortController();
+    setIsCancelling(false);
+    
+    // SSMR: Set global AbortSignal for aggressive cancellation in algorithm
+    (globalThis as any).currentAbortSignal = abortControllerRef.current.signal;
     
     // Set manual operation flag if overrides are provided
     if (overrideOriginal || overrideRevised) {
@@ -258,6 +411,9 @@ export const useComparison = () => {
       if (preserveFocus) {
         restoreFocus();
       }
+      
+      // SSMR: Clear global signal on successful completion
+      (globalThis as any).currentAbortSignal = null;
       
       // Clear manual operation flag after completion
       if (overrideOriginal || overrideRevised) {
@@ -453,6 +609,14 @@ export const useComparison = () => {
     localStorage.setItem('rdln-auto-compare-enabled', newValue.toString());
   }, [quickCompareEnabled]);
   
+  // Toggle System Protection and persist preference
+  const toggleSystemProtection = useCallback(() => {
+    const newValue = !systemProtectionEnabled;
+    setSystemProtectionEnabled(newValue);
+    localStorage.setItem('rdln-system-protection-enabled', newValue.toString());
+    console.log(`🛡️ System protection ${newValue ? 'enabled' : 'disabled'} - ${newValue ? 'Safe mode' : 'Stress testing mode'}`);
+  }, [systemProtectionEnabled]);
+  
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -471,6 +635,12 @@ export const useComparison = () => {
     resetComparison,
     quickCompareEnabled,
     toggleQuickCompare,
+    // SSMR: Cancellation support
+    cancelComparison,
+    isCancelling,
+    // System Protection for stress testing
+    systemProtectionEnabled,
+    toggleSystemProtection,
     // SSMR CHUNKING: Export chunking progress state
     // MODULAR: Separate namespace to avoid conflicts
     chunkingProgress: {

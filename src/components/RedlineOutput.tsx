@@ -6,6 +6,8 @@ interface RedlineOutputProps {
   changes: DiffChange[];
   onCopy: () => void;
   height?: number;
+  isProcessing?: boolean;
+  processingStatus?: string;
 }
 
 // Virtual scrolling configuration
@@ -14,14 +16,20 @@ const CHUNK_SIZE = 500; // Number of changes to render in each chunk (increased 
 const CHUNK_HEIGHT = 400; // Estimated height per chunk in pixels (increased proportionally)
 const BUFFER_CHUNKS = 1; // Fewer buffer chunks
 
-export const RedlineOutput: React.FC<RedlineOutputProps> = ({ changes, onCopy, height = 500 }) => {
+export const RedlineOutput: React.FC<RedlineOutputProps> = ({ 
+  changes, 
+  onCopy, 
+  height = 500,
+  isProcessing = false,
+  processingStatus = 'Processing...'
+}) => {
   // Virtual scrolling state
   const [scrollTop, setScrollTop] = React.useState(0);
   const [containerHeight, setContainerHeight] = React.useState(height - 120);
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   
-  // Use virtual scrolling for large change sets
-  const useVirtualScrolling = changes.length > VIRTUAL_THRESHOLD;
+  // Use virtual scrolling only for large change sets AND when processing is complete
+  const useVirtualScrolling = !isProcessing && changes.length > VIRTUAL_THRESHOLD;
 
   // Performance monitoring
   React.useEffect(() => {
@@ -62,14 +70,12 @@ export const RedlineOutput: React.FC<RedlineOutputProps> = ({ changes, onCopy, h
     };
   }, [changes, scrollTop, containerHeight, useVirtualScrolling]);
   
-  // Throttled scroll handler to reduce main thread blocking
+  // Smooth scroll handler with requestAnimationFrame throttling
   const handleScroll = React.useCallback((e: React.UIEvent<HTMLDivElement>) => {
     const newScrollTop = e.currentTarget.scrollTop;
-    // Only update if scroll position changed significantly (reduces recalculations)
-    if (Math.abs(newScrollTop - scrollTop) > CHUNK_HEIGHT / 4) {
-      setScrollTop(newScrollTop);
-    }
-  }, [scrollTop]);
+    // Always update scroll position - no dead zones
+    setScrollTop(newScrollTop);
+  }, []);
   
   // Update container height when component resizes
   React.useEffect(() => {
@@ -277,6 +283,14 @@ export const RedlineOutput: React.FC<RedlineOutputProps> = ({ changes, onCopy, h
           // Direct rendering for small change sets
           <div className="font-serif text-theme-neutral-800 leading-relaxed whitespace-pre-wrap libertinus-math-output">
             {changes.map((change, index) => renderChange(change, index))}
+            {isProcessing && (
+              <div className="mt-4 p-3 bg-theme-primary-50 border border-theme-primary-200 rounded-lg">
+                <div className="flex items-center gap-2 text-theme-primary-700">
+                  <div className="w-4 h-4 border-2 border-theme-primary-400 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-sm font-medium">{processingStatus}</span>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
