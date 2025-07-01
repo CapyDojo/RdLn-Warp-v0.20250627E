@@ -18,16 +18,16 @@ const checkSystemResources = (originalText: string, revisedText: string) => {
   //   usedMemory: memoryInfo ? `${(memoryInfo.usedJSHeapSize / 1024 / 1024).toFixed(1)}MB` : 'unknown'
   // });
   
-  // Extreme size protection (over 1M characters total)
-  if (totalLength > 1000000) {
+  // Extreme size protection (over 5M characters total - increased post-performance fix)
+  if (totalLength > 5000000) {
     return {
       canProceed: false,
-      reason: 'Documents too large (>1M characters). Please break into smaller sections to prevent system crashes.'
+      reason: 'Documents too large (>5M characters). Please break into smaller sections to prevent system crashes.'
     };
   }
   
-  // High complexity protection (large docs with many potential changes)
-  if (totalLength > 500000 && estimatedChanges > 100000) {
+  // High complexity protection (large docs with many potential changes - increased thresholds)
+  if (totalLength > 2000000 && estimatedChanges > 500000) {
     return {
       canProceed: false,
       reason: 'Document combination too complex. Try smaller documents or documents with fewer differences.'
@@ -42,18 +42,18 @@ const checkSystemResources = (originalText: string, revisedText: string) => {
     };
   }
   
-  // Successive operation protection - check for rapid consecutive large operations
+  // Successive operation protection - check for rapid consecutive large operations (increased threshold)
   const now = Date.now();
   const lastLargeOperation = (globalThis as any).lastLargeOperation || 0;
-  if (totalLength > 200000 && (now - lastLargeOperation) < 5000) { // 5 second cooldown for large docs
+  if (totalLength > 1000000 && (now - lastLargeOperation) < 5000) { // 5 second cooldown for very large docs (>1M chars)
     return {
       canProceed: false,
-      reason: 'Please wait a moment before processing another large document to prevent system overload.'
+      reason: 'Please wait a moment before processing another very large document to prevent system overload.'
     };
   }
   
-  // Record this operation if it's large
-  if (totalLength > 200000) {
+  // Record this operation if it's very large
+  if (totalLength > 1000000) {
     (globalThis as any).lastLargeOperation = now;
   }
   
