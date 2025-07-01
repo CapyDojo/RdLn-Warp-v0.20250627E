@@ -10,6 +10,8 @@
     4.  Using an `IntersectionObserver` to detect when a placeholder scrolls into view.
     5.  Dynamically injecting the pre-generated HTML into the placeholder when it becomes visible.
 *   **Key Insight**: The most effective way to optimize performance for massive DOMs is to prevent the browser from knowing about off-screen elements entirely. True UI virtualization, where DOM nodes are added and removed as they enter/leave the viewport, is the gold-standard solution for this class of problem.
+*   **Performance Validation**: Tested successfully with 1M+ character documents showing smooth resize performance, confirming the architecture can handle enterprise-scale legal documents.
+*   **System Protection Evolution**: Post-performance fix, increased protection thresholds 5x (1M→5M chars, 500k+100k→2M+500k changes, 200k→1M cooldown) while preserving safety guardrails. This provides realistic headroom for production use while maintaining protection against extreme edge cases.
 
 # Key Learnings: Solo Founder Journey Building RdLn Document Comparison Tool
 

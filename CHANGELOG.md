@@ -2,6 +2,9 @@
 ### Fixed
 - **Performance:** Eliminated severe (~1500ms) resize lag on the output panel when displaying massive documents (500k+ characters) with distant redline changes. Replaced the previous static HTML freezing with a more robust 'Chunked Static Rendering' approach, using IntersectionObserver to virtualize content and keep the DOM lean.
 
+### Changed
+- **System Protection:** Significantly increased protection thresholds following performance breakthrough. Maximum document size raised from 1M to 5M characters, complex document threshold increased from 500k+100k to 2M+500k changes, and large document cooldown updated from 200k to 1M characters. These changes provide realistic headroom for enterprise-scale legal documents while preserving safety guardrails.
+
 # RdLn Document Comparison Tool - Comprehensive Changelog
 
 ## Version 0.4.3 - "System Protection Toggle & Enhanced Cancellation"
