@@ -165,6 +165,40 @@ export const TestSuite: React.FC<TestSuiteProps> = ({ onLoadTest, onTestComplete
 
           {/* Test Cases */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Preload Test Cases */}
+            <div className="col-span-full mb-4 p-4 bg-theme-primary-50 rounded-lg border border-theme-primary-200">
+              <div className="flex items-center gap-2 mb-3">
+                <h4 className="font-semibold text-theme-primary-900">Large Document Test Preloaders</h4>
+                <span className="text-xs bg-theme-accent-200 text-theme-accent-800 px-2 py-1 rounded-full font-medium">
+                  200K CHARS
+                </span>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    const largeText1 = 'A'.repeat(199990) + ' Start changes' + 'A'.repeat(10);
+                    const largeText1Revised = 'A'.repeat(199990) + ' Start of changes' + 'A'.repeat(10);
+                    onLoadTest(largeText1, largeText1Revised);
+                  }}
+                  className="enhanced-button px-4 py-2 bg-theme-primary-600 text-white text-sm rounded hover:bg-theme-primary-700 transition-all duration-200 shadow-lg"
+                >
+                  Preload Large Few Changes
+                </button>
+                <button
+                  onClick={() => {
+                    const largeText2 = 'B'.repeat(100000) + ' Original Content ' + 'B'.repeat(99995);
+                    const largeText2Revised = 'Modified ' + 'B'.repeat(99995) + ' Changed Content ' + 'B'.repeat(99957) + ' Additional Modifications';
+                    onLoadTest(largeText2, largeText2Revised);
+                  }}
+                  className="enhanced-button px-4 py-2 bg-theme-primary-600 text-white text-sm rounded hover:bg-theme-primary-700 transition-all duration-200 shadow-lg"
+                >
+                  Preload Large Many Changes
+                </button>
+              </div>
+              <p className="text-xs text-theme-primary-600 mt-2">
+                These buttons load large documents (~200k characters) directly into the comparison interface for performance testing.
+              </p>
+            </div>
             {filteredTests.map((testCase) => {
               const result = testResults[testCase.id];
               const isRunning = runningTests && !result;

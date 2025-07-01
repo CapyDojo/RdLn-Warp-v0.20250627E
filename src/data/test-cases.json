@@ -86,5 +86,21 @@
     "category": "Intellectual Property",
     "originalText": "Employee hereby assigns to Company all right, title, and interest in and to any and all inventions, discoveries, improvements, and innovations (\"Inventions\") conceived, developed, or reduced to practice by Employee during the term of employment, whether alone or with others.\nThis assignment includes all Inventions that: (a) relate to Company's business or research; (b) result from work performed for Company; or (c) are developed using Company's equipment, supplies, facilities, or confidential information. Employee shall promptly disclose all such Inventions to Company in writing.\nEmployee retains ownership of inventions that are developed entirely on Employee's own time without use of Company resources and that do not relate to Company's business or research. Employee has listed all such prior inventions on Schedule A attached hereto.",
     "revisedText": "Employee hereby assigns to Company all right, title, and interest in and to any and all inventions, discoveries, improvements, innovations, and works of authorship (\"Inventions\") conceived, developed, or reduced to practice by Employee during the term of employment, whether alone or with others.\nThis assignment includes all Inventions that: (a) relate to Company's current or reasonably anticipated business or research; (b) result from work performed for Company; (c) are developed using Company's equipment, supplies, facilities, or confidential information; or (d) are suggested by or result from Employee's work for Company. Employee shall promptly disclose all such Inventions to Company in writing and execute any documents necessary to perfect Company's rights.\nEmployee retains ownership of inventions that are developed entirely on Employee's own time without use of Company resources, do not relate to Company's business or research, and do not compete with Company's products or services. Employee has listed all such prior inventions on Schedule A attached hereto and agrees to update this list annually."
+  },
+  {
+    "id": "large-doc-few-changes",
+    "name": "Large Document - Few Changes",
+    "description": "Test case for a large document (~200k chars) with minimal modifications",
+    "category": "Volume",
+    "originalText": "{{LARGE_TEXT_1}}",
+    "revisedText": "{{LARGE_TEXT_1_REVISED}}"
+  },
+  {
+    "id": "large-doc-many-changes",
+    "name": "Large Document - Many Changes",
+    "description": "Test case for a large document (~200k chars) with many modifications",
+    "category": "Volume",
+    "originalText": "{{LARGE_TEXT_2}}",
+    "revisedText": "{{LARGE_TEXT_2_REVISED}}"
   }
 ]

@@ -27,6 +27,9 @@ interface EnhancedRedlineOutputProps {
   height?: number;
   originalText?: string;
   revisedText?: string;
+  systemProtectionEnabled?: boolean; // System protection setting from main interface
+  isProcessing?: boolean;            // Processing status for compatibility
+  processingStatus?: string;         // Processing status message for compatibility
   
   // Enhancement controls (MODULAR - can be disabled)
   useEnhancedStrategy?: boolean;  // ROLLBACK: Set to false to use original behavior
@@ -46,9 +49,12 @@ export const EnhancedRedlineOutput: React.FC<EnhancedRedlineOutputProps> = ({
   height = 500,
   originalText = '',
   revisedText = '',
-  useEnhancedStrategy = true,  // Default enabled, easily disabled
-  showRenderingInfo = true,    // Default enabled, easily disabled  
-  showProgressIndicator = true // Default enabled, easily disabled
+  systemProtectionEnabled = true,  // Default enabled for safety
+  isProcessing = false,            // Legacy compatibility
+  processingStatus = 'Processing...', // Legacy compatibility
+  useEnhancedStrategy = true,      // Default enabled, easily disabled
+  showRenderingInfo = true,        // Default enabled, easily disabled  
+  showProgressIndicator = true     // Default enabled, easily disabled
 }) => {
   // Rendering strategy state
   const [renderingDecision, setRenderingDecision] = useState<RenderingDecision | null>(null);
@@ -83,7 +89,7 @@ export const EnhancedRedlineOutput: React.FC<EnhancedRedlineOutputProps> = ({
     }
     
     // Enhanced strategy analysis
-    const decision = analyzeRenderingStrategy(originalText, revisedText, changes);
+    const decision = analyzeRenderingStrategy(originalText, revisedText, changes, systemProtectionEnabled);
     setRenderingDecision(decision);
     setCurrentStrategy(decision.strategy);
     
@@ -363,6 +369,16 @@ export const EnhancedRedlineOutput: React.FC<EnhancedRedlineOutputProps> = ({
         ) : (
           // Render all changes directly
           changes.map((change, index) => renderChange(change, index))
+        )}
+        
+        {/* Legacy processing status display (preserved from original RedlineOutput) */}
+        {isProcessing && (
+          <div className="mt-4 p-3 bg-theme-primary-50 border border-theme-primary-200 rounded-lg">
+            <div className="flex items-center gap-2 text-theme-primary-700">
+              <div className="w-4 h-4 border-2 border-theme-primary-400 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-sm font-medium">{processingStatus}</span>
+            </div>
+          </div>
         )}
       </div>
     );

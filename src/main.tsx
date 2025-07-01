@@ -25,7 +25,8 @@ if (process.env.NODE_ENV === 'development' && !ENABLE_DEV_LOGS) {
   console.warn = (...args) => {
     // Suppress Tesseract warnings and other noise
     if (args[0]?.includes?.('Parameter not found:') || 
-        args[0]?.includes?.('Download the React DevTools')) {
+        args[0]?.includes?.('Download the React DevTools') ||
+        args[0]?.includes?.('🎯 CSS OUTPUT RESIZE')) {
       return;
     }
     originalWarn.apply(console, args);
@@ -50,11 +51,11 @@ createRoot(document.getElementById('root')!).render(
 setTimeout(async () => {
   try {
     if (process.env.NODE_ENV === 'development') {
-      console.log('🚀 Initializing background language loading...');
+      // console.log('🚀 Initializing background language loading...');
     }
     await BackgroundLanguageLoader.startBackgroundLoading();
     if (process.env.NODE_ENV === 'development') {
-      console.log('✅ Background language loading started successfully');
+      // console.log('✅ Background language loading started successfully');
     }
   } catch (error) {
     console.warn('⚠️ Background language loading failed (non-critical):', error);

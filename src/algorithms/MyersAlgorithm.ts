@@ -1,7 +1,7 @@
 import { DiffChange, ComparisonResult } from '../types';
 
 // DEBUG MODE: Set to true to enable detailed logging for debugging
-const DEBUG_MODE = true;
+const DEBUG_MODE = false;
 
 // Debug logger that can be easily toggled
 const debugLog = DEBUG_MODE ? console.log : () => {};
@@ -1374,20 +1374,20 @@ export class MyersAlgorithm {
     }
     
     // Tokenize the trimmed core content for efficiency
-    console.time('Tokenization - Original Core');
+    // console.time('Tokenization - Original Core');
     const originalTokens = this.tokenize(originalCore);
-    console.timeEnd('Tokenization - Original Core');
+    // console.timeEnd('Tokenization - Original Core');
 
-    console.time('Tokenization - Revised Core');
+    // console.time('Tokenization - Revised Core');
     const revisedTokens = this.tokenize(revisedCore);
-    console.timeEnd('Tokenization - Revised Core');
+    // console.timeEnd('Tokenization - Revised Core');
     
     debugLog('📝 Original tokens:', originalTokens.length);
     debugLog('📝 Revised tokens:', revisedTokens.length);
     
-    // TESTING: Lower threshold for debugging chunking progress (< 10 tokens)
+    // SMART PROGRESS: Only show progress for large diffs (3000+ tokens = ~15k chars)
     const totalTokens = originalTokens.length + revisedTokens.length;
-    const shouldTrackProgress = totalTokens > 10 && progressCallback;
+    const shouldTrackProgress = totalTokens > 3000 && progressCallback;
     
     debugLog('🔢 Token count analysis:', {
       originalTokens: originalTokens.length,
@@ -1407,7 +1407,7 @@ export class MyersAlgorithm {
     const STREAMING_THRESHOLD = 20000; // Tokens (configurable)
     const enableStreaming = true; // ROLLBACK: Set to false to disable streaming
     
-    console.time('Myers Diff');
+    // console.time('Myers Diff');
     let diff: any[];
     
     if (enableStreaming && totalTokens > STREAMING_THRESHOLD) {
@@ -1423,22 +1423,22 @@ export class MyersAlgorithm {
       diff = this.myers(originalTokens, revisedTokens);
     }
     
-    console.timeEnd('Myers Diff');
+    // console.timeEnd('Myers Diff');
     
     if (shouldTrackProgress) {
-      console.log('📊 Calling progressCallback(90, "Processing results...")');
+      // console.log('📊 Calling progressCallback(90, "Processing results...")');
       progressCallback!(90, 'Processing results...');
     }
     
     // Convert to our format and calculate stats
-    console.time('Result Processing');
-    console.log('📊 Post-processing performance tracking:', {
-      rawDiffLength: diff.length,
-      algorithmComplete: true,
-      startingPostProcessing: true
-    });
+    // console.time('Result Processing');
+    // console.log('📊 Post-processing performance tracking:', {
+    //   rawDiffLength: diff.length,
+    //   algorithmComplete: true,
+    //   startingPostProcessing: true
+    // });
     
-    console.time('Core Changes Mapping');
+    // console.time('Core Changes Mapping');
     let coreChanges: DiffChange[] = diff.map((change, index) => ({
       type: change.type as 'added' | 'removed' | 'unchanged' | 'changed',
       content: change.content,
@@ -1446,33 +1446,33 @@ export class MyersAlgorithm {
       revisedContent: change.revisedContent,
       index
     }));
-    console.timeEnd('Core Changes Mapping');
-    console.log('📊 Core changes created:', coreChanges.length);
+    // console.timeEnd('Core Changes Mapping');
+    // console.log('📊 Core changes created:', coreChanges.length);
     
     // PRIORITY 2.5: SSMR Reconstruct with combined paragraph and character trimming
-    console.time('Final Reconstruction');
+    // console.time('Final Reconstruction');
     const finalChanges = this.reconstructWithCombinedTrimming(coreChanges, paragraphTrimResult, charTrimResult);
-    console.timeEnd('Final Reconstruction');
-    console.timeEnd('Result Processing');
+    // console.timeEnd('Final Reconstruction');
+    // console.timeEnd('Result Processing');
     
-    console.log('📊 Final result size:', {
-      finalChangesLength: finalChanges.length,
-      totalCharacters: finalChanges.reduce((sum, change) => sum + (change.content?.length || 0), 0),
-      changeTypes: {
-        added: finalChanges.filter(c => c.type === 'added').length,
-        removed: finalChanges.filter(c => c.type === 'removed').length,
-        changed: finalChanges.filter(c => c.type === 'changed').length,
-        unchanged: finalChanges.filter(c => c.type === 'unchanged').length
-      }
-    });
+    // console.log('📊 Final result size:', {
+    //   finalChangesLength: finalChanges.length,
+    //   totalCharacters: finalChanges.reduce((sum, change) => sum + (change.content?.length || 0), 0),
+    //   changeTypes: {
+    //     added: finalChanges.filter(c => c.type === 'added').length,
+    //     removed: finalChanges.filter(c => c.type === 'removed').length,
+    //     changed: finalChanges.filter(c => c.type === 'changed').length,
+    //     unchanged: finalChanges.filter(c => c.type === 'unchanged').length
+    //   }
+    // });
     
     // EXTREME SIZE PROTECTION: Warn about very large result sets
     if (finalChanges.length > 5000) {
-      console.warn('⚠️ LARGE RESULT SET:', {
-        changesCount: finalChanges.length,
-        recommendation: 'UI may experience lag during rendering',
-        suggestion: 'Consider using progressive rendering or result limiting'
-      });
+      // console.warn('⚠️ LARGE RESULT SET:', {
+      //   changesCount: finalChanges.length,
+      //   recommendation: 'UI may experience lag during rendering',
+      //   suggestion: 'Consider using progressive rendering or result limiting'
+      // });
     }
     
     // Calculate stats before using in progressive sections
@@ -1486,10 +1486,10 @@ export class MyersAlgorithm {
 
     // SSMR: Progressive section streaming for large result sets
     if (this.FEATURE_FLAGS.USE_PROGRESSIVE_SECTIONS && finalChanges.length > this.SECTION_CONFIG.TARGET_SIZE) {
-      console.log('🔄 Large result set detected, using progressive section streaming:', {
-        changesCount: finalChanges.length,
-        targetSectionSize: this.SECTION_CONFIG.TARGET_SIZE
-      });
+      // console.log('🔄 Large result set detected, using progressive section streaming:', {
+      //   changesCount: finalChanges.length,
+      //   targetSectionSize: this.SECTION_CONFIG.TARGET_SIZE
+      // });
       
       // Stream sections progressively instead of rejecting
       return this.createProgressiveSectionResult(finalChanges, stats, progressCallback);
@@ -1498,11 +1498,11 @@ export class MyersAlgorithm {
     // CRITICAL FIX: Prevent UI crashes with massive result sets (legacy fallback)
     const MAX_CHANGES_FOR_UI = 50000; // Reasonable limit for browser rendering
     if (finalChanges.length > MAX_CHANGES_FOR_UI) {
-      console.error('🚨 RESULT SET TOO LARGE FOR UI:', {
-        changesCount: finalChanges.length,
-        maxAllowed: MAX_CHANGES_FOR_UI,
-        action: 'Rejecting to prevent browser crash'
-      });
+      // console.error('🚨 RESULT SET TOO LARGE FOR UI:', {
+      //   changesCount: finalChanges.length,
+      //   maxAllowed: MAX_CHANGES_FOR_UI,
+      //   action: 'Rejecting to prevent browser crash'
+      // });
       
       throw new Error(`Document comparison resulted in ${finalChanges.length} changes, which exceeds the UI limit of ${MAX_CHANGES_FOR_UI}. This typically indicates the documents are too different or too large for effective comparison.`);
     }
@@ -1517,30 +1517,30 @@ export class MyersAlgorithm {
     });
     
     // COMPREHENSIVE PERFORMANCE LOGGING FOR POST-PROCESSING ANALYSIS
-    console.log('🎯 POST-PROCESSING PERFORMANCE ANALYSIS:');
-    console.log('📊 Algorithm completed, starting return phase...');
+    // console.log('🎯 POST-PROCESSING PERFORMANCE ANALYSIS:');
+    // console.log('📊 Algorithm completed, starting return phase...');
     
     const returnStartTime = performance.now();
     
     // SAFE: Report completion
     if (progressCallback) {
-      console.log('📊 Calling progressCallback(100, "Complete")');
+      // console.log('📊 Calling progressCallback(100, "Complete")');
       progressCallback(100, 'Complete');
     }
     
-    console.log('📊 About to return result object...');
+    // console.log('📊 About to return result object...');
     const result = { changes: finalChanges, stats };
     
     const returnEndTime = performance.now();
-    console.log(`🎯 Return preparation completed in ${(returnEndTime - returnStartTime).toFixed(2)}ms`);
-    console.log('📊 Result object size analysis:', {
-      changesCount: finalChanges.length,
-      estimatedMemorySize: JSON.stringify(result).length,
-      largestChangeContent: Math.max(...finalChanges.map(c => (c.content?.length || 0))),
-      returnTime: (returnEndTime - returnStartTime).toFixed(2) + 'ms'
-    });
+    // console.log(`🎯 Return preparation completed in ${(returnEndTime - returnStartTime).toFixed(2)}ms`);
+    // console.log('📊 Result object size analysis:', {
+    //   changesCount: finalChanges.length,
+    //   estimatedMemorySize: JSON.stringify(result).length,
+    //   largestChangeContent: Math.max(...finalChanges.map(c => (c.content?.length || 0))),
+    //   returnTime: (returnEndTime - returnStartTime).toFixed(2) + 'ms'
+    // });
     
-    console.log('🚀 ALGORITHM COMPLETE - Returning to React component...');
+    // console.log('🚀 ALGORITHM COMPLETE - Returning to React component...');
     return result;
   }
 
@@ -1582,7 +1582,7 @@ const CHUNK_SIZE = 1800; // Process 1800 tokens per chunk (adjustable)
     for (let i = 0; i < maxLength; i += CHUNK_SIZE) {
       // SSMR: Check for cancellation at start of each chunk
       if (abortSignal?.aborted) {
-        console.log('🚫 Streaming Myers algorithm cancelled at chunk', Math.floor(i / CHUNK_SIZE) + 1);
+        // console.log('🚫 Streaming Myers algorithm cancelled at chunk', Math.floor(i / CHUNK_SIZE) + 1);
         throw new Error('Operation cancelled by user');
       }
       
@@ -1599,7 +1599,7 @@ const CHUNK_SIZE = 1800; // Process 1800 tokens per chunk (adjustable)
       
       // SSMR: Check for cancellation before processing chunk
       if (abortSignal?.aborted) {
-        console.log('🚫 Streaming Myers algorithm cancelled before processing chunk');
+        // console.log('🚫 Streaming Myers algorithm cancelled before processing chunk');
         throw new Error('Operation cancelled by user');
       }
       
@@ -1630,7 +1630,7 @@ const CHUNK_SIZE = 1800; // Process 1800 tokens per chunk (adjustable)
       
       // SSMR: Check for cancellation before yielding
       if (abortSignal?.aborted) {
-        console.log('🚫 Streaming Myers algorithm cancelled before yield');
+        // console.log('🚫 Streaming Myers algorithm cancelled before yield');
         throw new Error('Operation cancelled by user');
       }
       

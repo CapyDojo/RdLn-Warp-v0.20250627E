@@ -1,0 +1,30 @@
+/* SSMR CSS Resize Overrides - Force RedlineOutput to respect container height */
+
+.override-redline-height .glass-panel {
+  height: 100% !important;
+}
+
+.override-redline-height .glass-panel-inner-content {
+  height: calc(100% - 120px) !important; /* Account for header/footer */
+}
+
+.redline-output-wrapper .glass-panel {
+  height: 100% !important;
+  max-height: none !important;
+}
+
+.redline-output-wrapper .glass-panel-inner-content {
+  height: calc(100% - 120px) !important; /* Account for header/footer */
+  max-height: none !important;
+}
+
+/* Ensure child elements also respect container height */
+.redline-output-wrapper .glass-panel > div:first-child {
+  height: auto !important;
+}
+
+.redline-output-wrapper .glass-panel > div:last-child {
+  height: auto !important;
+}
+
+/* Simplified CSS classes removed - reverted to theme-based classes for stability */

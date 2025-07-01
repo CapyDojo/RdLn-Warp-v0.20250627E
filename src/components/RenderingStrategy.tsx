@@ -76,7 +76,8 @@ export interface RenderingDecision {
 export function analyzeRenderingStrategy(
   originalText: string, 
   revisedText: string, 
-  changes?: DiffChange[]
+  changes?: DiffChange[],
+  systemProtectionEnabled?: boolean
 ): RenderingDecision {
   const originalSize = originalText.length;
   const revisedSize = revisedText.length;
@@ -111,13 +112,14 @@ export function analyzeRenderingStrategy(
   let estimatedRenderTime: number;
   let recommendations: string[] = [];
   
-  // Emergency fallback for massive change sets
-  if (changeCount > RENDERING_THRESHOLDS.MASSIVE_CHANGES_THRESHOLD * 2) {
+  // Emergency fallback for massive change sets (only when system protection is enabled)
+  if (changeCount > RENDERING_THRESHOLDS.MASSIVE_CHANGES_THRESHOLD * 2 && systemProtectionEnabled !== false) {
     mode = 'emergency_fallback';
     reasoning = 'Extremely large change set detected. Using emergency fallback mode to prevent UI blocking.';
     estimatedRenderTime = 1000; // 1 second
     recommendations.push('Consider comparing smaller document sections');
     recommendations.push('The documents may be fundamentally different');
+    recommendations.push('System protection enabled - disable in settings for full rendering');
   }
   // Virtual scrolling for massive but manageable change sets
   else if (changeCount > RENDERING_THRESHOLDS.VIRTUAL_SCROLL_THRESHOLD) {

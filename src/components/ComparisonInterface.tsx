@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, startTransition } from 'react';
 import { Play, RotateCcw, AlertCircle, CheckCircle, Image, Globe, ArrowLeftRight, Zap, ZapOff, GripHorizontal } from 'lucide-react';
 import { useComparison } from '../hooks/useComparison';
 import { TextInputPanel } from './TextInputPanel';
@@ -14,6 +14,9 @@ import { BackgroundLoadingStatus } from './BackgroundLoadingStatus';
 import { ChunkingProgressIndicator } from './ChunkingProgressIndicator';
 
 export const ComparisonInterface: React.FC = () => {
+  // Performance tracking (silent in production)
+  const renderStartTime = performance.now();
+  
   const {
     originalText,
     revisedText,
@@ -35,15 +38,26 @@ export const ComparisonInterface: React.FC = () => {
     toggleSystemProtection
   } = useComparison();
   
-  // DEBUG: Log result changes
+  // SSMR: DISABLED result size monitoring - was causing resize lag
+  // React.useEffect(() => {
+  //   if (result) {
+  //     console.log('📊 RESIZE DEBUG: Result object size:', {
+  //       changesCount: result.changes?.length || 0,
+  //       estimatedMemorySize: JSON.stringify(result).length,
+  //       timestamp: performance.now()
+  //     });
+  //   }
+  // }, [result]);
+  
+  // DEBUG: Log result changes (DISABLED during resize debugging)
   React.useEffect(() => {
-    console.log('🎨 ComparisonInterface - result changed:', {
-      hasResult: !!result,
-      resultType: typeof result,
-      hasChanges: !!(result?.changes),
-      changesLength: result?.changes?.length,
-      resultKeys: result ? Object.keys(result) : 'no result'
-    });
+    // console.log('🎨 ComparisonInterface - result changed:', {
+    //   hasResult: !!result,
+    //   resultType: typeof result,
+    //   hasChanges: !!(result?.changes),
+    //   changesLength: result?.changes?.length,
+    //   resultKeys: result ? Object.keys(result) : 'no result'
+    // });
   }, [result]);
 
   // CHUNKING DEBUG: Temporarily disabled to prevent infinite loops
@@ -54,9 +68,19 @@ export const ComparisonInterface: React.FC = () => {
   const [copySuccess, setCopySuccess] = React.useState(false);
   const [autoCompareCountdown, setAutoCompareCountdown] = React.useState(0);
   
-  // Resizable panels state
+  // SSMR FIX: CSS-based resize to prevent React re-renders
+  // SAFE: Fallback to React state if CSS manipulation fails
+  // MODULAR: Can be disabled by setting USE_CSS_RESIZE = false
+  // REVERSIBLE: Easy rollback to React state
+  const USE_CSS_RESIZE = true; // ROLLBACK: Set to false to use React state
+  
+  // Fallback React state (only used if CSS resize is disabled)
   const [panelHeight, setPanelHeight] = useState(400);
   const [outputHeight, setOutputHeight] = useState(500);
+  
+  // DOM refs for direct manipulation
+  const inputPanelsRef = useRef<HTMLDivElement>(null);
+  const outputPanelRef = useRef<HTMLDivElement>(null);
   const resizeHandleRef = useRef<HTMLDivElement>(null);
   const outputResizeHandleRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
@@ -67,20 +91,70 @@ export const ComparisonInterface: React.FC = () => {
   const outputStartHeight = useRef(0);
   const minHeight = 200;
   const minOutputHeight = 300;
+  
+  // CSS manipulation helpers
+  const setPanelHeightCSS = useCallback((height: number) => {
+    if (!USE_CSS_RESIZE) {
+      setPanelHeight(height);
+      return;
+    }
+    
+    // Direct CSS manipulation of TextInputPanel inner content - no React re-render
+    if (inputPanelsRef.current) {
+      // Target the actual glass-panel-inner-content divs that have the height styling
+      const innerContentElements = inputPanelsRef.current.querySelectorAll('.glass-panel-inner-content');
+      innerContentElements.forEach(element => {
+        (element as HTMLElement).style.height = `${height}px`;
+      });
+    }
+  }, [USE_CSS_RESIZE]);
+  
+  const setOutputHeightCSS = useCallback((height: number) => {
+    if (!USE_CSS_RESIZE) {
+      setOutputHeight(height);
+      return;
+    }
+    
+    // Direct CSS manipulation - no React re-render
+    if (outputPanelRef.current) {
+      outputPanelRef.current.style.height = `${height}px`;
+    }
+  }, [USE_CSS_RESIZE]);
+  
+  // Initialize CSS heights on mount and pre-warm the system
+  // Use a ref to track if pre-warming has completed to avoid double execution
+  const preWarmingCompleted = useRef(false);
+  
+  useEffect(() => {
+    if (USE_CSS_RESIZE) {
+      // Set initial CSS heights to override any default React state
+      setPanelHeightCSS(400);
+      setOutputHeightCSS(500);
+      
+      // PRE-WARM: Immediate execution to avoid StrictMode double-mounting issues
+      if (!preWarmingCompleted.current) {
+        // Trigger immediate adjustments to warm up the CSS manipulation system
+        setPanelHeightCSS(401);
+        setPanelHeightCSS(400);
+        setOutputHeightCSS(501);
+        setOutputHeightCSS(500);
+        preWarmingCompleted.current = true;
+      }
+    }
+  }, [USE_CSS_RESIZE, setPanelHeightCSS, setOutputHeightCSS]);
 
   // Keyboard shortcuts and global cancellation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Global ESC key cancellation - highest priority
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        if (isProcessing && !isCancelling) {
-          console.log('🚫 ESC key cancellation triggered');
-          cancelComparison();
+        // Global ESC key cancellation - highest priority
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          e.stopPropagation();
+          if (isProcessing && !isCancelling) {
+            cancelComparison();
+          }
+          return;
         }
-        return;
-      }
       
       // Ctrl+Enter comparison shortcut
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
@@ -101,7 +175,6 @@ export const ComparisonInterface: React.FC = () => {
 
   const handleLoadTest = (originalText: string, revisedText: string) => {
     // SSMR: Clear inputs first to prevent persistence issues
-    console.log('🧹 Clearing existing content before loading test case...');
     setOriginalText('');
     setRevisedText('');
     
@@ -112,14 +185,12 @@ export const ComparisonInterface: React.FC = () => {
     
     // Use setTimeout to ensure state is cleared before loading new content
     setTimeout(() => {
-      console.log('📝 Loading new test case content...');
       setOriginalText(originalText);
       setRevisedText(revisedText);
       
       // Auto-compare if enabled - use manual operation flag to ensure cancellation works
       if (quickCompareEnabled) {
         setTimeout(() => {
-          console.log('🚀 Test auto-compare triggered');
           compareDocuments(false, true, originalText, revisedText);
         }, 200);
       }
@@ -232,15 +303,27 @@ export const ComparisonInterface: React.FC = () => {
     return revisedDoc;
   };
   
-  // Resize handlers for synchronized input panels
+  // SSMR FIX: CSS-based resize handlers to prevent React re-renders
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDraggingRef.current) return;
+    
+    const moveStartTime = performance.now();
     
     // Calculate delta from initial mouse position
     const deltaY = e.clientY - dragStartY.current;
     const newHeight = Math.max(minHeight, Math.min(800, startHeight.current + deltaY));
-    setPanelHeight(newHeight);
-  }, [minHeight]);
+    
+    // CSS manipulation with startTransition for non-blocking operations
+    startTransition(() => {
+      setPanelHeightCSS(newHeight);
+    });
+    
+    const moveEndTime = performance.now();
+    const moveDuration = moveEndTime - moveStartTime;
+    
+    // Only log slow mouse moves to identify bottlenecks
+    // (Logging disabled for production)
+  }, [minHeight, setPanelHeightCSS]);
   
   const handleMouseUp = useCallback(() => {
     isDraggingRef.current = false;
@@ -253,27 +336,45 @@ export const ComparisonInterface: React.FC = () => {
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     
-    // Capture initial state
+    // Capture initial state - use actual DOM height instead of React state
     dragStartY.current = e.clientY;
-    startHeight.current = panelHeight;
+    
+    if (USE_CSS_RESIZE && inputPanelsRef.current) {
+      // Get actual height from DOM for CSS-based resize
+      const firstPanel = inputPanelsRef.current.querySelector('.glass-panel-inner-content') as HTMLElement;
+      if (firstPanel) {
+        const computedHeight = firstPanel.getBoundingClientRect().height;
+        startHeight.current = computedHeight;
+      } else {
+        startHeight.current = 400; // fallback
+      }
+    } else {
+      // Use React state for fallback mode
+      startHeight.current = panelHeight;
+    }
+    
     isDraggingRef.current = true;
     
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
     document.body.style.cursor = 'row-resize';
     document.body.style.userSelect = 'none';
-  }, [handleMouseMove, handleMouseUp, panelHeight]);
+  }, [handleMouseMove, handleMouseUp, panelHeight, USE_CSS_RESIZE]);
   
   
-  // Output resize handlers
+  // SSMR FIX: CSS-based output resize handlers to prevent React re-renders
   const handleOutputMouseMove = useCallback((e: MouseEvent) => {
     if (!isOutputDraggingRef.current) return;
     
     // Calculate delta from initial mouse position
     const deltaY = e.clientY - outputDragStartY.current;
     const newHeight = Math.max(minOutputHeight, Math.min(900, outputStartHeight.current + deltaY));
-    setOutputHeight(newHeight);
-  }, [minOutputHeight]);
+    
+    // CSS manipulation with startTransition for non-blocking operations
+    startTransition(() => {
+      setOutputHeightCSS(newHeight);
+    });
+  }, [minOutputHeight, setOutputHeightCSS]);
   
   const handleOutputMouseUp = useCallback(() => {
     isOutputDraggingRef.current = false;
@@ -286,16 +387,25 @@ export const ComparisonInterface: React.FC = () => {
   const handleOutputMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     
-    // Capture initial state
+    // Capture initial state - use actual DOM height instead of stale React state
     outputDragStartY.current = e.clientY;
-    outputStartHeight.current = outputHeight;
+    
+    if (USE_CSS_RESIZE && outputPanelRef.current) {
+      // Get actual height from DOM for CSS-based resize
+      const computedHeight = outputPanelRef.current.getBoundingClientRect().height;
+      outputStartHeight.current = computedHeight;
+    } else {
+      // Use React state for fallback mode
+      outputStartHeight.current = outputHeight;
+    }
+    
     isOutputDraggingRef.current = true;
     
     document.addEventListener('mousemove', handleOutputMouseMove);
     document.addEventListener('mouseup', handleOutputMouseUp);
     document.body.style.cursor = 'row-resize';
     document.body.style.userSelect = 'none';
-  }, [handleOutputMouseMove, handleOutputMouseUp, outputHeight]);
+  }, [handleOutputMouseMove, handleOutputMouseUp, outputHeight, USE_CSS_RESIZE]);
 
   const handleSwapContent = () => {
     const tempOriginal = originalText;
@@ -321,14 +431,7 @@ export const ComparisonInterface: React.FC = () => {
         className="mb-4" 
       />
       
-      {/* SSMR CHUNKING: Step 3 - Chunking Progress Indicator (Option 2: Separate from OCR) */}
-      <ChunkingProgressIndicator
-        progress={chunkingProgress.progress}
-        stage={chunkingProgress.stage}
-        isChunking={chunkingProgress.isChunking}
-        enabled={chunkingProgress.enabled} // ROLLBACK: Set to false to hide completely
-        className="mb-4"
-      />
+      {/* SSMR CHUNKING: Progress now shown in output area during processing */}
       
       {/* Enhanced OCR Feature Notice - Enhanced with glassmorphism */}
       <div className="glass-panel border border-theme-primary-200 rounded-lg p-4 mb-6 shadow-lg transition-all duration-300">
@@ -419,6 +522,24 @@ export const ComparisonInterface: React.FC = () => {
           className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
         >
           🚀 Monster Doc, Crazy Changes
+        </button>
+        <button
+          onClick={() => {
+            const original = createMockDocument('large', 200000, false);
+            handleLoadTest(original, createMockDiff('few', original));
+          }}
+          className="enhanced-button bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
+        >
+          📚 Large Doc, Few Changes
+        </button>
+        <button
+          onClick={() => {
+            const original = createMockDocument('large', 200000, false);
+            handleLoadTest(original, createMockDiff('many', original));
+          }}
+          className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
+        >
+          📚 Large Doc, Many Changes
         </button>
         </div>
         
@@ -525,24 +646,28 @@ export const ComparisonInterface: React.FC = () => {
 
       {/* Input Section with Centered Swap Button - Enhanced with glassmorphism */}
       <div className="relative mb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <TextInputPanel
-            title="Original Version"
-            value={originalText}
-            onChange={(value: string, isPasteAction?: boolean) => setOriginalText(value, isPasteAction)}
-            placeholder="Paste your original legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
-            disabled={isProcessing}
-            height={panelHeight}
-          />
+        <div ref={inputPanelsRef} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div data-input-panel>
+            <TextInputPanel
+              title="Original Version"
+              value={originalText}
+              onChange={(value: string, isPasteAction?: boolean) => setOriginalText(value, isPasteAction)}
+              placeholder="Paste your original legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
+              disabled={isProcessing}
+              height={USE_CSS_RESIZE ? undefined : panelHeight}
+            />
+          </div>
           
-          <TextInputPanel
-            title="Revised Version"
-            value={revisedText}
-            onChange={(value: string, isPasteAction?: boolean) => setRevisedText(value, isPasteAction)}
-            placeholder="Paste your revised legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
-            disabled={isProcessing}
-            height={panelHeight}
-          />
+          <div data-input-panel>
+            <TextInputPanel
+              title="Revised Version"
+              value={revisedText}
+              onChange={(value: string, isPasteAction?: boolean) => setRevisedText(value, isPasteAction)}
+              placeholder="Paste your revised legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
+              disabled={isProcessing}
+              height={USE_CSS_RESIZE ? undefined : panelHeight}
+            />
+          </div>
         </div>
         
         {/* Resizable Panels Handle - Glassmorphic and thumb-friendly */}
@@ -600,16 +725,72 @@ export const ComparisonInterface: React.FC = () => {
       )}
 
 /* Results Section - Enhanced with glassmorphism */
-      {result && (
+      {(result || (isProcessing && chunkingProgress.enabled && chunkingProgress.isChunking)) && (
         <>
           <div className="mb-6">
-            <RedlineOutput 
-              changes={result.changes} 
-              onCopy={handleCopy}
-              height={outputHeight}
-              isProcessing={chunkingProgress.isChunking}
-              processingStatus={chunkingProgress.stage}
-            />
+            {(isProcessing && chunkingProgress.enabled && chunkingProgress.isChunking) ? (
+              <div className="glass-panel overflow-hidden shadow-lg transition-all duration-300" style={{ height: `${outputHeight}px`, minHeight: '200px' }}>
+                <div className="glass-panel-header-footer px-4 py-3 border-b border-theme-neutral-200 flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-theme-primary-900">Processing Comparison...</h3>
+                </div>
+                <div className="glass-panel-inner-content p-6 overflow-y-auto flex flex-col items-center justify-center" style={{ height: `${outputHeight - 120}px` }}>
+                  {chunkingProgress.enabled && chunkingProgress.isChunking ? (
+                    <div className="w-full max-w-md">
+                      <div className="flex items-center gap-3 text-theme-primary-600 mb-4">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-theme-primary-600"></div>
+                        <span className="text-lg font-medium">Processing comparison...</span>
+                      </div>
+                      <div className="w-full bg-theme-neutral-200 rounded-full h-3 mb-2">
+                        <div 
+                          className="h-3 bg-theme-primary-600 rounded-full transition-all duration-300" 
+                          style={{ width: `${Math.min(100, Math.max(0, chunkingProgress.progress))}%` }}
+                        ></div>
+                      </div>
+                      <div className="text-sm text-theme-neutral-600 text-center">
+                        {chunkingProgress.stage || 'Processing...'}
+                      </div>
+                      <div className="text-xs text-theme-neutral-500 text-center mt-2">
+                        {chunkingProgress.progress}% complete
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3 text-theme-primary-600">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-theme-primary-600"></div>
+                      <span className="text-lg font-medium">Starting comparison...</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div 
+                ref={outputPanelRef} 
+                style={USE_CSS_RESIZE ? { 
+                  height: `${outputHeight}px`,
+                  overflow: 'hidden' // Ensure container controls height
+                } : undefined}
+                className={USE_CSS_RESIZE ? "override-redline-height" : ""}
+              >
+                <div style={USE_CSS_RESIZE ? {
+                  height: '100%',
+                  overflow: 'hidden'
+                } : undefined}>
+                  <div 
+                    style={USE_CSS_RESIZE ? {
+                      height: '100%'
+                    } : undefined}
+                    className={USE_CSS_RESIZE ? 'redline-output-wrapper' : ''}
+                  >
+                    <RedlineOutput
+                      changes={result.changes} 
+                      onCopy={handleCopy}
+                      height={USE_CSS_RESIZE ? 9999 : outputHeight} // Force RedlineOutput to use container height
+                      isProcessing={false}
+                      processingStatus=""
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
             
             {/* Output Resize Handle - Positioned at bottom center of output */}
             <div className="flex justify-center mt-4">
@@ -624,9 +805,11 @@ export const ComparisonInterface: React.FC = () => {
             </div>
           </div>
           
-          <div>
-            <ComparisonStats stats={result.stats} />
-          </div>
+          {result && (
+            <div>
+              <ComparisonStats stats={result.stats} />
+            </div>
+          )}
         </>
       )}
 

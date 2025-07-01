@@ -5,6 +5,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { useTheme } from './contexts/ThemeContext';
 import { OCRService } from './utils/OCRService';
 import { LogoTestPage } from './pages/LogoTestPage'; // Import the new LogoTestPage
+import './styles/resize-overrides.css'; // SSMR CSS resize fixes
 
 function AppContent() {
   const { currentTheme, themeConfig } = useTheme();
