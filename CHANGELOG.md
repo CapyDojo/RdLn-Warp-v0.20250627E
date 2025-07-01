@@ -1,3 +1,7 @@
+## [0.2.1] - 2025-07-01
+### Fixed
+- **Performance:** Eliminated severe (~1500ms) resize lag on the output panel when displaying massive documents (500k+ characters) with distant redline changes. Replaced the previous static HTML freezing with a more robust 'Chunked Static Rendering' approach, using IntersectionObserver to virtualize content and keep the DOM lean.
+
 # RdLn Document Comparison Tool - Comprehensive Changelog
 
 ## Version 0.4.3 - "System Protection Toggle & Enhanced Cancellation"

@@ -1,3 +1,16 @@
+## 2025-07-01: Fixing Large DOM Performance with Chunked Static Rendering
+
+*   **Problem**: Severe (1500ms+) lag when resizing panels containing enormous, static HTML documents (~15MB), even when using `dangerouslySetInnerHTML` to bypass React's virtual DOM.
+*   **Root Cause Analysis**: Browser performance profiling (Chrome DevTools) definitively identified the bottleneck as the browser's own "Recalculate Style" phase. Resizing the container forced the engine to re-evaluate styles for hundreds of thousands of DOM nodes, even if they were off-screen.
+*   **Ineffective Solutions**: CSS `content-visibility: auto` was insufficient to solve the resize lag, as the browser still had to manage the layout of the massive, single DOM element.
+*   **Effective Solution**: Implemented **Chunked Static Rendering**. This pattern involves:
+    1.  Splitting the content into manageable chunks (e.g., 1000 items/chunk).
+    2.  Generating a static HTML string *for each chunk*.
+    3.  Rendering lightweight placeholder `<div>`s with a fixed estimated height.
+    4.  Using an `IntersectionObserver` to detect when a placeholder scrolls into view.
+    5.  Dynamically injecting the pre-generated HTML into the placeholder when it becomes visible.
+*   **Key Insight**: The most effective way to optimize performance for massive DOMs is to prevent the browser from knowing about off-screen elements entirely. True UI virtualization, where DOM nodes are added and removed as they enter/leave the viewport, is the gold-standard solution for this class of problem.
+
 # Key Learnings: Solo Founder Journey Building RdLn Document Comparison Tool
 
 *Insights from building a production-ready legal tech MVP in 2025*
