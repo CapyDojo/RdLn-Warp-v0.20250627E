@@ -1,4 +1,4 @@
-export type ThemeName = 'professional' | 'bamboo' | 'apple-light' | 'apple-dark' | 'kyoto' | 'new-york';
+export type ThemeName = 'professional' | 'bamboo' | 'apple-light' | 'apple-dark' | 'kyoto' | 'new-york' | 'autumn';
 
 export interface ThemeConfig {
   name: ThemeName;
