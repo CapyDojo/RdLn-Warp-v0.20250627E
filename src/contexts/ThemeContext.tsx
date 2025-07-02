@@ -206,14 +206,26 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
             padding: 0 !important;
           `,
           kyoto: `
-            background: linear-gradient(135deg, #0f2f1a 0%, #14532d 25%, #1a5d35 50%, #14532d 75%, #0f2f1a 100%) !important;
+            background: linear-gradient(135deg, 
+              #7A3D1A 0%,     /* Rich burnt sienna - left side */
+              #9B4A1F 10%,    /* Deep rust */
+              #C55A11 20%,    /* Burnt orange */
+              #D97706 30%,    /* Amber 700 */
+              #92400E 40%,    /* Amber 800 */
+              #4A5D23 50%,    /* Olive brown - transition */
+              #1E3A1E 60%,    /* Deep forest */
+              #134E4A 70%,    /* Teal 800 */
+              #0F766E 80%,    /* Teal 700 */
+              #0D9488 90%,    /* Teal 600 */
+              #14B8A6 100%    /* Teal 500 - right side */
+            ) !important;
             background-image: 
-              linear-gradient(315deg, rgba(239, 68, 68, 0.75) 0%, rgba(220, 38, 38, 0.65) 15%, rgba(185, 28, 28, 0.45) 31%, rgba(21, 77, 35, 0.75) 50%, rgba(15, 47, 26, 0.82) 100%),
-              radial-gradient(ellipse 350px 200px at 10% 8%, rgba(248, 113, 113, 0.35) 0%, rgba(220, 38, 38, 0.20) 50%, rgba(185, 28, 28, 0.08) 80%, rgba(0, 0, 0, 0) 100%),
-              radial-gradient(ellipse 500px 300px at 25% 15%, rgba(248, 113, 113, 0.45) 0%, rgba(220, 38, 38, 0.25) 40%, rgba(185, 28, 28, 0.15) 70%, rgba(185, 28, 28, 0.05) 90%, rgba(0, 0, 0, 0) 100%),
-              radial-gradient(ellipse 450px 350px at 80% 85%, rgba(21, 77, 35, 0.60) 0%, rgba(15, 47, 26, 0.45) 35%, rgba(21, 77, 35, 0.25) 65%, rgba(15, 47, 26, 0.08) 85%, rgba(0, 0, 0, 0) 100%),
-              radial-gradient(ellipse 300px 400px at 10% 70%, rgba(239, 68, 68, 0.35) 0%, rgba(220, 38, 38, 0.20) 45%, rgba(185, 28, 28, 0.10) 75%, rgba(220, 38, 38, 0.03) 90%, rgba(0, 0, 0, 0) 100%),
-              radial-gradient(ellipse 400px 250px at 5% 90%, rgba(248, 113, 113, 0.25) 0%, rgba(220, 38, 38, 0.15) 60%, rgba(185, 28, 28, 0.06) 85%, rgba(0, 0, 0, 0) 100%) !important;
+              /* Enhanced texture overlays for depth */
+              radial-gradient(ellipse 1000px 800px at 15% 25%, rgba(122, 61, 26, 0.6) 0%, rgba(155, 74, 31, 0.4) 25%, transparent 60%),
+              radial-gradient(ellipse 800px 600px at 85% 75%, rgba(15, 118, 110, 0.5) 0%, rgba(13, 148, 136, 0.3) 35%, transparent 70%),
+              radial-gradient(ellipse 600px 400px at 50% 10%, rgba(197, 90, 17, 0.4) 0%, rgba(217, 119, 6, 0.25) 40%, transparent 80%),
+              radial-gradient(ellipse 700px 900px at 5% 85%, rgba(122, 61, 26, 0.3) 0%, rgba(155, 74, 31, 0.15) 50%, transparent 85%),
+              radial-gradient(ellipse 500px 700px at 95% 45%, rgba(19, 78, 74, 0.4) 0%, rgba(15, 118, 110, 0.2) 45%, transparent 90%) !important;
             background-repeat: no-repeat !important;
             background-attachment: fixed !important;
             background-size: 100% 100% !important;

@@ -505,7 +505,18 @@ export const ThemeSelector: React.FC = () => {
 };
 ```
 
-## Phase 5: Implementation Steps
+## Phase 5: Theming Enhancements (Post-MVP)
+
+### Kyoto Night Theme (Dark variant of Zen)
+
+- **Objective**: Introduce a dark version of the Kyoto Zen theme, named **Kyoto Night**, for users who prefer dark mode interfaces.
+- **Description**: A dark, elegant theme inspired by a tranquil Kyoto night. Deep forest greens and autumn maple reds are inverted to create a high-contrast, visually striking dark theme, while maintaining the brand's premium aesthetic.
+- **Color Palette**:
+  - **Primary (Deep Forest Green)**: Inverted for dark mode, using darker shades as the base and lighter shades for highlights.
+  - **Secondary (Autumn Maple Red)**: Inverted for dark mode to provide vibrant, high-contrast accents.
+  - **Neutral (Tatami & Stone)**: Inverted to a dark palette, with charcoal and stone grays for backgrounds and lighter grays for text.
+  - **Accent (Golden Bamboo)**: Warm golden-yellow accents that pop against the dark background, inspired by bamboo groves at night.
+- **Effects**: `premium` glassmorphism with `backdropBlur: '32px'` and `backgroundOpacity: '0.85'` for a deep, immersive feel.
 
 ### Step 1: Create Foundation Files
 1. Create `src/types/theme.ts`
