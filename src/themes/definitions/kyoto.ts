@@ -8,7 +8,7 @@ import { GLASSMORPHISM_EFFECTS } from '../utils/effects';
  */
 export const kyotoTheme: ThemeConfig = {
   name: 'kyoto',
-  displayName: 'Kyoto Dusk',
+  displayName: 'Kyoto Afternoon',
   description: 'A dark, elegant theme inspired by a tranquil Kyoto night.',
   colors: {
     // Deep Forest Green primary palette - inverted for dark mode
@@ -50,7 +50,7 @@ export const kyotoTheme: ThemeConfig = {
       800: '#a16207',  // Bronze
       900: '#713f12',  // Deep bronze
     },
-    // Tatami & Stone neutral palette - inverted for dark mode
+    // Tatami & Stone neutral palette - harmonized with peach theme
     neutral: {
       50: '#1c1917',
       100: '#292524',
@@ -60,8 +60,8 @@ export const kyotoTheme: ThemeConfig = {
       500: '#a8a29e',
       600: '#d6d3d1',
       700: '#e7e5e4',
-      800: '#f5f5f4',
-      900: '#fafaf9',
+      800: '#fef7e6',  // Changed from white to peach
+      900: '#fef7e6',  // Changed from white to peach
     },
   },
   effects: GLASSMORPHISM_EFFECTS.premium,

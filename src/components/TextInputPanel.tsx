@@ -149,7 +149,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   };
 
   return (
-    <div className="glass-panel overflow-hidden shadow-lg transition-all duration-300">
+    <div className="glass-panel glass-content-panel overflow-hidden shadow-lg transition-all duration-300">
       <div className="glass-panel-header-footer px-4 py-3 border-b border-theme-neutral-200 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <FileText className="w-5 h-5 text-theme-primary-900" />
@@ -204,7 +204,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
 
       {/* Language Settings Panel */}
       {showLanguageSettings && (
-        <div className="px-4 py-4 bg-theme-neutral-50 border-b border-theme-neutral-200">
+        <div className="px-4 py-4 border-b border-theme-neutral-200">
           <div className="space-y-4">
             {/* Auto-detect toggle */}
             <div className="flex items-center justify-between">
@@ -219,7 +219,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
                 }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-theme-neutral-50 transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
                     autoDetect ? 'translate-x-6' : 'translate-x-1'
                   }`}
                 />
@@ -353,7 +353,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         
         {/* OCR Progress Bar */}
         {isProcessing && (
-          <div className="absolute top-2 left-2 right-2 glass-panel p-3">
+          <div className="absolute top-2 left-2 right-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
               <Image className="w-4 h-4 text-theme-primary-600" />
               <span className="text-sm font-medium text-theme-neutral-700">
@@ -398,7 +398,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
           {/* Language Detection Status - Only show when there's content and detected languages */}
           {detectedLanguages.length > 0 && !isProcessing && value.trim() && (
-            <div className="flex items-center gap-2 px-2 py-1 glass-panel text-xs">
+            <div className="flex items-center gap-2 px-2 py-1 bg-transparent border border-white/20 rounded text-xs">
               <Languages className="w-3 h-3 text-theme-secondary-600" />
               <span className="text-theme-secondary-700 font-medium">
                 {detectedLanguages.length === 1 
@@ -409,7 +409,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
             </div>
           )}
           
-          <div className="text-xs text-theme-neutral-500 glass-panel px-2 py-1 ml-auto">
+          <div className="text-xs text-theme-neutral-500 bg-transparent border border-white/20 rounded px-2 py-1 ml-auto">
             {value.length.toLocaleString()} characters
           </div>
         </div>

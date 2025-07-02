@@ -5,7 +5,7 @@ export default {
     extend: {
       fontFamily: {
         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Inter', 'system-ui', 'sans-serif'],
-        'serif': ['Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
+        'serif': ['Libre Baskerville', 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
       },
       colors: {
         // Theme-aware colors using CSS variables

@@ -70,7 +70,7 @@ export const ThemeSelector: React.FC = () => {
         title="Change Theme"
       >
         <Palette className="w-4 h-4" />
-        <span className="hidden sm:inline whitespace-nowrap">Theme</span>
+        <span className="hidden sm:inline whitespace-nowrap">Themes</span>
         <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -94,7 +94,6 @@ export const ThemeSelector: React.FC = () => {
               >
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold truncate">{theme.displayName}</div>
-                  <div className="text-sm opacity-70 truncate">{theme.description}</div>
                 </div>
                 {currentTheme === theme.name && (
                   <Check className="w-5 h-5 text-theme-primary-600 shrink-0 ml-3" />

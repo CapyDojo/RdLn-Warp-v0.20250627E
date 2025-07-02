@@ -1,27 +1,43 @@
-/* Glassmorphism Effects - Enhanced with Logo Test Page Aesthetics */
+/* Glassmorphism Effects - Unified Opacity System */
 
-/* Base glassmorphism panel - Optimized blur to prevent banding */
+/* 
+ * UNIFIED OPACITY LEVELS:
+ * --glass-subtle: 0.05  (input fields, overlay elements)
+ * --glass-panel:  0.12  (main panels, containers)
+ * --glass-focus:  0.20  (hover/focus states)
+ * --glass-strong: 0.35  (prominent panels, modals)
+ */
+
+:root {
+  --glass-subtle: 0.05;
+  --glass-panel: 0.12;
+  --glass-focus: 0.20;
+  --glass-strong: 0.35;
+}
+
+/* Base glassmorphism panel - Unified opacity system */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, var(--glass-panel)) !important;
   backdrop-filter: blur(10px) saturate(1.3);
   -webkit-backdrop-filter: blur(10px) saturate(1.3);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  border: 1px solid rgba(255, 255, 255, var(--glass-focus));
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, var(--glass-subtle));
   transition: all 0.3s ease;
 }
 
-/* Enhanced hover effects for glass panels - softer gradients and smooth animations */
+/* Enhanced hover effects for glass panels - Unified opacity system */
 .glass-panel:hover {
-  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, var(--glass-focus)) !important;
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, var(--glass-panel));
+  border-color: rgba(255, 255, 255, var(--glass-strong));
   transition: all 600ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Professional theme glassmorphism - Translucent with legible text */
+/* Professional theme glassmorphism - Unified opacity system */
 [data-theme="professional"] .glass-panel {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border: 1px solid rgba(var(--color-primary-200-rgb), 0.5);
-  box-shadow: 0 8px 32px 0 rgba(30, 64, 175, 0.25);
+  background: rgba(255, 255, 255, var(--glass-panel)) !important;
+  border: 1px solid rgba(var(--color-primary-200-rgb), var(--glass-focus));
+  box-shadow: 0 8px 32px 0 rgba(30, 64, 175, var(--glass-panel));
   backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
   color: #1e293b !important; /* Deep charcoal - enhanced with backdrop */
@@ -60,15 +76,15 @@
 }
 
 [data-theme="professional"] .glass-panel:hover {
-  background: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 16px 48px 0 rgba(30, 64, 175, 0.35), 0 4px 16px 0 rgba(30, 64, 175, 0.2);
-  border-color: rgba(var(--color-primary-300-rgb), 0.6);
+  background: rgba(255, 255, 255, var(--glass-focus));
+  box-shadow: 0 16px 48px 0 rgba(30, 64, 175, var(--glass-strong)), 0 4px 16px 0 rgba(30, 64, 175, var(--glass-focus));
+  border-color: rgba(var(--color-primary-300-rgb), var(--glass-strong));
 }
 
-/* Professional theme input fields with glassmorphism */
+/* Professional theme input fields with glassmorphism - Unified opacity system */
 [data-theme="professional"] .glass-input-field {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border: 1px solid rgba(var(--color-primary-300-rgb), 0.4) !important;
+  background: rgba(255, 255, 255, var(--glass-subtle)) !important;
+  border: 1px solid rgba(var(--color-primary-300-rgb), var(--glass-panel)) !important;
   backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
   color: rgb(var(--color-neutral-800-rgb)) !important;
@@ -77,9 +93,9 @@
 }
 
 [data-theme="professional"] .glass-input-field:focus {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border-color: rgba(var(--color-primary-500-rgb), 0.5) !important;
-  box-shadow: 0 0 0 3px rgba(var(--color-primary-500-rgb), 0.15) !important;
+  background: rgba(255, 255, 255, var(--glass-panel)) !important;
+  border-color: rgba(var(--color-primary-500-rgb), var(--glass-focus)) !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-500-rgb), var(--glass-subtle)) !important;
   outline: none !important;
 }
 
@@ -87,27 +103,27 @@
   color: rgba(var(--color-neutral-600-rgb), 0.7) !important;
 }
 
-/* Bamboo theme glassmorphism - Translucent with natural feel */
+/* Bamboo theme glassmorphism - Unified opacity system */
 [data-theme="bamboo"] .glass-panel {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border: 1px solid rgba(93, 138, 58, 0.4);
-  box-shadow: 0 8px 32px 0 rgba(93, 138, 58, 0.2);
+  background: rgba(255, 255, 255, var(--glass-panel)) !important;
+  border: 1px solid rgba(232, 196, 31, var(--glass-focus));
+  box-shadow: 0 8px 32px 0 rgba(232, 196, 31, var(--glass-focus));
   backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.4);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.4);
-  color: #0f140f !important; /* Deep forest - enhanced with backdrop */
+  color: #2e0e01 !important; /* Extremely dark ochre - enhanced with backdrop */
 }
 
 /* Bamboo theme text hierarchy */
 [data-theme="bamboo"] .text-body,
 [data-theme="bamboo"] .libertinus-math-text {
-  color: #0f140f !important; /* Deep forest - 8.5:1 contrast */
+  color: #2e0e01 !important; /* Extremely dark ochre - enhanced readability */
 }
 
 [data-theme="bamboo"] h1,
 [data-theme="bamboo"] h2,
 [data-theme="bamboo"] h3,
 [data-theme="bamboo"] .text-header {
-  color: #1a3f1a !important; /* Dark green - 7.2:1 contrast */
+  color: #2e0e01 !important; /* Extremely dark ochre - enhanced readability */
   font-weight: 600;
 }
 
@@ -121,7 +137,7 @@
 [data-theme="bamboo"] .text-theme-accent-500,
 [data-theme="bamboo"] button:not(.glass-panel),
 [data-theme="bamboo"] a {
-  color: #a06d15 !important; /* Gold accent - 5.1:1 contrast */
+  color: #2e0e01 !important; /* Extremely dark ochre - enhanced readability */
 }
 
 [data-theme="bamboo"] .text-success,
@@ -130,17 +146,17 @@
 }
 
 [data-theme="bamboo"] .glass-panel:hover {
-  background: rgba(248, 245, 240, 0.8);
-  box-shadow: 0 16px 48px 0 rgba(93, 138, 58, 0.3);
-  border-color: rgba(93, 138, 58, 0.5);
+  background: rgba(248, 245, 240, var(--glass-focus));
+  box-shadow: 0 16px 48px 0 rgba(241, 215, 58, var(--glass-strong));
+  border-color: rgba(241, 215, 58, var(--glass-strong));
   transform: translateY(-3px) scale(1.005);
 }
 
-/* Apple Light theme glassmorphism - Clean translucency */
+/* Apple Light theme glassmorphism - Unified opacity system */
 [data-theme="apple-light"] .glass-panel {
-  background: rgba(255, 255, 255, 0.3) !important;
-  border: 1px solid rgba(203, 213, 225, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(14, 165, 233, 0.1);
+  background: rgba(255, 255, 255, var(--glass-panel)) !important;
+  border: 1px solid rgba(203, 213, 225, var(--glass-focus));
+  box-shadow: 0 8px 32px 0 rgba(14, 165, 233, var(--glass-subtle));
   backdrop-filter: blur(var(--effect-backdropBlur, 20px)) saturate(1.2);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 20px)) saturate(1.2);
   border-radius: 12px;
@@ -180,16 +196,16 @@
 }
 
 [data-theme="apple-light"] .glass-panel:hover {
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 16px 48px 0 rgba(14, 165, 233, 0.2);
-  border-color: rgba(14, 165, 233, 0.4);
+  background: rgba(255, 255, 255, var(--glass-focus));
+  box-shadow: 0 16px 48px 0 rgba(14, 165, 233, var(--glass-focus));
+  border-color: rgba(14, 165, 233, var(--glass-strong));
 }
 
-/* Apple Dark theme glassmorphism - Reduced blur to prevent banding */
+/* Apple Dark theme glassmorphism - Unified opacity system */
 [data-theme="apple-dark"] .glass-panel {
-  background: rgba(23, 23, 23, 0.3) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(139, 92, 246, 0.1);
+  background: rgba(23, 23, 23, var(--glass-panel)) !important;
+  border: 1px solid rgba(255, 255, 255, var(--glass-subtle));
+  box-shadow: 0 8px 32px 0 rgba(139, 92, 246, var(--glass-subtle));
   backdrop-filter: blur(8px) saturate(1.6);
   -webkit-backdrop-filter: blur(8px) saturate(1.6);
   border-radius: 12px;
@@ -229,39 +245,44 @@
 }
 
 [data-theme="apple-dark"] .glass-panel:hover {
-  background: rgba(23, 23, 23, 0.85);
-  box-shadow: 0 16px 48px 0 rgba(139, 92, 246, 0.2);
-  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(23, 23, 23, var(--glass-focus));
+  box-shadow: 0 16px 48px 0 rgba(139, 92, 246, var(--glass-focus));
+  border-color: rgba(139, 92, 246, var(--glass-strong));
 }
 
-/* Kyoto Dusk theme glassmorphism - a dark, elegant theme */
+/* Kyoto Dusk theme glassmorphism - Unified opacity system */
 [data-theme="kyoto"] .glass-panel {
-  background: rgba(28, 25, 23, 0.3) !important; /* Dark, translucent stone */
-  border: 1px solid rgba(120, 113, 108, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(220, 38, 38, 0.1);
+  background: rgba(28, 25, 23, var(--glass-panel)) !important;
+  border: 1px solid rgba(120, 113, 108, var(--glass-focus));
+  box-shadow: 0 8px 32px 0 rgba(220, 8, 8, var(--glass-strong)) !important;
   backdrop-filter: blur(var(--effect-backdropBlur, 24px)) saturate(1.6);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 24px)) saturate(1.6);
-  color: #fafaf9 !important;
+  /* Removed color override - let text hierarchy handle colors */
 }
 
 /* Kyoto Dusk theme text hierarchy */
 [data-theme="kyoto"] .text-body,
-[data-theme="kyoto"] .libertinus-math-text {
-  color: #fafaf9 !important; /* Tatami white */
+[data-theme="kyoto"] .libertinus-math-text,
+[data-theme="kyoto"] textarea,
+[data-theme="kyoto"] input,
+[data-theme="kyoto"] .glass-input-field,
+[data-theme="kyoto"] .text-theme-neutral-800,
+[data-theme="kyoto"] .text-theme-neutral-700 {
+  color: #f8b4b4 !important; /* CORRECT peach color for user-generated text */
 }
 
 [data-theme="kyoto"] h1,
 [data-theme="kyoto"] h2,
 [data-theme="kyoto"] h3,
 [data-theme="kyoto"] .text-header {
-  color: #f0fdf4 !important; /* Lightest forest green */
+  color: #86efac !important; /* Theme button background green for panel titles */
   font-weight: 600;
 }
 
 [data-theme="kyoto"] .text-secondary,
 [data-theme="kyoto"] .text-theme-neutral-600,
 [data-theme="kyoto"] .text-theme-neutral-500 {
-  color: #d6d3d1 !important; /* Light stone */
+  color: #fef7e6 !important; /* Tatami wheat off-white for secondary text */
 }
 
 [data-theme="kyoto"] .text-interactive,
@@ -277,16 +298,17 @@
 }
 
 [data-theme="kyoto"] .glass-panel:hover {
-  background: rgba(28, 25, 23, 0.85);
-  box-shadow: 0 16px 48px 0 rgba(220, 38, 38, 0.2);
-  border-color: rgba(220, 38, 38, 0.3);
+  background: rgba(28, 25, 23, var(--glass-focus));
+  box-shadow: 0 20px 64px 0 rgba(220, 8, 8, var(--glass-strong)), 0 8px 32px 0 rgba(220, 8, 8, var(--glass-strong));
+  border-color: rgba(220, 8, 8, var(--glass-strong));
+  /* Removed transform - elegant shadow intensification only */
 }
 
-/* New York theme glassmorphism - Urban translucency */
+/* New York theme glassmorphism - Unified opacity system */
 [data-theme="new-york"] .glass-panel {
-  background: rgba(33, 33, 33, 0.3) !important;
-  border: 1px solid rgba(255, 152, 0, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(251, 140, 0, 0.15);
+  background: rgba(33, 33, 33, var(--glass-panel)) !important;
+  border: 1px solid rgba(255, 152, 0, var(--glass-focus));
+  box-shadow: 0 8px 32px 0 rgba(251, 140, 0, var(--glass-panel));
   backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.4);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.4);
   color: #fafafa !important; /* Bright white - enhanced with backdrop */
@@ -325,16 +347,16 @@
 }
 
 [data-theme="new-york"] .glass-panel:hover {
-  background: rgba(33, 33, 33, 0.85);
-  box-shadow: 0 16px 48px 0 rgba(251, 140, 0, 0.25);
-  border-color: rgba(255, 152, 0, 0.4);
+  background: rgba(33, 33, 33, var(--glass-focus));
+  box-shadow: 0 16px 48px 0 rgba(251, 140, 0, var(--glass-strong));
+  border-color: rgba(255, 152, 0, var(--glass-strong));
 }
 
-/* Autumn theme glassmorphism - Translucent over autumn garden */
+/* Autumn theme glassmorphism - Unified opacity system */
 [data-theme="autumn"] .glass-panel {
-  background: rgba(250, 250, 249, 0.35) !important; /* More translucent tatami white */
-  border: 1px solid rgba(34, 197, 94, 0.25); /* Forest green border */
-  box-shadow: 0 8px 32px 0 rgba(245, 158, 11, 0.2); /* Warm golden shadow */
+  background: rgba(250, 250, 249, var(--glass-panel)) !important;
+  border: 1px solid rgba(34, 197, 94, var(--glass-focus));
+  box-shadow: 0 8px 32px 0 rgba(245, 158, 11, var(--glass-focus));
   backdrop-filter: blur(var(--effect-backdropBlur, 24px)) saturate(1.4);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 24px)) saturate(1.4);
   color: #1c1917 !important; /* Deepest charcoal - enhanced with backdrop */
@@ -378,20 +400,11 @@
 }
 
 [data-theme="autumn"] .glass-panel:hover {
-  background: rgba(250, 250, 249, 0.5);
-  box-shadow: 0 16px 48px 0 rgba(245, 158, 11, 0.3), 0 4px 16px 0 rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.4); /* Stronger forest green on hover */
+  background: rgba(250, 250, 249, var(--glass-focus));
+  box-shadow: 0 16px 48px 0 rgba(245, 158, 11, var(--glass-strong)), 0 4px 16px 0 rgba(34, 197, 94, var(--glass-panel));
+  border-color: rgba(34, 197, 94, var(--glass-strong));
 }
 
-/* Professional theme output panels - enhanced shadows */
-[data-theme="professional"] .glass-panel.output-panel,
-[data-theme="professional"] .glass-panel.redline-output-wrapper .glass-panel {
-  box-shadow: 0 8px 32px 0 rgba(30, 64, 175, 0.25);
-}
-
-[data-theme="professional"] .glass-panel.output-panel:hover {
-  box-shadow: 0 16px 48px 0 rgba(30, 64, 175, 0.35), 0 4px 16px 0 rgba(30, 64, 175, 0.2);
-}
 
 [data-theme="professional"] .output-resize-handle {
   background-color: rgba(var(--color-primary-200-rgb), 0.6) !important;
@@ -409,6 +422,9 @@
 .enhanced-button {
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.1);
+  /* Enhanced text contrast for all buttons */
+  font-weight: 600 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .enhanced-button:hover {
@@ -418,6 +434,100 @@
 
 .enhanced-button:active {
   transform: translateY(-1px) scale(1.02);
+}
+
+/* OPTIMIZED Button Legibility Enhancement System - Consolidated for Performance */
+
+/* Universal Enhanced Button Styling */
+.enhanced-button {
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  text-rendering: optimizeLegibility;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Primary Button Colors - Optimized with CSS Variables */
+.bg-theme-primary-600 {
+  --btn-bg: var(--button-primary-bg, #1e40af);
+  --btn-border: var(--button-primary-border, #1d4ed8);
+  --btn-text: var(--button-primary-text, #ffffff);
+  --btn-hover-bg: var(--button-primary-hover, #1e3a8a);
+  background-color: var(--btn-bg) !important;
+  border-color: var(--btn-border) !important;
+  color: var(--btn-text) !important;
+}
+
+.bg-theme-primary-600:hover {
+  background-color: var(--btn-hover-bg) !important;
+}
+
+/* Accent Button Colors */
+.bg-theme-accent-600,
+.bg-theme-accent-500 {
+  --btn-bg: var(--button-accent-bg, #dc2626);
+  --btn-border: var(--button-accent-border, #b91c1c);
+  --btn-text: var(--button-accent-text, #ffffff);
+  --btn-hover-bg: var(--button-accent-hover, #b91c1c);
+  background-color: var(--btn-bg) !important;
+  border-color: var(--btn-border) !important;
+  color: var(--btn-text) !important;
+}
+
+.bg-theme-accent-600:hover,
+.bg-theme-accent-500:hover {
+  background-color: var(--btn-hover-bg) !important;
+}
+
+/* Neutral Button Colors */
+.bg-theme-neutral-600 {
+  --btn-bg: var(--button-neutral-bg, #374151);
+  --btn-border: var(--button-neutral-border, #4b5563);
+  --btn-text: var(--button-neutral-text, #ffffff);
+  --btn-hover-bg: var(--button-neutral-hover, #1f2937);
+  background-color: var(--btn-bg) !important;
+  border-color: var(--btn-border) !important;
+  color: var(--btn-text) !important;
+}
+
+.bg-theme-neutral-600:hover {
+  background-color: var(--btn-hover-bg) !important;
+}
+
+/* Light Neutral Buttons */
+.bg-theme-neutral-100 {
+  --btn-bg: var(--button-light-bg, #e2e8f0);
+  --btn-border: var(--button-light-border, #cbd5e1);
+  --btn-text: var(--button-light-text, #1e293b);
+  --btn-hover-bg: var(--button-light-hover, #cbd5e1);
+  background-color: var(--btn-bg) !important;
+  border-color: var(--btn-border) !important;
+  color: var(--btn-text) !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.bg-theme-neutral-100:hover {
+  background-color: var(--btn-hover-bg) !important;
+  color: var(--button-light-hover-text, #0f172a) !important;
+}
+
+.bg-theme-neutral-200 {
+  --btn-bg: var(--button-light2-bg, #cbd5e1);
+  --btn-border: var(--button-light2-border, #94a3b8);
+  --btn-text: var(--button-light2-text, #1e293b);
+  background-color: var(--btn-bg) !important;
+  border-color: var(--btn-border) !important;
+  color: var(--btn-text) !important;
+}
+
+/* Disabled States */
+.enhanced-button:disabled,
+.enhanced-button.disabled {
+  background-color: #9ca3af !important;
+  border-color: #d1d5db !important;
+  color: #374151 !important;
+  text-shadow: none !important;
+  cursor: not-allowed !important;
+  opacity: 0.8 !important;
 }
 
 /* Subtle button hover effects for smaller elements */
@@ -431,10 +541,10 @@
   box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
 }
 
-/* Input field glassmorphism base */
+/* Input field glassmorphism base - Unified opacity system */
 .glass-input-field {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, var(--glass-subtle)) !important;
+  border: 1px solid rgba(255, 255, 255, var(--glass-panel)) !important;
   backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
   box-shadow: none !important;
@@ -442,22 +552,22 @@
 }
 
 .glass-input-field:hover {
-  border-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, var(--glass-focus)) !important;
 }
 
-/* Bamboo theme input fields with glassmorphism - Enhanced contrast */
+/* Bamboo theme input fields with glassmorphism - Unified opacity system */
 [data-theme="bamboo"] .glass-input-field {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border: 1px solid rgba(93, 138, 58, 0.3) !important;
+  background: rgba(255, 255, 255, var(--glass-subtle)) !important;
+  border: 1px solid rgba(93, 138, 58, var(--glass-focus)) !important;
   backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
-  color: rgba(15, 20, 15, 0.95) !important;
+  color: #2e0e01 !important;
 }
 
 [data-theme="bamboo"] .glass-input-field:focus {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border-color: rgba(93, 138, 58, 0.5) !important;
-  box-shadow: 0 0 0 3px rgba(93, 138, 58, 0.15) !important;
+  background: rgba(255, 255, 255, var(--glass-panel)) !important;
+  border-color: rgba(93, 138, 58, var(--glass-strong)) !important;
+  box-shadow: 0 0 0 3px rgba(93, 138, 58, var(--glass-subtle)) !important;
   outline: none !important;
 }
 
@@ -485,7 +595,6 @@
 
 /* Apple Dark theme input fields */
 [data-theme="apple-dark"] .glass-input-field {
-  background: rgba(23, 23, 23, 0.05) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   backdrop-filter: blur(var(--effect-backdropBlur, 20px)) !important;
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 20px)) !important;
@@ -501,14 +610,15 @@
   transform: scale(1.002);
 }
 
-/* Glass panel header and footer sections */
+/* Glass panel header and footer sections - Use unified transparency */
 [data-theme="bamboo"] .glass-panel-header-footer {
-  background: rgba(255, 255, 255, 0.4);
-  border-color: rgba(93, 138, 58, 0.3);
+  background: transparent !important;
+  border-color: rgba(93, 138, 58, var(--glass-focus));
 }
 
+/* Text areas get subtle background for readability across all themes */
 [data-theme="bamboo"] .glass-panel-inner-content {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, var(--glass-subtle)) !important;
 }
 
 /* Text contrast improvements for bamboo theme */
@@ -536,6 +646,33 @@
   color: rgba(45, 125, 45, 0.9) !important;
 }
 
+/* Kyoto theme specific title colors for panel headings */
+[data-theme="kyoto"] .text-theme-primary-900 {
+  color: #ee8f1c !important; /* Updated orange color */
+}
+
+/* Kyoto theme footer text harmonization */
+[data-theme="kyoto"] .glass-panel-header-footer,
+[data-theme="kyoto"] .glass-panel-header-footer .text-theme-neutral-600,
+[data-theme="kyoto"] .glass-panel-header-footer .text-theme-neutral-500 {
+  color: #fef7e6 !important; /* Tatami wheat off-white for all footer text */
+}
+
+/* NUCLEAR OVERRIDE - Maximum specificity for Kyoto theme text */
+html[data-theme="kyoto"] .glass-panel textarea,
+html[data-theme="kyoto"] .glass-panel input,
+html[data-theme="kyoto"] .glass-panel .glass-input-field,
+html[data-theme="kyoto"] .glass-panel .text-theme-neutral-800,
+html[data-theme="kyoto"] .glass-panel .text-theme-neutral-700,
+html[data-theme="kyoto"] .glass-panel .libertinus-math-text,
+html[data-theme="kyoto"] .glass-panel .text-body,
+html[data-theme="kyoto"] textarea.glass-input-field,
+html[data-theme="kyoto"] input.glass-input-field,
+html[data-theme="kyoto"] .glass-panel textarea.text-theme-neutral-800,
+html[data-theme="kyoto"] .glass-panel input.text-theme-neutral-800 {
+  color: #f8b4b4 !important; /* FORCE CORRECT peach color with maximum specificity */
+}
+
 /* Enhanced glassmorphism utility */
 .glass-effect {
   backdrop-filter: blur(var(--effect-backdropBlur, 12px));
@@ -548,32 +685,45 @@
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease, transform 0.3s ease;
 }
 
-/* Clean hover effects for text input panels - No banding */
-.glass-panel.text-input-panel {
+/* Clean hover effects for content panels - No banding */
+.glass-panel.glass-content-panel {
   transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.glass-panel.text-input-panel:hover {
+/* CHUNK FIX: Prevent chunk containers from inheriting glass effects */
+.glass-panel.glass-content-panel .chunk-container,
+.glass-panel.glass-content-panel .chunk-container *,
+.glass-panel.glass-content-panel .chunk-container::before,
+.glass-panel.glass-content-panel .chunk-container::after {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+.glass-panel.glass-content-panel:hover {
   backdrop-filter: blur(calc(var(--effect-backdropBlur, 12px) * 1.15)) saturate(1.05);
   -webkit-backdrop-filter: blur(calc(var(--effect-backdropBlur, 12px) * 1.15)) saturate(1.05);
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
+  border-color: rgba(255, 255, 255, var(--glass-strong));
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, var(--glass-panel));
 }
 
 /* Theme-specific clean hover effects */
-[data-theme="professional"] .glass-panel.text-input-panel:hover {
-  border-color: rgba(var(--color-primary-300-rgb), 0.6);
-  box-shadow: 0 8px 32px 0 rgba(var(--color-primary-600-rgb), 0.15);
+[data-theme="professional"] .glass-panel.glass-content-panel:hover {
+  border-color: rgba(var(--color-primary-300-rgb), var(--glass-strong));
+  box-shadow: 0 8px 32px 0 rgba(var(--color-primary-600-rgb), var(--glass-panel));
 }
 
-[data-theme="bamboo"] .glass-panel.text-input-panel:hover {
-  border-color: rgba(93, 138, 58, 0.5);
-  box-shadow: 0 8px 32px 0 rgba(93, 138, 58, 0.2);
+[data-theme="bamboo"] .glass-panel.glass-content-panel:hover {
+  border-color: rgba(93, 138, 58, var(--glass-focus));
+  box-shadow: 0 8px 32px 0 rgba(93, 138, 58, var(--glass-focus));
 }
 
 /* Libertinus Math font styles */
 .libertinus-math-text {
-  font-family: 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
+  font-family: 'Libre Baskerville', 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "onum" 1;
   font-variant-numeric: oldstyle-nums;
   letter-spacing: 0.01em;
@@ -581,13 +731,13 @@
 }
 
 .libertinus-math-placeholder {
-  font-family: 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
+  font-family: 'Libre Baskerville', 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   letter-spacing: 0.01em;
 }
 
 .libertinus-math-output {
-  font-family: 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
+  font-family: 'Libre Baskerville', 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "onum" 1;
   font-variant-numeric: oldstyle-nums;
   letter-spacing: 0.01em;
@@ -597,7 +747,7 @@
 
 /* Enhanced placeholder styling for all themes */
 .glass-input-field::placeholder {
-  font-family: 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
+  font-family: 'Libre Baskerville', 'Libertinus Math', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   letter-spacing: 0.01em;
   opacity: 0.7;
@@ -626,7 +776,7 @@
 .libertinus-math-text,
 .libertinus-math-placeholder,
 .libertinus-math-output {
-  font-family: 'Libertinus Math', 'Libertinus Math Fallback', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
+  font-family: 'Libre Baskerville', 'Libertinus Math', 'Libertinus Math Fallback', 'ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif' !important;
 }
 
 /* Fix for dropdown positioning to prevent header expansion */
@@ -668,4 +818,239 @@ header .flex {
   z-index: 40 !important;
   background: transparent !important;
   pointer-events: auto !important;
+}
+
+/* Classic Light theme glassmorphism - Light theme with orange accent borders and shadows */
+[data-theme="classic-light"] .glass-panel {
+  background: rgba(248, 250, 252, var(--glass-panel)) !important;
+  border: 1px solid rgba(249, 115, 22, var(--glass-subtle));
+  box-shadow: 0 4px 16px 0 rgba(249, 115, 22, var(--glass-subtle)), 0 1px 4px 0 rgba(14, 165, 233, var(--glass-subtle));
+  backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
+  color: #1e293b !important; /* Dark text on light background */
+}
+
+/* Classic Light theme text hierarchy */
+[data-theme="classic-light"] .text-body,
+[data-theme="classic-light"] .libertinus-math-text {
+  color: #1e293b !important; /* Dark text - excellent contrast on light */
+}
+
+[data-theme="classic-light"] h1,
+[data-theme="classic-light"] h2,
+[data-theme="classic-light"] h3,
+[data-theme="classic-light"] .text-header {
+  color: #0f172a !important; /* Very dark for headers */
+  font-weight: 600;
+}
+
+[data-theme="classic-light"] .text-secondary,
+[data-theme="classic-light"] .text-theme-neutral-600,
+[data-theme="classic-light"] .text-theme-neutral-500 {
+  color: #475569 !important; /* Medium gray for secondary text */
+}
+
+[data-theme="classic-light"] .text-interactive,
+[data-theme="classic-light"] .text-theme-accent-500,
+[data-theme="classic-light"] button:not(.glass-panel),
+[data-theme="classic-light"] a {
+  color: #ea580c !important; /* Darker orange accent for better contrast */
+}
+
+[data-theme="classic-light"] .text-success,
+[data-theme="classic-light"] .text-active {
+  color: #0284c7 !important; /* Darker blue for success/active states */
+}
+
+[data-theme="classic-light"] .glass-panel:hover {
+  background: rgba(248, 250, 252, var(--glass-focus));
+  box-shadow: 0 16px 48px 0 rgba(249, 115, 22, var(--glass-strong)), 0 4px 16px 0 rgba(14, 165, 233, var(--glass-panel));
+  border-color: rgba(249, 115, 22, var(--glass-strong));
+}
+
+/* Classic Light theme input fields with glassmorphism and orange accents */
+[data-theme="classic-light"] .glass-input-field {
+  background: rgba(255, 255, 255, var(--glass-subtle)) !important;
+  border: 1px solid rgba(249, 115, 22, var(--glass-subtle)) !important;
+  backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
+  color: #1e293b !important;
+  box-shadow: 0 2px 8px 0 rgba(249, 115, 22, var(--glass-subtle)) !important;
+  transition: all 0.3s ease !important;
+}
+
+[data-theme="classic-light"] .glass-input-field:focus {
+  background: rgba(255, 255, 255, var(--glass-panel)) !important;
+  border-color: rgba(249, 115, 22, var(--glass-focus)) !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, var(--glass-subtle)), 0 4px 16px 0 rgba(249, 115, 22, var(--glass-panel)) !important;
+  outline: none !important;
+}
+
+[data-theme="classic-light"] .glass-input-field::placeholder {
+  color: rgba(71, 85, 105, 0.7) !important;
+}
+
+/* Classic Light theme panel borders with orange accents */
+[data-theme="classic-light"] .glass-panel-header-footer {
+  background: transparent !important;
+  border-color: rgba(249, 115, 22, var(--glass-focus));
+}
+
+[data-theme="classic-light"] .glass-panel-inner-content {
+  background: rgba(255, 255, 255, var(--glass-subtle)) !important;
+}
+
+/* Enhanced orange accent borders for content panels */
+[data-theme="classic-light"] .glass-panel.glass-content-panel {
+  border: 2px solid rgba(249, 115, 22, var(--glass-subtle)) !important;
+  box-shadow: 0 4px 16px 0 rgba(249, 115, 22, var(--glass-subtle)), 0 1px 4px 0 rgba(14, 165, 233, var(--glass-subtle)) !important;
+}
+
+[data-theme="classic-light"] .glass-panel.glass-content-panel:hover {
+  border-color: rgba(249, 115, 22, var(--glass-strong)) !important;
+  box-shadow: 0 12px 40px 0 rgba(249, 115, 22, var(--glass-strong)), 0 4px 16px 0 rgba(14, 165, 233, var(--glass-panel)) !important;
+}
+
+/* Classic Dark theme glassmorphism - Dark theme with pure greys and orange accent borders */
+[data-theme="classic-dark"] .glass-panel {
+  background: rgba(38, 38, 38, var(--glass-panel)) !important;
+  border: 1px solid rgba(249, 115, 22, var(--glass-subtle));
+  box-shadow: 0 4px 16px 0 rgba(249, 115, 22, var(--glass-subtle)), 0 1px 4px 0 rgba(14, 165, 233, var(--glass-subtle));
+  backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
+  color: #fafafa !important; /* Light text on dark background */
+}
+
+/* Classic Dark theme text hierarchy */
+[data-theme="classic-dark"] .text-body,
+[data-theme="classic-dark"] .libertinus-math-text,
+[data-theme="classic-dark"] .output-content {
+  color: #fafafa !important; /* Pure white for text - excellent contrast on dark */
+}
+
+[data-theme="classic-dark"] h1,
+[data-theme="classic-dark"] h2,
+[data-theme="classic-dark"] h3,
+[data-theme="classic-dark"] .text-header {
+  color: #ffffff !important; /* Pure white for headers */
+  font-weight: 600;
+}
+
+[data-theme="classic-dark"] .text-secondary,
+[data-theme="classic-dark"] .text-theme-neutral-600,
+[data-theme="classic-dark"] .text-theme-neutral-500 {
+  color: #a3a3a3 !important; /* Pure medium gray for secondary text */
+}
+
+[data-theme="classic-dark"] .text-interactive,
+[data-theme="classic-dark"] .text-theme-accent-500,
+[data-theme="classic-dark"] button:not(.glass-panel),
+[data-theme="classic-dark"] a {
+  color: #fb923c !important; /* Orange accent for interactive elements */
+}
+
+/* Ensure all output panel text is properly colored for dark mode */
+[data-theme="classic-dark"] .glass-panel-inner-content *,
+[data-theme="classic-dark"] .text-theme-neutral-800,
+[data-theme="classic-dark"] .text-theme-neutral-700,
+[data-theme="classic-dark"] .font-serif,
+[data-theme="classic-dark"] span {
+  color: #fafafa !important; /* Pure white for all output text */
+}
+
+[data-theme="classic-dark"] .text-success,
+[data-theme="classic-dark"] .text-active {
+  color: #38bdf8 !important; /* Light blue for success/active states */
+}
+
+[data-theme="classic-dark"] .glass-panel:hover {
+  background: rgba(38, 38, 38, var(--glass-focus));
+  box-shadow: 0 8px 24px 0 rgba(249, 115, 22, var(--glass-panel)), 0 2px 8px 0 rgba(14, 165, 233, var(--glass-subtle));
+  border-color: rgba(249, 115, 22, var(--glass-focus));
+}
+
+/* Classic Dark theme input fields with glassmorphism and orange accents */
+[data-theme="classic-dark"] .glass-input-field {
+  background: rgba(64, 64, 64, var(--glass-subtle)) !important;
+  border: 1px solid rgba(249, 115, 22, var(--glass-subtle)) !important;
+  backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
+  color: #fafafa !important;
+  box-shadow: 0 2px 8px 0 rgba(249, 115, 22, var(--glass-subtle)) !important;
+  transition: all 0.3s ease !important;
+}
+
+[data-theme="classic-dark"] .glass-input-field:focus {
+  background: rgba(64, 64, 64, var(--glass-panel)) !important;
+  border-color: rgba(249, 115, 22, var(--glass-focus)) !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, var(--glass-subtle)), 0 4px 16px 0 rgba(249, 115, 22, var(--glass-panel)) !important;
+  outline: none !important;
+}
+
+[data-theme="classic-dark"] .glass-input-field::placeholder {
+  color: rgba(163, 163, 163, 0.7) !important;
+}
+
+/* Classic Dark theme panel borders with orange accents */
+[data-theme="classic-dark"] .glass-panel-header-footer {
+  background: transparent !important;
+  border-color: rgba(249, 115, 22, var(--glass-focus));
+}
+
+[data-theme="classic-dark"] .glass-panel-inner-content {
+  background: rgba(64, 64, 64, var(--glass-subtle)) !important;
+}
+
+/* Enhanced orange accent borders for content panels */
+[data-theme="classic-dark"] .glass-panel.glass-content-panel {
+  border: 2px solid rgba(249, 115, 22, var(--glass-subtle)) !important;
+  box-shadow: 0 4px 16px 0 rgba(249, 115, 22, var(--glass-subtle)), 0 1px 4px 0 rgba(14, 165, 233, var(--glass-subtle)) !important;
+}
+
+[data-theme="classic-dark"] .glass-panel.glass-content-panel:hover {
+  border-color: rgba(249, 115, 22, var(--glass-focus)) !important;
+  box-shadow: 0 8px 24px 0 rgba(249, 115, 22, var(--glass-panel)), 0 2px 8px 0 rgba(14, 165, 233, var(--glass-subtle)) !important;
+}
+
+/* Comprehensive bamboo theme text harmonization - use extremely dark ochre everywhere */
+[data-theme="bamboo"] h1,
+[data-theme="bamboo"] h2,
+[data-theme="bamboo"] h3,
+[data-theme="bamboo"] h4,
+[data-theme="bamboo"] h5,
+[data-theme="bamboo"] h6,
+[data-theme="bamboo"] .text-header,
+[data-theme="bamboo"] .text-theme-neutral-900,
+[data-theme="bamboo"] .text-theme-neutral-800,
+[data-theme="bamboo"] .text-theme-neutral-700,
+[data-theme="bamboo"] .text-theme-primary-900,
+[data-theme="bamboo"] .text-theme-primary-800,
+[data-theme="bamboo"] .text-theme-primary-700,
+[data-theme="bamboo"] .text-theme-accent-800,
+[data-theme="bamboo"] .text-theme-accent-700,
+[data-theme="bamboo"] .text-theme-secondary-800,
+[data-theme="bamboo"] .text-theme-secondary-700,
+[data-theme="bamboo"] .text-black,
+[data-theme="bamboo"] .text-gray-900,
+[data-theme="bamboo"] .comparison-statistics-text,
+[data-theme="bamboo"] strong,
+[data-theme="bamboo"] .auto-compare-text,
+[data-theme="bamboo"] .redline-text,
+[data-theme="bamboo"] .header-card-text,
+/* Output panel wrapper class removed - using direct targeting */
+[data-theme="bamboo"] .glass-panel .output-content,
+[data-theme="bamboo"] span.bg-theme-secondary-100,
+[data-theme="bamboo"] span.bg-theme-accent-100,
+[data-theme="bamboo"] .bg-theme-secondary-100,
+[data-theme="bamboo"] .bg-theme-accent-100,
+[data-theme="bamboo"] .text-theme-primary-700,
+[data-theme="bamboo"] .text-sm,
+[data-theme="bamboo"] .font-medium,
+[data-theme="bamboo"] .font-semibold {
+  color: #2e0e01 !important;
+}
+
+/* Additional bamboo theme text coverage for edge cases */
+[data-theme="bamboo"] .glass-panel * {
+  color: inherit;
 }

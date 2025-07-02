@@ -1,3 +1,11 @@
+## [0.2.3] - 2025-07-02
+### Fixed
+- **Paragraph Break Preservation:** Fixed critical issue where paragraph breaks (double newlines `\n\n`) were being lost during document comparison, causing all text to appear as a single paragraph in redline output. Root cause was in the single-pass paragraph splitting optimization where separators were not fully preserved during reconstruction. Fixed by updating `splitIntoParagraphsSinglePass()` to capture complete paragraph content including full separators (e.g., `\n\n`) instead of stopping at first newline. Also enhanced both RedlineOutput and EnhancedRedlineOutput components with explicit `white-space: pre-wrap` styling to ensure proper whitespace rendering in the browser.
+
+## [0.2.2] - 2025-07-02
+### Fixed
+- **UI Consistency:** Resolved glass panel visual inconsistency where output panel appeared to have "multiple layers of effects" compared to input panels. Root cause was DOM structural differences: input panels had simple structure (Panel → Content) while output panel had nested structure (Wrapper → Panel → Chunks → Content). Fixed by removing extra wrapper div around RedlineOutput component and streamlining chunk rendering to eliminate unnecessary DOM nesting. Added comprehensive CSS background normalization ensuring identical glassmorphism effects across all content panels.
+
 ## [0.2.1] - 2025-07-01
 ### Fixed
 - **Performance:** Eliminated severe (~1500ms) resize lag on the output panel when displaying massive documents (500k+ characters) with distant redline changes. Replaced the previous static HTML freezing with a more robust 'Chunked Static Rendering' approach, using IntersectionObserver to virtualize content and keep the DOM lean.

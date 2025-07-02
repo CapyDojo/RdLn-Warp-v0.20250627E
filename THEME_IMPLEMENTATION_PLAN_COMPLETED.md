@@ -218,7 +218,7 @@ export const themes: Record<ThemeName, ThemeConfig> = {
   },
   bamboo: {
     name: 'bamboo',
-    displayName: 'Bamboo Green',
+    displayName: 'Bamboo Morning',
     description: 'Serene bamboo green theme with glassmorphic effects',
     colors: {
       primary: {
@@ -252,7 +252,7 @@ export const themes: Record<ThemeName, ThemeConfig> = {
         300: '#f7e96a',
         400: '#f1d73a',
         500: '#e8c41f',
-        600: '#c89815',
+        600: '#896910',
         700: '#a06d15',
         800: '#845517',
         900: '#714619',
@@ -507,9 +507,9 @@ export const ThemeSelector: React.FC = () => {
 
 ## Phase 5: Theming Enhancements (Post-MVP)
 
-### Kyoto Dusk Theme (Dark variant of Zen)
+### Kyoto Afternoon Theme (Dark variant of Zen)
 
-- **Objective**: Introduce a dark version of the Kyoto Zen theme, named **Kyoto Dusk**, for users who prefer dark mode interfaces.
+- **Objective**: Introduce a dark version of the Kyoto Zen theme, named **Kyoto Afternoon**, for users who prefer dark mode interfaces.
 - **Description**: A dark, elegant theme inspired by a tranquil Kyoto night. Deep forest greens and autumn maple reds are inverted to create a high-contrast, visually striking dark theme, while maintaining the brand's premium aesthetic.
 - **Color Palette**:
   - **Primary (Deep Forest Green)**: Inverted for dark mode, using darker shades as the base and lighter shades for highlights.

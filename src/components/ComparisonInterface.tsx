@@ -89,7 +89,6 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
   
   // DOM refs for direct manipulation
   const inputPanelsRef = useRef<HTMLDivElement>(null);
-  const outputPanelRef = useRef<HTMLDivElement>(null);
   const resizeHandleRef = useRef<HTMLDivElement>(null);
   const outputResizeHandleRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
@@ -124,9 +123,10 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
       return;
     }
     
-    // Direct CSS manipulation - no React re-render
-    if (outputPanelRef.current) {
-      outputPanelRef.current.style.height = `${height}px`;
+    // SSMR: Target RedlineOutput glass-panel-inner-content directly
+    const outputElement = document.querySelector('.glass-panel.glass-content-panel:not([data-input-panel] .glass-panel) .glass-panel-inner-content');
+    if (outputElement) {
+      (outputElement as HTMLElement).style.height = `${height - 120}px`; // Account for header/footer
     }
   }, [USE_CSS_RESIZE]);
   
@@ -151,6 +151,17 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
       }
     }
   }, [USE_CSS_RESIZE, setPanelHeightCSS, setOutputHeightCSS]);
+  
+  // FIX: Apply output height CSS constraint when result changes
+  useEffect(() => {
+    if (result && USE_CSS_RESIZE) {
+      // Apply proper height constraint after new comparison result
+      // Use setTimeout to ensure DOM is ready after component renders
+      setTimeout(() => {
+        setOutputHeightCSS(500); // Reset to default constrained height
+      }, 10);
+    }
+  }, [result, USE_CSS_RESIZE, setOutputHeightCSS]);
 
   // Keyboard shortcuts and global cancellation
   useEffect(() => {
@@ -399,10 +410,17 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
     // Capture initial state - use actual DOM height instead of stale React state
     outputDragStartY.current = e.clientY;
     
-    if (USE_CSS_RESIZE && outputPanelRef.current) {
-      // Get actual height from DOM for CSS-based resize
-      const computedHeight = outputPanelRef.current.getBoundingClientRect().height;
-      outputStartHeight.current = computedHeight;
+    if (USE_CSS_RESIZE) {
+      // Get actual height from DOM for CSS-based resize - target RedlineOutput directly
+      const outputElements = document.querySelectorAll('.glass-panel.glass-content-panel .glass-panel-inner-content');
+      // Get the last one (output panel) since input panels are first
+      const outputElement = outputElements[outputElements.length - 1];
+      if (outputElement) {
+        const computedHeight = outputElement.getBoundingClientRect().height;
+        outputStartHeight.current = computedHeight;
+      } else {
+        outputStartHeight.current = 500; // fallback
+      }
     } else {
       // Use React state for fallback mode
       outputStartHeight.current = outputHeight;
@@ -743,13 +761,13 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
 
       {(result || (isProcessing && chunkingProgress.enabled && chunkingProgress.isChunking)) && (
         <>
-          <div className="mb-6">
+          <div className="mb-6"> {/* Match input panel structure for natural expansion */}
             {(isProcessing && chunkingProgress.enabled && chunkingProgress.isChunking) ? (
-              <div className="glass-panel overflow-hidden shadow-lg transition-all duration-300" style={{ height: `${outputHeight}px`, minHeight: '200px' }}>
+              <div className="glass-panel shadow-lg transition-all duration-300">
                 <div className="glass-panel-header-footer px-4 py-3 border-b border-theme-neutral-200 flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-theme-primary-900">Processing Comparison...</h3>
                 </div>
-                <div className="glass-panel-inner-content p-6 overflow-y-auto flex flex-col items-center justify-center" style={{ height: `${outputHeight - 120}px` }}>
+                <div className="glass-panel-inner-content p-6 flex flex-col items-center justify-center" style={{ minHeight: '300px' }}>
                   {chunkingProgress.enabled && chunkingProgress.isChunking ? (
                     <div className="w-full max-w-md">
                       <div className="flex items-center gap-3 text-theme-primary-600 mb-4">
@@ -778,34 +796,14 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
                 </div>
               </div>
             ) : (
-              <div 
-                ref={outputPanelRef} 
-                style={USE_CSS_RESIZE ? { 
-                  height: `${outputHeight}px`,
-                  overflow: 'hidden' // Ensure container controls height
-                } : undefined}
-                className={`${USE_CSS_RESIZE ? "override-redline-height" : ""} glass-panel output-panel`}
-              >
-                <div style={USE_CSS_RESIZE ? {
-                  height: '100%',
-                  overflow: 'hidden'
-                } : undefined}>
-                  <div 
-                    style={USE_CSS_RESIZE ? {
-                      height: '100%'
-                    } : undefined}
-                    className={USE_CSS_RESIZE ? 'redline-output-wrapper' : ''}
-                  >
-                    <RedlineOutput
-                      changes={result.changes} 
-                      onCopy={handleCopy}
-                      height={USE_CSS_RESIZE ? 9999 : outputHeight} // Force RedlineOutput to use container height
-                      isProcessing={false}
-                      processingStatus=""
-                    />
-                  </div>
-                </div>
-              </div>
+              // SSMR: Direct RedlineOutput with no wrapper - matches TextInputPanel structure exactly
+              <RedlineOutput
+                changes={result.changes} 
+                onCopy={handleCopy}
+                height={USE_CSS_RESIZE ? 9999 : outputHeight} // Height controlled by inner-content CSS
+                isProcessing={false}
+                processingStatus=""
+              />
             )}
             
             {/* Output Resize Handle - Positioned at bottom center of output */}

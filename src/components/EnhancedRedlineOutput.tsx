@@ -52,9 +52,9 @@ export const EnhancedRedlineOutput: React.FC<EnhancedRedlineOutputProps> = ({
   systemProtectionEnabled = true,  // Default enabled for safety
   isProcessing = false,            // Legacy compatibility
   processingStatus = 'Processing...', // Legacy compatibility
-  useEnhancedStrategy = true,      // Default enabled, easily disabled
-  showRenderingInfo = true,        // Default enabled, easily disabled  
-  showProgressIndicator = true     // Default enabled, easily disabled
+  useEnhancedStrategy = true,      // Ensure semantic chunking and paragraph breaks
+  showRenderingInfo = false,       // Disable strategy info for standard behavior
+  showProgressIndicator = false    // Disable progress indicators for standard behavior
 }) => {
   // Rendering strategy state
   const [renderingDecision, setRenderingDecision] = useState<RenderingDecision | null>(null);
@@ -227,30 +227,30 @@ export const EnhancedRedlineOutput: React.FC<EnhancedRedlineOutputProps> = ({
     switch (change.type) {
       case 'added':
         return (
-          <span key={key} className="bg-theme-secondary-100 text-theme-secondary-800 underline decoration-2 decoration-theme-secondary-600">
+          <span key={key} className="bg-theme-secondary-100 text-theme-secondary-800 underline decoration-2 decoration-theme-secondary-600" style={{ whiteSpace: 'pre-wrap' }}>
             {change.content}
           </span>
         );
       case 'removed':
         return (
-          <span key={key} className="bg-theme-accent-100 text-theme-accent-800 line-through decoration-2 decoration-theme-accent-600">
+          <span key={key} className="bg-theme-accent-100 text-theme-accent-800 line-through decoration-2 decoration-theme-accent-600" style={{ whiteSpace: 'pre-wrap' }}>
             {change.content}
           </span>
         );
       case 'changed':
         return (
           <span key={key}>
-            <span className="bg-theme-accent-100 text-theme-accent-800 line-through decoration-2 decoration-theme-accent-600">
+            <span className="bg-theme-accent-100 text-theme-accent-800 line-through decoration-2 decoration-theme-accent-600" style={{ whiteSpace: 'pre-wrap' }}>
               {change.originalContent}
             </span>
-            <span className="bg-theme-secondary-100 text-theme-secondary-800 underline decoration-2 decoration-theme-secondary-600">
+            <span className="bg-theme-secondary-100 text-theme-secondary-800 underline decoration-2 decoration-theme-secondary-600" style={{ whiteSpace: 'pre-wrap' }}>
               {change.revisedContent}
             </span>
           </span>
         );
       case 'unchanged':
         return (
-          <span key={key} className="text-theme-neutral-800">
+          <span key={key} className="text-theme-neutral-800" style={{ whiteSpace: 'pre-wrap' }}>
             {change.content}
           </span>
         );
@@ -288,7 +288,7 @@ export const EnhancedRedlineOutput: React.FC<EnhancedRedlineOutputProps> = ({
       <div 
         key={`semantic-chunk-${chunkIndex}`} 
         style={chunkHeight ? { minHeight: chunkHeight } : undefined}
-        className="semantic-chunk"
+className="chunk-container"
       >
         {chunk.map((change, itemIndex) => {
           const originalIndex = startIndex + itemIndex;
@@ -389,7 +389,7 @@ export const EnhancedRedlineOutput: React.FC<EnhancedRedlineOutputProps> = ({
       {/* Header */}
       <div className="glass-panel-header-footer px-4 py-3 border-b border-theme-neutral-200 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-theme-primary-900">
-          Redlined Document
+          Comparison Redline
         </h3>
         <div className="flex gap-2">
           <button

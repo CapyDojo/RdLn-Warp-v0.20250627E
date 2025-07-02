@@ -44,17 +44,21 @@ export class MyersAlgorithm {
     const tokens: string[] = [];
     let i = 0;
     
+    
     while (i < text.length) {
       const char = text[i];
       
-      // Skip whitespace but preserve it as tokens
+      // Skip whitespace but preserve it as tokens, with special handling for paragraph breaks
       if (/\s/.test(char)) {
         let whitespace = '';
         while (i < text.length && /\s/.test(text[i])) {
           whitespace += text[i];
           i++;
         }
-        tokens.push(whitespace);
+        // Only push non-empty whitespace tokens
+        if (whitespace.length > 0) {
+          tokens.push(whitespace);
+        }
         continue;
       }
       
@@ -87,7 +91,10 @@ export class MyersAlgorithm {
       i++;
     }
     
-    return tokens.filter(token => token.length > 0);
+    const filteredTokens = tokens.filter(token => token.length > 0);
+    
+    
+    return filteredTokens;
   }
 
   private static isStartOfNumber(text: string, index: number): boolean {
@@ -993,7 +1000,7 @@ export class MyersAlgorithm {
     const minParagraphs = Math.min(originalParagraphs.length, revisedParagraphs.length);
     
     while (prefixParagraphCount < minParagraphs && 
-           originalParagraphs[prefixParagraphCount].trim() === revisedParagraphs[prefixParagraphCount].trim()) {
+           originalParagraphs[prefixParagraphCount] === revisedParagraphs[prefixParagraphCount]) {
       prefixParagraphCount++;
     }
     
@@ -1004,8 +1011,8 @@ export class MyersAlgorithm {
     const maxSuffixParagraphs = Math.min(originalRemaining, revisedRemaining);
     
     while (suffixParagraphCount < maxSuffixParagraphs &&
-           originalParagraphs[originalParagraphs.length - 1 - suffixParagraphCount].trim() === 
-           revisedParagraphs[revisedParagraphs.length - 1 - suffixParagraphCount].trim()) {
+           originalParagraphs[originalParagraphs.length - 1 - suffixParagraphCount] === 
+           revisedParagraphs[revisedParagraphs.length - 1 - suffixParagraphCount]) {
       suffixParagraphCount++;
     }
     
@@ -1088,8 +1095,8 @@ export class MyersAlgorithm {
         const lookAhead = this.analyzeParagraphBreak(text, i);
         
         if (lookAhead.isParagraphBreak) {
-          // Complete current paragraph (including the newline)
-          const paragraphContent = text.slice(currentParagraphStart, i + 1);
+          // Complete current paragraph (including full separator like \n\n)
+          const paragraphContent = text.slice(currentParagraphStart, lookAhead.nextParagraphStart);
           if (paragraphContent.trim().length > 0) {
             paragraphs.push(paragraphContent);
           }

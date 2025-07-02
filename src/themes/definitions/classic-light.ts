@@ -1,0 +1,77 @@
+import { ThemeConfig } from '../../types/theme';
+
+/**
+ * Classic Light Theme
+ * A sophisticated dark mode theme inspired by modern desktop applications,
+ * featuring various shades of grey with light blue and orange accents.
+ * Uses flat colors without gradients for a clean, professional appearance.
+ */
+export const classicLightTheme: ThemeConfig = {
+  name: 'classic-light',
+  displayName: 'Classic Light',
+  description: 'A dark theme with grey tones, light blue and orange accents - inspired by modern desktop applications',
+  colors: {
+    // Light blue primary palette - for highlights and interactive elements
+    primary: {
+      50: '#f0f9ff',   // Very light blue tint
+      100: '#e0f2fe',  // Light blue
+      200: '#bae6fd',  // Medium-light blue
+      300: '#7dd3fc',  // Medium blue
+      400: '#38bdf8',  // Medium-bright blue
+      500: '#0ea5e9',  // Base light blue - main accent
+      600: '#0284c7',  // Medium-dark blue
+      700: '#0369a1',  // Dark blue
+      800: '#075985',  // Darker blue
+      900: '#0c4a6e',  // Darkest blue
+    },
+    // Grey palette - main interface colors (dark mode greys)
+    secondary: {
+      50: '#f8fafc',   // Lightest (for text on dark)
+      100: '#f1f5f9',  // Very light grey
+      200: '#e2e8f0',  // Light grey
+      300: '#cbd5e1',  // Medium-light grey
+      400: '#94a3b8',  // Medium grey
+      500: '#64748b',  // Base grey
+      600: '#475569',  // Medium-dark grey
+      700: '#334155',  // Dark grey - secondary backgrounds
+      800: '#1e293b',  // Darker grey - primary backgrounds
+      900: '#0f172a',  // Darkest grey - deepest backgrounds
+    },
+    // Orange accent palette - for warnings, highlights, and action items
+    accent: {
+      50: '#fff7ed',   // Very light orange tint
+      100: '#ffedd5',  // Light orange
+      200: '#fed7aa',  // Medium-light orange
+      300: '#fdba74',  // Medium orange
+      400: '#fb923c',  // Medium-bright orange
+      500: '#f97316',  // Base orange - secondary accent
+      600: '#ea580c',  // Medium-dark orange
+      700: '#c2410c',  // Dark orange
+      800: '#9a3412',  // Darker orange
+      900: '#7c2d12',  // Darkest orange
+    },
+    // True neutral greys - for text and subtle backgrounds
+    neutral: {
+      50: '#fafafa',   // Almost white
+      100: '#f4f4f5',  // Very light neutral
+      200: '#e4e4e7',  // Light neutral
+      300: '#d4d4d8',  // Medium-light neutral
+      400: '#a1a1aa',  // Medium neutral
+      500: '#71717a',  // Base neutral - regular text
+      600: '#52525b',  // Medium-dark neutral
+      700: '#3f3f46',  // Dark neutral - headings
+      800: '#27272a',  // Darker neutral - cards/panels
+      900: '#18181b',  // Darkest neutral - deep backgrounds
+    },
+  },
+  // No glassmorphism effects - flat design as requested
+  effects: {
+    glassmorphism: false,
+    backdropBlur: '0px',
+    backgroundOpacity: '1',
+    shadowIntensity: 'medium',
+    gradientOverlay: false,
+    animationLevel: 'subtle',
+    textureOverlay: false,
+  },
+};

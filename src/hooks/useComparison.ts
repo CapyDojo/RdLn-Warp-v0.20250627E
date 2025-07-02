@@ -338,6 +338,7 @@ export const useComparison = () => {
         //   areTextsIdentical: actualOriginal === actualRevised
         // });
       
+      
       // Use actual texts for comparison (either from state or overrides)
       const result = await MyersAlgorithm.compare(actualOriginal, actualRevised, progressCallback);
         // console.log('✅ MyersAlgorithm.compare completed, result:', result);

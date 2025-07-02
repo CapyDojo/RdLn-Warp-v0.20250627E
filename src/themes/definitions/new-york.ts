@@ -2,13 +2,13 @@ import { ThemeConfig } from '../../types/theme';
 import { GLASSMORPHISM_EFFECTS } from '../utils/effects';
 
 /**
- * New York Night Theme
+ * NYC Dusk Theme
  * A sophisticated dark theme inspired by a NYC skyline at night.
  * Features charcoal grays, warm amber accents, and electric blue highlights.
  */
 export const newYorkTheme: ThemeConfig = {
   name: 'new-york',
-  displayName: 'New York Night',
+  displayName: 'NYC Dusk',
   description: 'Urban night skyline with warm amber accents',
   colors: {
     primary: {

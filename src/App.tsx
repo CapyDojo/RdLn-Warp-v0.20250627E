@@ -22,7 +22,7 @@ function AppContent() {
   }, []);
 
   return (
-    <div className={`min-h-screen ${themeConfig.effects?.glassmorphism ? '' : 'bg-theme-neutral-50'}`}>
+    <div className="min-h-screen">
       <Header 
         showAdvancedOcrCard={showAdvancedOcrCard}
         showPerformanceDemoCard={showPerformanceDemoCard}
@@ -44,7 +44,7 @@ function AppContent() {
               Built for legal professionals. All processing happens in your browser - your documents never leave your device.
             </p>
             <p className="text-xs mt-2 text-theme-neutral-500 font-serif libertinus-math-text leading-relaxed">
-              Uses proprietary algorithm tuned for semantically optimal redline readability. 
+              Proprietary algorithm tuned for surgical, semantic redlines. 
               Features advanced OCR powered by Tesseract.js for screenshot-to-text conversion.
             </p>
             

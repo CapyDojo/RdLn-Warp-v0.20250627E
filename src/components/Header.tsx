@@ -22,7 +22,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Logo Section */}
           <div className="flex items-center gap-3">
             <div 
-              className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-theme-primary-500 to-theme-primary-700 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
+              className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-theme-primary-300 to-theme-primary-700 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
               style={{ flexShrink: 0, aspectRatio: '1/1' }}
             >
               <span className="text-white text-xl font-bold font-serif leading-none tracking-tighter">
