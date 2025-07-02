@@ -2,7 +2,19 @@ import React from 'react';
 import { Zap, Image } from 'lucide-react';
 import { ThemeSelector } from './ThemeSelector';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  showAdvancedOcrCard?: boolean;
+  showPerformanceDemoCard?: boolean;
+  onToggleAdvancedOcr?: () => void;
+  onTogglePerformanceDemo?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ 
+  showAdvancedOcrCard = true, 
+  showPerformanceDemoCard = true, 
+  onToggleAdvancedOcr, 
+  onTogglePerformanceDemo 
+}) => {
   return (
     <header className="floating-header">
       <nav className="glass-panel rounded-2xl px-4 sm:px-6 py-3 sm:py-4 shadow-xl border border-white/20 backdrop-blur-xl transition-all duration-300 hover:shadow-2xl">
@@ -10,33 +22,47 @@ export const Header: React.FC = () => {
           {/* Logo Section */}
           <div className="flex items-center gap-3">
             <div 
-              className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-theme-primary-500 to-theme-primary-700 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
+              className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-theme-primary-500 to-theme-primary-700 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
               style={{ flexShrink: 0, aspectRatio: '1/1' }}
             >
-              <span className="text-white text-lg font-bold font-serif leading-none tracking-tighter">
+              <span className="text-white text-xl font-bold font-serif leading-none tracking-tighter">
                 RdLn
               </span>
             </div>
-            <span className="hidden sm:block text-theme-primary-800 font-semibold text-lg tracking-tight">
-              Legal Redline
-            </span>
           </div>
           
-          {/* Feature Highlights - Compact for floating nav */}
-          <div className="hidden lg:flex items-center gap-4">
-            <div className="flex items-center gap-2 px-3 py-2 bg-theme-accent-100/50 rounded-lg border border-theme-accent-200/50">
-              <Image className="w-4 h-4 text-theme-accent-600" />
-              <span className="text-theme-accent-800 font-medium text-sm">OCR</span>
-            </div>
-            <div className="flex items-center gap-2 px-3 py-2 bg-theme-secondary-100/50 rounded-lg border border-theme-secondary-200/50">
-              <Zap className="w-4 h-4 text-theme-secondary-600" />
-              <span className="text-theme-secondary-800 font-medium text-sm">Fast</span>
-            </div>
-          </div>
 
           {/* Controls */}
           <div className="flex items-center gap-3">
             <ThemeSelector />
+            {/* Dev Toggle Buttons */}
+            {onToggleAdvancedOcr && (
+              <button
+                onClick={onToggleAdvancedOcr}
+                className={`px-2 py-1 text-xs rounded transition-all ${
+                  showAdvancedOcrCard 
+                    ? 'bg-green-500 text-white hover:bg-green-600' 
+                    : 'bg-gray-500 text-white hover:bg-gray-600'
+                }`}
+                title="Toggle Advanced OCR card visibility"
+              >
+                OCR {showAdvancedOcrCard ? 'ON' : 'OFF'}
+              </button>
+            )}
+            {onTogglePerformanceDemo && (
+              <button
+                onClick={onTogglePerformanceDemo}
+                className={`px-2 py-1 text-xs rounded transition-all ${
+                  showPerformanceDemoCard 
+                    ? 'bg-green-500 text-white hover:bg-green-600' 
+                    : 'bg-gray-500 text-white hover:bg-gray-600'
+                }`}
+                title="Toggle Performance Demo card visibility"
+              >
+                Demo {showPerformanceDemoCard ? 'ON' : 'OFF'}
+              </button>
+            )}
+            
             {/* Temporary Logo Test Link - REMOVE AFTER TESTING */}
             <a 
               href="/logo-test" 

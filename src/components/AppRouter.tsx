@@ -69,7 +69,7 @@ function AppContent({ isLogoTestPage }: AppContentProps) {
             {/* Professional attribution */}
             <div className="mt-6 pt-4 border-t border-theme-neutral-200">
               <p className="text-xs text-theme-neutral-400 font-serif">
-                Â© 2025 RdLn - Professional Legal Text Comparison App
+                Â© 2025 RdLn - Professional Text Redlining with OCR
               </p>
             </div>
           </div>

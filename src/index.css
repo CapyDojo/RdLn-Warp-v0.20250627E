@@ -116,12 +116,12 @@ body {
 
 /* Kyoto theme global text - Dark autumn night inspired */
 [data-theme="kyoto"] {
-  --text-body: #fafaf9;      /* Tatami white - light text for dark background */
-  --text-header: #f0fdf4;    /* Lightest forest green - headers */
-  --text-secondary: #d6d3d1; /* Light stone - secondary text */
-  --text-interactive: #f8b4b4; /* Light maple red - interactive elements */
-  --text-success: #bbf7d0;   /* Light forest green - success states */
-  --text-on-glass: #fafaf9; /* Light text for glass panels */
+  --text-body: #f8b4b4;      /* Light maple red - consistent peach across all text */
+  --text-header: #f8b4b4;    /* Light maple red - consistent with interactive elements */
+  --text-secondary: #f8b4b4; /* Light maple red - unified appearance */
+  --text-interactive: #f8b4b4; /* Light maple red - interactive elements (unchanged) */
+  --text-success: #bbf7d0;   /* Light forest green - success states (unchanged) */
+  --text-on-glass: #f8b4b4; /* Consistent peach for glass panels */
 }
 
 /* New York theme global text */

@@ -13,7 +13,16 @@ import { BackgroundLoadingStatus } from './BackgroundLoadingStatus';
 // SSMR CHUNKING: Step 3 - Import chunking progress indicator
 import { ChunkingProgressIndicator } from './ChunkingProgressIndicator';
 
-export const ComparisonInterface: React.FC = () => {
+interface ComparisonInterfaceProps {
+  showAdvancedOcrCard?: boolean;
+  showPerformanceDemoCard?: boolean;
+}
+
+export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
+  showAdvancedOcrCard = true,
+  showPerformanceDemoCard = true
+}) => {
+  
   // Performance tracking (silent in production)
   const renderStartTime = performance.now();
   
@@ -433,127 +442,128 @@ export const ComparisonInterface: React.FC = () => {
       
       {/* SSMR CHUNKING: Progress now shown in output area during processing */}
       
+      
       {/* Enhanced OCR Feature Notice - Enhanced with glassmorphism */}
-      <div className="glass-panel border border-theme-primary-200 rounded-lg p-4 mb-6 shadow-lg transition-all duration-300">
-        <div className="flex items-start gap-3">
-          <div className="flex items-center gap-2">
-            <Image className="w-5 h-5 text-theme-primary-600" />
-            <Globe className="w-5 h-5 text-theme-secondary-600" />
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold text-theme-primary-900 mb-1">Advanced Multi-Language OCR</h3>
-            <p className="text-sm text-theme-primary-700 mb-2">
-              Take a screenshot of any document and paste it directly into the input areas. 
-              The app will automatically detect the language and extract text using advanced OCR technology.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-theme-primary-600">
-              <div>
-                <strong>Supported Languages:</strong> English, Chinese (Simplified & Traditional), Spanish, French, German, Japanese, Korean, Arabic, Russian
-              </div>
-              <div>
-                <strong>Features:</strong> Auto-detection, Manual selection, Legal terminology optimization, Smart formatting
+      {showAdvancedOcrCard && (
+        <div className="glass-panel border border-theme-primary-200 rounded-lg p-4 mb-6 shadow-lg transition-all duration-300">
+          <div className="flex items-start gap-3">
+            <div className="flex items-center gap-2">
+              <Image className="w-5 h-5 text-theme-primary-600" />
+              <Globe className="w-5 h-5 text-theme-secondary-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-theme-primary-900 mb-1">Advanced Multi-Language OCR</h3>
+              <p className="text-sm text-theme-primary-700 mb-2">
+                Take a screenshot of any document and paste it directly into the input areas. 
+                The app will automatically detect the language and extract text using advanced OCR technology.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-theme-primary-600">
+                <div>
+                  <strong>Supported Languages:</strong> English, Chinese (Simplified & Traditional), Spanish, French, German, Japanese, Korean, Arabic, Russian
+                </div>
+                <div>
+                  <strong>Features:</strong> Auto-detection, Manual selection, Legal terminology optimization, Smart formatting
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Demo Performance Test Buttons */}
-      <div className="glass-panel border border-theme-accent-200 rounded-lg p-6 mb-6 shadow-lg transition-all duration-300">
-        <div className="text-center mb-4">
-          <h3 className="text-lg font-semibold text-theme-primary-900 mb-2">🚀 Performance Demo Scenarios</h3>
-          <p className="text-sm text-theme-neutral-600">
-            Test different rendering strategies with realistic document sizes and change complexities.
-            Watch the intelligent strategy selection in action!
-          </p>
+      {showPerformanceDemoCard && (
+        <div className="glass-panel border border-theme-accent-200 rounded-lg p-6 mb-6 shadow-lg transition-all duration-300">
+          <div className="text-center mb-4">
+            <h3 className="text-lg font-semibold text-theme-primary-900 mb-2">🚀 Performance Demo Scenarios</h3>
+            <p className="text-sm text-theme-neutral-600">
+              Test different rendering strategies with realistic document sizes and change complexities.
+              Watch the intelligent strategy selection in action!
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Row 1: Few Changes */}
+          <button
+            onClick={() => {
+              const original = createMockDocument('small', 5000, false);
+              handleLoadTest(original, createMockDiff('few', original));
+            }}
+            className="enhanced-button bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
+          >
+            📄 Small Doc, Few Changes
+          </button>
+          <button
+            onClick={() => {
+              const original = createMockDocument('medium', 15000, false);
+              handleLoadTest(original, createMockDiff('few', original));
+            }}
+            className="enhanced-button bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
+          >
+            📑 Medium Doc, Few Changes
+          </button>
+          <button
+            onClick={() => {
+              const original = createMockDocument('large', 200000, false);
+              handleLoadTest(original, createMockDiff('few', original));
+            }}
+            className="enhanced-button bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
+          >
+            📚 Large Doc, Few Changes
+          </button>
+          <button
+            onClick={() => {
+              const original = createMockDocument('monster', 500000, false);
+              handleLoadTest(original, createMockDiff('few', original));
+            }}
+            className="enhanced-button bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
+          >
+            🏢 Monster Doc, Few Changes
+          </button>
+          
+          {/* Row 2: Many/Extreme Changes */}
+          <button
+            onClick={() => {
+              const original = createMockDocument('small', 5000, false);
+              handleLoadTest(original, createMockDiff('many', original));
+            }}
+            className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
+          >
+            📄 Small Doc, Many Changes
+          </button>
+          <button
+            onClick={() => {
+              const original = createMockDocument('medium', 15000, false);
+              handleLoadTest(original, createMockDiff('many', original));
+            }}
+            className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
+          >
+            📑 Medium Doc, Many Changes
+          </button>
+          <button
+            onClick={() => {
+              const original = createMockDocument('large', 200000, false);
+              handleLoadTest(original, createMockDiff('many', original));
+            }}
+            className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
+          >
+            📚 Large Doc, Many Changes
+          </button>
+          <button
+            onClick={() => {
+              const original = createMockDocument('monster', 500000, false);
+              handleLoadTest(original, createMockDiff('extreme', original));
+            }}
+            className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
+          >
+            🚀 Monster Doc, Crazy Changes
+          </button>
+          </div>
+          
+          <div className="mt-4 text-xs text-center text-theme-neutral-500">
+            💡 <strong>Tip:</strong> Enable Auto-Compare to see real-time strategy selection and performance metrics
+          </div>
         </div>
-        
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Column 1: Small Documents */}
-        <button
-          onClick={() => {
-            const original = createMockDocument('small', 5000, false);
-            handleLoadTest(original, createMockDiff('few', original));
-          }}
-          className="enhanced-button bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
-        >
-          📄 Small Doc, Few Changes
-        </button>
-        <button
-          onClick={() => {
-            const original = createMockDocument('small', 5000, false);
-            handleLoadTest(original, createMockDiff('many', original));
-          }}
-          className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
-        >
-          📄 Small Doc, Many Changes
-        </button>
-        
-        {/* Column 2: Medium Documents */}
-        <button
-          onClick={() => {
-            const original = createMockDocument('medium', 15000, false);
-            handleLoadTest(original, createMockDiff('few', original));
-          }}
-          className="enhanced-button bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
-        >
-          📑 Medium Doc, Few Changes
-        </button>
-        <button
-          onClick={() => {
-            const original = createMockDocument('medium', 15000, false);
-            handleLoadTest(original, createMockDiff('many', original));
-          }}
-          className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
-        >
-          📑 Medium Doc, Many Changes
-        </button>
-        
-        {/* Column 3: Large Documents */}
-        <button
-          onClick={() => {
-            const original = createMockDocument('large', 200000, false);
-            handleLoadTest(original, createMockDiff('few', original));
-          }}
-          className="enhanced-button bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
-        >
-          📚 Large Doc, Few Changes
-        </button>
-        <button
-          onClick={() => {
-            const original = createMockDocument('large', 200000, false);
-            handleLoadTest(original, createMockDiff('many', original));
-          }}
-          className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
-        >
-          📚 Large Doc, Many Changes
-        </button>
-        
-        {/* Column 4: Monster Documents */}
-        <button
-          onClick={() => {
-            const original = createMockDocument('monster', 500000, false);
-            handleLoadTest(original, createMockDiff('few', original));
-          }}
-          className="enhanced-button bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
-        >
-          🏢 Monster Doc, Few Changes
-        </button>
-        <button
-          onClick={() => {
-            const original = createMockDocument('monster', 500000, false);
-            handleLoadTest(original, createMockDiff('extreme', original));
-          }}
-          className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
-        >
-          🚀 Monster Doc, Crazy Changes
-        </button>
-        </div>
-        
-        <div className="mt-4 text-xs text-center text-theme-neutral-500">
-          💡 <strong>Tip:</strong> Enable Auto-Compare to see real-time strategy selection and performance metrics
-        </div>
-      </div>
+      )}
 
       {/* Control Bar - Enhanced with glassmorphism and Quick Compare */}
       <div className="glass-panel p-4 mb-6 shadow-lg transition-all duration-300">

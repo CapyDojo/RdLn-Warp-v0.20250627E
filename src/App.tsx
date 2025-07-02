@@ -9,6 +9,10 @@ import './styles/resize-overrides.css'; // SSMR CSS resize fixes
 
 function AppContent() {
   const { currentTheme, themeConfig } = useTheme();
+  
+  // Dev toggle state for cards that won't make it to production
+  const [showAdvancedOcrCard, setShowAdvancedOcrCard] = React.useState(true);
+  const [showPerformanceDemoCard, setShowPerformanceDemoCard] = React.useState(true);
 
   // Cleanup OCR worker on app unmount
   useEffect(() => {
@@ -19,9 +23,17 @@ function AppContent() {
 
   return (
     <div className={`min-h-screen ${themeConfig.effects?.glassmorphism ? '' : 'bg-theme-neutral-50'}`}>
-      <Header />
+      <Header 
+        showAdvancedOcrCard={showAdvancedOcrCard}
+        showPerformanceDemoCard={showPerformanceDemoCard}
+        onToggleAdvancedOcr={() => setShowAdvancedOcrCard(!showAdvancedOcrCard)}
+        onTogglePerformanceDemo={() => setShowPerformanceDemoCard(!showPerformanceDemoCard)}
+      />
       <main className="pt-24">
-        <ComparisonInterface />
+        <ComparisonInterface 
+          showAdvancedOcrCard={showAdvancedOcrCard}
+          showPerformanceDemoCard={showPerformanceDemoCard}
+        />
       </main>
       
       {/* Footer - Enhanced with glassmorphism to match top sections */}
@@ -61,7 +73,7 @@ function AppContent() {
             {/* Professional attribution */}
             <div className="mt-6 pt-4 border-t border-theme-neutral-200">
               <p className="text-xs text-theme-neutral-400 font-serif">
-                © 2025 RdLn - Professional Legal Text Comparison App
+                © 2025 RdLn - Professional Text Redlining with OCR
               </p>
             </div>
           </div>

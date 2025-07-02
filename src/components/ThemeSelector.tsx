@@ -9,30 +9,53 @@ export const ThemeSelector: React.FC = () => {
   const { currentTheme, setTheme, availableThemes } = useTheme();
   const { isOpen, toggle, referenceRef, popperRef } = useDropdown();
   
-  const { styles, attributes } = usePopper(referenceRef.current, popperRef.current, {
-    placement: 'bottom-end',
-    modifiers: [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 8],
+  // Only initialize usePopper when both refs are available
+  const [enablePopper, setEnablePopper] = React.useState(false);
+  
+  // Check if both refs are available
+  React.useLayoutEffect(() => {
+    if (referenceRef.current && popperRef.current && isOpen) {
+      setEnablePopper(true);
+    } else if (!isOpen) {
+      setEnablePopper(false);
+    }
+  }, [isOpen, referenceRef.current, popperRef.current]);
+  
+  const { styles, attributes, update } = usePopper(
+    enablePopper ? referenceRef.current : null,
+    enablePopper ? popperRef.current : null,
+    {
+      placement: 'bottom-end',
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [0, 8],
+          },
         },
-      },
-      {
-        name: 'preventOverflow',
-        options: {
-          boundary: 'viewport',
-          padding: 8,
+        {
+          name: 'preventOverflow',
+          options: {
+            boundary: 'viewport',
+            padding: 8,
+          },
         },
-      },
-      {
-        name: 'flip',
-        options: {
-          fallbackPlacements: ['top-end', 'bottom-start', 'top-start'],
+        {
+          name: 'flip',
+          options: {
+            fallbackPlacements: ['top-end', 'bottom-start', 'top-start'],
+          },
         },
-      },
-    ],
-  });
+      ],
+    }
+  );
+
+  // Force update popper position when enabled
+  React.useLayoutEffect(() => {
+    if (enablePopper && update) {
+      update();
+    }
+  }, [enablePopper, update]);
 
   const handleSelectTheme = (themeName: string) => {
     setTheme(themeName);
@@ -56,7 +79,7 @@ export const ThemeSelector: React.FC = () => {
           ref={popperRef as React.RefObject<HTMLDivElement>}
           style={styles.popper}
           {...attributes.popper}
-          className="glass-panel rounded-xl shadow-xl z-[60] min-w-[240px] overflow-hidden border border-white/20"
+          className="glass-panel rounded-xl shadow-xl z-[9999] min-w-[240px] overflow-hidden border border-white/20"
         >
           <div className="p-2">
             {availableThemes.map((theme) => (
