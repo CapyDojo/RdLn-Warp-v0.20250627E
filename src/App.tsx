@@ -17,19 +17,8 @@ function AppContent() {
     };
   }, []);
 
-  // DEFINITIVE FIX: Remove all background classes for glassmorphic themes
-  const getAppBackgroundClass = () => {
-    // For themes with glassmorphism effects, return empty string (no background)
-    // This allows backdrop-filter to correctly blur the document.body gradient
-    if (themeConfig.effects?.glassmorphism) {
-      return '';
-    }
-    // For solid themes, use theme-neutral background
-    return 'bg-theme-neutral-50';
-  };
-
   return (
-    <div className="min-h-screen" style={{ background: 'transparent' }}>
+    <div className={`min-h-screen ${themeConfig.effects?.glassmorphism ? '' : 'bg-theme-neutral-50'}`}>
       <Header />
       <main className="pt-24">
         <ComparisonInterface />

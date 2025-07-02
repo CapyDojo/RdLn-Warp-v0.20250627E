@@ -507,9 +507,9 @@ export const ThemeSelector: React.FC = () => {
 
 ## Phase 5: Theming Enhancements (Post-MVP)
 
-### Kyoto Night Theme (Dark variant of Zen)
+### Kyoto Dusk Theme (Dark variant of Zen)
 
-- **Objective**: Introduce a dark version of the Kyoto Zen theme, named **Kyoto Night**, for users who prefer dark mode interfaces.
+- **Objective**: Introduce a dark version of the Kyoto Zen theme, named **Kyoto Dusk**, for users who prefer dark mode interfaces.
 - **Description**: A dark, elegant theme inspired by a tranquil Kyoto night. Deep forest greens and autumn maple reds are inverted to create a high-contrast, visually striking dark theme, while maintaining the brand's premium aesthetic.
 - **Color Palette**:
   - **Primary (Deep Forest Green)**: Inverted for dark mode, using darker shades as the base and lighter shades for highlights.

@@ -114,14 +114,14 @@ body {
   --text-on-glass: #f5f5f5;
 }
 
-/* Kyoto theme global text - Autumn garden inspired */
+/* Kyoto theme global text - Dark autumn night inspired */
 [data-theme="kyoto"] {
-  --text-body: #1c1917;      /* Deepest charcoal - tatami contrast */
-  --text-header: #14532d;    /* Deepest forest green - evergreen trees */
-  --text-secondary: #57534e; /* Medium-dark stone - natural materials */
-  --text-interactive: #dc2626; /* Medium-dark maple red - autumn leaves */
-  --text-success: #15803d;   /* Dark forest green - bamboo success */
-  --text-on-glass: #1c1917; /* Same as body for glass panels */
+  --text-body: #fafaf9;      /* Tatami white - light text for dark background */
+  --text-header: #f0fdf4;    /* Lightest forest green - headers */
+  --text-secondary: #d6d3d1; /* Light stone - secondary text */
+  --text-interactive: #f8b4b4; /* Light maple red - interactive elements */
+  --text-success: #bbf7d0;   /* Light forest green - success states */
+  --text-on-glass: #fafaf9; /* Light text for glass panels */
 }
 
 /* New York theme global text */

@@ -219,7 +219,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
                 }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-full bg-theme-neutral-50 transition-transform ${
                     autoDetect ? 'translate-x-6' : 'translate-x-1'
                   }`}
                 />

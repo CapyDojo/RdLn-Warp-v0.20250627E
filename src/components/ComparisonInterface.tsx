@@ -468,7 +468,8 @@ export const ComparisonInterface: React.FC = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Column 1: Small Documents */}
         <button
           onClick={() => {
             const original = createMockDocument('small', 5000, false);
@@ -487,6 +488,8 @@ export const ComparisonInterface: React.FC = () => {
         >
           📄 Small Doc, Many Changes
         </button>
+        
+        {/* Column 2: Medium Documents */}
         <button
           onClick={() => {
             const original = createMockDocument('medium', 15000, false);
@@ -505,24 +508,8 @@ export const ComparisonInterface: React.FC = () => {
         >
           📑 Medium Doc, Many Changes
         </button>
-        <button
-          onClick={() => {
-            const original = createMockDocument('monster', 500000, false);
-            handleLoadTest(original, createMockDiff('few', original));
-          }}
-          className="enhanced-button bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
-        >
-          🏢 Monster Doc, Few Changes
-        </button>
-        <button
-          onClick={() => {
-            const original = createMockDocument('monster', 500000, false);
-            handleLoadTest(original, createMockDiff('extreme', original));
-          }}
-          className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
-        >
-          🚀 Monster Doc, Crazy Changes
-        </button>
+        
+        {/* Column 3: Large Documents */}
         <button
           onClick={() => {
             const original = createMockDocument('large', 200000, false);
@@ -540,6 +527,26 @@ export const ComparisonInterface: React.FC = () => {
           className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
         >
           📚 Large Doc, Many Changes
+        </button>
+        
+        {/* Column 4: Monster Documents */}
+        <button
+          onClick={() => {
+            const original = createMockDocument('monster', 500000, false);
+            handleLoadTest(original, createMockDiff('few', original));
+          }}
+          className="enhanced-button bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
+        >
+          🏢 Monster Doc, Few Changes
+        </button>
+        <button
+          onClick={() => {
+            const original = createMockDocument('monster', 500000, false);
+            handleLoadTest(original, createMockDiff('extreme', original));
+          }}
+          className="enhanced-button bg-theme-accent-600 text-white rounded-lg hover:bg-theme-accent-700 transition-all duration-200 shadow-lg px-3 py-2 text-sm"
+        >
+          🚀 Monster Doc, Crazy Changes
         </button>
         </div>
         
