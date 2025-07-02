@@ -199,6 +199,19 @@ textarea:focus {
   outline-offset: 2px !important;
 }
 
+/* Floating Header - Ensure it stays fixed during scroll */
+.floating-header {
+  position: fixed !important;
+  top: 1rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 9999 !important;
+  width: 100% !important;
+  max-width: 72rem !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
 /* Selection states */
 ::selection {
   background: var(--text-interactive) !important;

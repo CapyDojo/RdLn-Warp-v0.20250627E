@@ -54,7 +54,7 @@ const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
   };
 
   return (
-    <div className="glass-panel overflow-hidden shadow-lg transition-all duration-300">
+    <div className="glass-panel output-panel overflow-hidden shadow-lg transition-all duration-300">
       <div className="glass-panel-header-footer px-4 py-3 border-b border-theme-neutral-200 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-theme-primary-900">Redlined Document</h3>
         <div className="flex gap-2">

@@ -155,11 +155,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         // Pre-define ALL theme background styles for faster application
         const backgroundStyles = {
           professional: `
-            background: #f1f5f9 !important;
+            background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 25%, #f8fafc  50%, #f1f5f9 75%, #e2e8f0 100%) !important;
             background-image: 
-              radial-gradient(circle at 25% 25%, rgba(226, 232, 240, 0.05) 0%, transparent 50%),
-              radial-gradient(circle at 75% 75%, rgba(203, 213, 225, 0.03) 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, rgba(241, 245, 249, 0.02) 0%, transparent 50%) !important;
+              linear-gradient(138deg, rgba(59, 130, 246, 0.35) 0%, rgba(147, 197, 253, 0.28) 22%, transparent 48%, rgba(219, 234, 254, 0.22) 73%, rgba(239, 246, 255, 0.15) 100%),
+              radial-gradient(ellipse at 28% 18%, rgba(226, 232, 240, 0.25) 0%, transparent 52%),
+              radial-gradient(ellipse at 78% 82%, rgba(203, 213, 225, 0.20) 0%, transparent 47%) !important;
             background-repeat: no-repeat !important;
             background-attachment: fixed !important;
             background-size: 100% 100% !important;
@@ -168,11 +168,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
             padding: 0 !important;
           `,
           bamboo: `
-            background: #7ba05f !important;
-            background-image: 
-              radial-gradient(circle at 25% 25%, rgba(108, 153, 73, 0.08) 0%, transparent 50%),
-              radial-gradient(circle at 75% 75%, rgba(138, 178, 108, 0.05) 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, rgba(93, 138, 58, 0.03) 0%, transparent 50%) !important;
+            background: linear-gradient(45deg, #2d5016 0%, #4a7c59 25%, #7ba05f 50%, #c5d4b8 75%, #f8faf5 100%) !important;
             background-repeat: no-repeat !important;
             background-attachment: fixed !important;
             background-size: 100% 100% !important;
@@ -181,11 +177,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
             padding: 0 !important;
           `,
           'apple-light': `
-            background: #f8fafc !important;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f8fafc 25%, #ffffff 50%, #f8fafc 75%, #e0f2fe 100%) !important;
             background-image: 
-              radial-gradient(circle at 25% 25%, rgba(241, 245, 249, 0.04) 0%, transparent 50%),
-              radial-gradient(circle at 75% 75%, rgba(226, 232, 240, 0.03) 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, rgba(248, 250, 252, 0.02) 0%, transparent 50%) !important;
+              radial-gradient(ellipse 650px 450px at 25% 15%, rgba(56, 189, 248, 0.32) 0%, transparent 60%),
+              radial-gradient(ellipse 750px 300px at 75% 85%, rgba(125, 211, 252, 0.28) 0%, transparent 65%),
+              radial-gradient(ellipse 400px 700px at 10% 50%, rgba(186, 230, 253, 0.25) 0%, transparent 55%),
+              radial-gradient(ellipse 550px 400px at 90% 30%, rgba(224, 242, 254, 0.18) 0%, transparent 50%),
+              radial-gradient(ellipse 300px 600px at 45% 95%, rgba(241, 245, 249, 0.25) 0%, transparent 45%),
+              radial-gradient(ellipse 500px 250px at 70% 5%, rgba(226, 232, 240, 0.22) 0%, transparent 40%) !important;
             background-repeat: no-repeat !important;
             background-attachment: fixed !important;
             background-size: 100% 100% !important;
@@ -207,14 +206,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
             padding: 0 !important;
           `,
           kyoto: `
-            background: #14532d !important;
+            background: linear-gradient(135deg, #0f2f1a 0%, #14532d 25%, #1a5d35 50%, #14532d 75%, #0f2f1a 100%) !important;
             background-image: 
-              radial-gradient(circle at 25% 15%, rgba(239, 68, 68, 0.06) 0%, transparent 40%),
-              radial-gradient(circle at 75% 25%, rgba(220, 38, 38, 0.04) 0%, transparent 35%),
-              radial-gradient(circle at 60% 85%, rgba(185, 28, 28, 0.03) 0%, transparent 30%),
-              radial-gradient(circle at 20% 75%, rgba(34, 197, 94, 0.05) 0%, transparent 45%),
-              radial-gradient(circle at 85% 60%, rgba(22, 163, 74, 0.04) 0%, transparent 40%),
-              radial-gradient(circle at 50% 50%, rgba(120, 113, 108, 0.02) 0%, transparent 60%) !important;
+              linear-gradient(315deg, rgba(239, 68, 68, 0.75) 0%, rgba(220, 38, 38, 0.65) 15%, rgba(185, 28, 28, 0.45) 31%, rgba(21, 77, 35, 0.75) 50%, rgba(15, 47, 26, 0.82) 100%),
+              radial-gradient(ellipse 350px 200px at 10% 8%, rgba(248, 113, 113, 0.35) 0%, rgba(220, 38, 38, 0.20) 50%, rgba(185, 28, 28, 0.08) 80%, rgba(0, 0, 0, 0) 100%),
+              radial-gradient(ellipse 500px 300px at 25% 15%, rgba(248, 113, 113, 0.45) 0%, rgba(220, 38, 38, 0.25) 40%, rgba(185, 28, 28, 0.15) 70%, rgba(185, 28, 28, 0.05) 90%, rgba(0, 0, 0, 0) 100%),
+              radial-gradient(ellipse 450px 350px at 80% 85%, rgba(21, 77, 35, 0.60) 0%, rgba(15, 47, 26, 0.45) 35%, rgba(21, 77, 35, 0.25) 65%, rgba(15, 47, 26, 0.08) 85%, rgba(0, 0, 0, 0) 100%),
+              radial-gradient(ellipse 300px 400px at 10% 70%, rgba(239, 68, 68, 0.35) 0%, rgba(220, 38, 38, 0.20) 45%, rgba(185, 28, 28, 0.10) 75%, rgba(220, 38, 38, 0.03) 90%, rgba(0, 0, 0, 0) 100%),
+              radial-gradient(ellipse 400px 250px at 5% 90%, rgba(248, 113, 113, 0.25) 0%, rgba(220, 38, 38, 0.15) 60%, rgba(185, 28, 28, 0.06) 85%, rgba(0, 0, 0, 0) 100%) !important;
             background-repeat: no-repeat !important;
             background-attachment: fixed !important;
             background-size: 100% 100% !important;
@@ -251,10 +250,22 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         
         // Apply the theme-specific background style
         if (backgroundStyles[currentTheme]) {
+          console.log(`🎨 THEME DEBUG: About to apply ${currentTheme} theme background`);
+          console.log(`🎨 THEME DEBUG: Current body style before:`, document.body.style.cssText);
+          
           document.body.style.cssText = backgroundStyles[currentTheme];
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`🎨 Applied ${currentTheme} theme background (optimized)`);
-          }
+          
+          console.log(`🎨 THEME DEBUG: Applied ${currentTheme} theme background`);
+          console.log(`🎨 THEME DEBUG: CSS applied:`, backgroundStyles[currentTheme]);
+          console.log(`🎨 THEME DEBUG: Body style after:`, document.body.style.cssText);
+          
+          // Check if styles are being overridden
+          setTimeout(() => {
+            console.log(`🎨 THEME DEBUG: Body style 100ms later:`, document.body.style.cssText);
+            const computedStyle = window.getComputedStyle(document.body);
+            console.log(`🎨 THEME DEBUG: Computed background:`, computedStyle.background);
+            console.log(`🎨 THEME DEBUG: Computed backgroundImage:`, computedStyle.backgroundImage);
+          }, 100);
         } else {
           // Fallback for unknown themes
           document.body.style.cssText = `

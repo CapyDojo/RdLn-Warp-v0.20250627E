@@ -29,9 +29,11 @@ function AppContent() {
   };
 
   return (
-    <div className={`min-h-screen ${getAppBackgroundClass()}`}>
+    <div className="min-h-screen" style={{ background: 'transparent' }}>
       <Header />
-      <ComparisonInterface />
+      <main className="pt-24">
+        <ComparisonInterface />
+      </main>
       
       {/* Footer - Enhanced with glassmorphism to match top sections */}
       <footer className="mt-16 glass-panel border-t border-theme-neutral-200 shadow-lg transition-all duration-300">
@@ -41,7 +43,7 @@ function AppContent() {
               Built for legal professionals. All processing happens in your browser - your documents never leave your device.
             </p>
             <p className="text-xs mt-2 text-theme-neutral-500 font-serif libertinus-math-text leading-relaxed">
-              Uses Myers algorithm for mathematically optimal document comparison results. 
+              Uses proprietary algorithm tuned for semantically optimal redline readability. 
               Features advanced OCR powered by Tesseract.js for screenshot-to-text conversion.
             </p>
             
@@ -70,7 +72,7 @@ function AppContent() {
             {/* Professional attribution */}
             <div className="mt-6 pt-4 border-t border-theme-neutral-200">
               <p className="text-xs text-theme-neutral-400 font-serif">
-                © 2024 RdLn - Professional Legal Document Comparison Tool
+                © 2025 RdLn - Professional Legal Text Comparison App
               </p>
             </div>
           </div>

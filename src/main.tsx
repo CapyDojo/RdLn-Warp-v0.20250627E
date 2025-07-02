@@ -8,7 +8,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { BackgroundLanguageLoader } from './services/BackgroundLanguageLoader';
 
 // Development console control - set to false for quiet development
-const ENABLE_DEV_LOGS = false; // Toggle this for clean development console
+const ENABLE_DEV_LOGS = true; // Toggle this for clean development console
 
 if (process.env.NODE_ENV === 'development' && !ENABLE_DEV_LOGS) {
   // Suppress all development noise for a clean console

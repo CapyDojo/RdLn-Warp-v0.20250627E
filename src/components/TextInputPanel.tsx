@@ -196,7 +196,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
             title="OCR Language Settings"
           >
             <Globe className="w-4 h-4" />
-            <span className="hidden sm:inline">Languages</span>
+            <span className="hidden sm:inline">OCR Languages</span>
             <ChevronDown className={`w-3 h-3 transition-transform ${showLanguageSettings ? 'rotate-180' : ''}`} />
           </button>
         </div>
@@ -304,7 +304,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
                   English + Chinese
                 </button>
                 <button
-                  onClick={() => setSelectedLanguages(['eng', 'spa', 'fra'])}
+                  onClick={() => setSelectedLanguages(['eng', 'deu', 'spa', 'fra'])}
                   className="px-3 py-1 text-xs bg-theme-primary-100 text-theme-primary-800 rounded-full hover:bg-theme-primary-200 transition-colors"
                 >
                   English + European

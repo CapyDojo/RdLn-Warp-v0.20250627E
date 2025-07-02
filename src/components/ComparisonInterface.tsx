@@ -724,7 +724,6 @@ export const ComparisonInterface: React.FC = () => {
         </div>
       )}
 
-/* Results Section - Enhanced with glassmorphism */
       {(result || (isProcessing && chunkingProgress.enabled && chunkingProgress.isChunking)) && (
         <>
           <div className="mb-6">
@@ -768,7 +767,7 @@ export const ComparisonInterface: React.FC = () => {
                   height: `${outputHeight}px`,
                   overflow: 'hidden' // Ensure container controls height
                 } : undefined}
-                className={USE_CSS_RESIZE ? "override-redline-height" : ""}
+                className={`${USE_CSS_RESIZE ? "override-redline-height" : ""} glass-panel output-panel`}
               >
                 <div style={USE_CSS_RESIZE ? {
                   height: '100%',
@@ -796,7 +795,7 @@ export const ComparisonInterface: React.FC = () => {
             <div className="flex justify-center mt-4">
               <div
                 ref={outputResizeHandleRef}
-                className="glass-panel flex items-center justify-center w-20 h-8 bg-theme-primary-200/60 hover:bg-theme-primary-300/70 cursor-row-resize rounded-lg transition-all duration-300 touch-none select-none backdrop-blur-md border border-theme-primary-300/30 shadow-lg hover:shadow-xl hover:scale-105"
+                className="glass-panel output-resize-handle flex items-center justify-center w-20 h-8 bg-theme-primary-200/60 hover:bg-theme-primary-300/70 cursor-row-resize rounded-lg transition-all duration-300 touch-none select-none backdrop-blur-md border border-theme-primary-300/30 shadow-lg hover:shadow-xl hover:scale-105"
                 onMouseDown={handleOutputMouseDown}
                 title="Drag to resize output panel"
               >
