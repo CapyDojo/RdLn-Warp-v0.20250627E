@@ -9,6 +9,7 @@ interface ThemeContextType {
   themeConfig: ThemeConfig;
   setTheme: (theme: ThemeName) => void;
   availableThemes: ThemeConfig[];
+  reorderThemes: (fromIndex: number, toIndex: number) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -25,13 +26,46 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
+const DEFAULT_THEME_ORDER: ThemeName[] = [
+  'professional',
+  'bamboo',
+  'apple-light',
+  'apple-dark',
+  'kyoto',
+  'new-york',
+  'autumn',
+  'classic-light',
+  'classic-dark'
+];
+
+const THEME_ORDER_STORAGE_KEY = 'rdln-theme-order';
+
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [currentTheme, setCurrentTheme] = useState<ThemeName>('professional');
+  const [themeOrder, setThemeOrder] = useState<ThemeName[]>(DEFAULT_THEME_ORDER);
 
-  // Load theme from localStorage on mount with validation
+  // Load theme and theme order from localStorage on mount
   useEffect(() => {
     const savedTheme = getThemeFromStorage();
     setCurrentTheme(savedTheme);
+    
+    // Load custom theme order
+    const savedOrder = localStorage.getItem(THEME_ORDER_STORAGE_KEY);
+    if (savedOrder) {
+      try {
+        const parsedOrder = JSON.parse(savedOrder) as ThemeName[];
+        // Validate that all themes are present and no extras
+        const isValidOrder = parsedOrder.length === DEFAULT_THEME_ORDER.length &&
+          parsedOrder.every(theme => DEFAULT_THEME_ORDER.includes(theme)) &&
+          DEFAULT_THEME_ORDER.every(theme => parsedOrder.includes(theme));
+        
+        if (isValidOrder) {
+          setThemeOrder(parsedOrder);
+        }
+      } catch (error) {
+        console.warn('Invalid theme order in localStorage, using default order');
+      }
+    }
   }, []);
 
   // Apply theme to document root (OPTIMIZED for performance)
@@ -68,11 +102,24 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     localStorage.setItem('rdln-theme', theme);
   };
 
+  const reorderThemes = (fromIndex: number, toIndex: number) => {
+    const newOrder = [...themeOrder];
+    const [movedTheme] = newOrder.splice(fromIndex, 1);
+    newOrder.splice(toIndex, 0, movedTheme);
+    
+    setThemeOrder(newOrder);
+    localStorage.setItem(THEME_ORDER_STORAGE_KEY, JSON.stringify(newOrder));
+  };
+
+  // Create availableThemes in the custom order
+  const availableThemes = themeOrder.map(themeName => themes[themeName]);
+
   const value: ThemeContextType = {
     currentTheme,
     themeConfig: themes[currentTheme],
     setTheme,
-    availableThemes: Object.values(themes),
+    availableThemes,
+    reorderThemes,
   };
 
   return (

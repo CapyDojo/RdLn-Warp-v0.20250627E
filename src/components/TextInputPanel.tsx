@@ -1,5 +1,6 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import { FileText, Image, AlertCircle, Loader, Settings, Globe, ChevronDown, Languages } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { FileText, Image, AlertCircle, Loader, ChevronDown, Languages } from 'lucide-react';
 import { useOCR } from '../hooks/useOCR';
 import { OCRLanguage } from '../types/ocr-types';
 
@@ -21,8 +22,10 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   height = 400
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const segmentedControlRef = useRef<HTMLDivElement>(null);
   const [showLanguageSettings, setShowLanguageSettings] = useState(false);
   const [isPasteInProgress, setIsPasteInProgress] = useState(false);
+  const [controlRect, setControlRect] = useState<DOMRect | null>(null);
   
   const { 
     isProcessing, 
@@ -190,136 +193,53 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
             </div>
           )}
           
-          <button
-            onClick={() => setShowLanguageSettings(!showLanguageSettings)}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-theme-neutral-100 hover:bg-theme-neutral-200 rounded-lg transition-colors"
-            title="OCR Language Settings"
-          >
-            <Globe className="w-4 h-4" />
-            <span className="hidden sm:inline">OCR Languages</span>
-            <ChevronDown className={`w-3 h-3 transition-transform ${showLanguageSettings ? 'rotate-180' : ''}`} />
-          </button>
-        </div>
-      </div>
-
-      {/* Language Settings Panel */}
-      {showLanguageSettings && (
-        <div className="px-4 py-4 border-b border-theme-neutral-200">
-          <div className="space-y-4">
-            {/* Auto-detect toggle */}
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="text-sm font-medium text-theme-neutral-700">Auto-detect Language</label>
-                <p className="text-xs text-theme-neutral-500">Automatically detect document language</p>
-              </div>
+          {/* OCR Language Segmented Control */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-theme-neutral-700 hidden sm:inline">OCR Language</span>
+            <div className="segmented-control" ref={segmentedControlRef}>
               <button
-                onClick={() => setAutoDetect(!autoDetect)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  autoDetect ? 'bg-theme-primary-600' : 'bg-theme-neutral-300'
-                }`}
+                onClick={() => {
+                  setAutoDetect(true);
+                  setShowLanguageSettings(false); // Always close dropdown when switching to Auto
+                }}
+                className={`segment ${autoDetect ? 'active' : ''}`}
               >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    autoDetect ? 'translate-x-6' : 'translate-x-1'
+                Auto
+              </button>
+              <button
+                onClick={() => {
+                  if (!autoDetect) {
+                    // Already in manual mode, just toggle dropdown
+                    setShowLanguageSettings(!showLanguageSettings);
+                  } else {
+                    // Switching from auto to manual, open dropdown
+                    setAutoDetect(false);
+                    setShowLanguageSettings(true);
+                  }
+                  
+                  // Update control position for dropdown
+                  if (segmentedControlRef.current) {
+                    const rect = segmentedControlRef.current.getBoundingClientRect();
+                    setControlRect(rect);
+                  }
+                }}
+                className={`segment flex items-center gap-1.5 ${!autoDetect ? 'active' : ''}`}
+              >
+                Manual
+                <ChevronDown
+                  className={`w-3 h-3 transition-transform duration-200 ${
+                    showLanguageSettings ? 'rotate-180' : ''
                   }`}
                 />
               </button>
+              <div className={`sliding-indicator ${autoDetect ? 'to-left' : 'to-right'}`}></div>
             </div>
-
-            {/* Detected Languages - Enhanced Display - Only show when there's content */}
-            {detectedLanguages.length > 0 && value.trim() && (
-              <div>
-                <label className="text-sm font-medium text-theme-neutral-700 mb-2 block">
-                  Detected Languages ({detectedLanguages.length})
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  {detectedLanguages.map((langCode, index) => (
-                    <div
-                      key={langCode}
-                      className="flex items-center gap-2 px-3 py-2 bg-theme-secondary-100 border border-theme-secondary-200 rounded-lg"
-                    >
-                      <div className="flex items-center gap-2 flex-1">
-                        <span className="text-sm font-medium text-theme-secondary-800">
-                          {getLanguageDisplayName(langCode)}
-                        </span>
-                      </div>
-                      {index === 0 && (
-                        <span className="text-xs bg-theme-secondary-200 text-theme-secondary-800 px-2 py-0.5 rounded-full">
-                          Primary
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-theme-neutral-600 mt-2">
-                  Languages are listed in order of detection confidence. Primary language is used for specialized text processing.
-                </p>
-              </div>
-            )}
-
-            {/* Manual Language Selection */}
-            {!autoDetect && (
-              <div>
-                <label className="text-sm font-medium text-theme-neutral-700 mb-2 block">
-                  Select Languages ({selectedLanguages.length} selected)
-                </label>
-                <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
-                  {supportedLanguages.map(language => (
-                    <label
-                      key={language.code}
-                      className="flex items-center gap-2 p-2 hover:bg-theme-neutral-100 rounded cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedLanguages.includes(language.code)}
-                        onChange={() => handleLanguageToggle(language.code)}
-                        className="rounded border-theme-neutral-300 text-theme-primary-600 focus:ring-theme-primary-500"
-                      />
-                      <span className="text-sm">
-                        {language.flag} {language.name}
-                      </span>
-                      <span className="text-xs text-theme-neutral-500 ml-auto">
-                        {language.downloadSize}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Quick Language Presets */}
-            <div>
-              <label className="text-sm font-medium text-theme-neutral-700 mb-2 block">Quick Presets</label>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => setSelectedLanguages(['eng'])}
-                  className="px-3 py-1 text-xs bg-theme-primary-100 text-theme-primary-800 rounded-full hover:bg-theme-primary-200 transition-colors"
-                >
-                  English Only
-                </button>
-                <button
-                  onClick={() => setSelectedLanguages(['eng', 'chi_sim', 'chi_tra'])}
-                  className="px-3 py-1 text-xs bg-theme-primary-100 text-theme-primary-800 rounded-full hover:bg-theme-primary-200 transition-colors"
-                >
-                  English + Chinese
-                </button>
-                <button
-                  onClick={() => setSelectedLanguages(['eng', 'deu', 'spa', 'fra'])}
-                  className="px-3 py-1 text-xs bg-theme-primary-100 text-theme-primary-800 rounded-full hover:bg-theme-primary-200 transition-colors"
-                >
-                  English + European
-                </button>
-                <button
-                  onClick={() => setSelectedLanguages(['eng', 'jpn', 'kor'])}
-                  className="px-3 py-1 text-xs bg-theme-primary-100 text-theme-primary-800 rounded-full hover:bg-theme-primary-200 transition-colors"
-                >
-                  English + Asian
-                </button>
-              </div>
-            </div>
+            
+            {/* Show dropdown arrow when manual mode */}
           </div>
         </div>
-      )}
+      </div>
+
       
       <div className="glass-panel-inner-content relative" style={{ height: `${height}px`, minHeight: '200px' }}>
         <textarea
@@ -419,17 +339,145 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
           <div className="absolute inset-4 flex items-center justify-center pointer-events-none">
             <div className="text-center text-theme-neutral-400 max-w-sm">
               <Image className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm mb-1 font-serif libertinus-math-placeholder">Paste text or images</p>
-              <p className="text-xs font-serif libertinus-math-placeholder">
-                Take a screenshot and paste (Ctrl+V) to automatically extract text using OCR
+              <p className="text-sm mb-1 font-serif libertinus-math-placeholder">Paste text or screenshot</p>
+              
+              <p className="text-xs font-serif libertinus-math-placeholder"><i>
+                Take a screenshot and paste (Ctrl+V) to</i>   
               </p>
+              <p className="text-xs font-serif libertinus-math-placeholder">
+                <i>extract text with OCR</i>             
+              </p>
+              <br></br>
               <p className="text-xs mt-1 text-theme-primary-400 font-serif libertinus-math-placeholder">
-                Supports {supportedLanguages.length} languages including Chinese, Japanese, Korean, Arabic & more
+                <i>Supports {supportedLanguages.length} languages including Chinese, German, French, Arabic, Japanese, Korean & more</i>
               </p>
             </div>
           </div>
         )}
       </div>
+      
+      {/* Floating Language Settings Dropdown - Rendered via Portal */}
+      {!autoDetect && showLanguageSettings && controlRect && createPortal(
+        <div className="fixed inset-0 z-[9999] pointer-events-none">
+          <div 
+            className="absolute pointer-events-auto"
+            style={{
+              top: controlRect.bottom,
+              left: controlRect.right - 500, // Align right edge of dropdown with right edge of control
+              width: '500px'
+            }}
+          >
+            <div className="glass-panel shadow-2xl border border-white/20 backdrop-blur-xl transition-all duration-300 rounded-xl overflow-hidden" style={{ width: '500px', maxHeight: '60vh' }}>
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-white/10">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-theme-primary-900">Manual Language Selection</h3>
+                  <button
+                    onClick={() => setShowLanguageSettings(false)}
+                    className="text-theme-neutral-600 hover:text-theme-neutral-800 transition-colors"
+                  >
+                    <ChevronDown className="w-5 h-5 rotate-180" />
+                  </button>
+                </div>
+              </div>
+              
+              {/* Content */}
+              <div className="px-6 py-4 space-y-6 overflow-y-auto" style={{ maxHeight: 'calc(60vh - 80px)' }}>
+                {/* Detected Languages - Enhanced Display - Only show when there's content */}
+                {detectedLanguages.length > 0 && value.trim() && (
+                  <div>
+                    <label className="text-sm font-medium text-theme-neutral-700 mb-3 block">
+                      Detected Languages ({detectedLanguages.length})
+                    </label>
+                    <div className="grid grid-cols-1 gap-2">
+                      {detectedLanguages.map((langCode, index) => (
+                        <div
+                          key={langCode}
+                          className="flex items-center gap-3 px-4 py-3 bg-theme-secondary-50 border border-theme-secondary-200 rounded-lg"
+                        >
+                          <div className="flex items-center gap-2 flex-1">
+                            <span className="text-sm font-medium text-theme-secondary-800">
+                              {getLanguageDisplayName(langCode)}
+                            </span>
+                          </div>
+                          {index === 0 && (
+                            <span className="text-xs bg-theme-secondary-200 text-theme-secondary-800 px-2 py-1 rounded-full">
+                              Primary
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-theme-neutral-600 mt-3">
+                      Languages are listed in order of detection confidence. Primary language is used for specialized text processing.
+                    </p>
+                  </div>
+                )}
+
+                {/* Manual Language Selection */}
+                <div>
+                  <label className="text-sm font-medium text-theme-neutral-700 mb-3 block">
+                    Select Languages ({selectedLanguages.length} selected)
+                  </label>
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border border-theme-neutral-200 rounded-lg p-3">
+                    {supportedLanguages.map(language => (
+                      <label
+                        key={language.code}
+                        className="flex items-center gap-2 p-2 hover:bg-theme-neutral-100 rounded cursor-pointer transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedLanguages.includes(language.code)}
+                          onChange={() => handleLanguageToggle(language.code)}
+                          className="rounded border-theme-neutral-300 text-theme-primary-600 focus:ring-theme-primary-500"
+                        />
+                        <span className="text-sm flex-1">
+                          {language.flag} {language.name}
+                        </span>
+                        <span className="text-xs text-theme-neutral-500">
+                          {language.downloadSize}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Quick Language Presets */}
+                <div>
+                  <label className="text-sm font-medium text-theme-neutral-700 mb-3 block">Quick Presets</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setSelectedLanguages(['eng'])}
+                      className="px-4 py-2 text-sm bg-theme-primary-100 text-theme-primary-800 rounded-lg hover:bg-theme-primary-200 transition-colors"
+                    >
+                      English Only
+                    </button>
+                    <button
+                      onClick={() => setSelectedLanguages(['eng', 'chi_sim', 'chi_tra'])}
+                      className="px-4 py-2 text-sm bg-theme-primary-100 text-theme-primary-800 rounded-lg hover:bg-theme-primary-200 transition-colors"
+                    >
+                      English + Chinese
+                    </button>
+                    <button
+                      onClick={() => setSelectedLanguages(['eng', 'deu', 'spa', 'fra'])}
+                      className="px-4 py-2 text-sm bg-theme-primary-100 text-theme-primary-800 rounded-lg hover:bg-theme-primary-200 transition-colors"
+                    >
+                      English + European
+                    </button>
+                    <button
+                      onClick={() => setSelectedLanguages(['eng', 'jpn', 'kor'])}
+                      className="px-4 py-2 text-sm bg-theme-primary-100 text-theme-primary-800 rounded-lg hover:bg-theme-primary-200 transition-colors"
+                    >
+                      English + Asian
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

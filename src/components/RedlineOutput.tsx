@@ -165,14 +165,14 @@ const generateHTMLString = (changes: DiffChange[]) => {
     
     switch (change.type) {
       case 'added':
-        html += `<span class="bg-theme-secondary-100 text-theme-secondary-800 underline decoration-2 decoration-theme-secondary-600">${escape(change.content || '')}</span>`;
+        html += `<span class="bg-theme-secondary-100 text-theme-secondary-800 border border-theme-secondary-300 underline decoration-2 decoration-theme-secondary-600">${escape(change.content || '')}</span>`;
         break;
       case 'removed':
-        html += `<span class="bg-theme-accent-100 text-theme-accent-800 line-through decoration-2 decoration-theme-accent-600">${escape(change.content || '')}</span>`;
+        html += `<span class="bg-theme-accent-100 text-theme-accent-800 border border-theme-accent-300 line-through decoration-2 decoration-theme-accent-600">${escape(change.content || '')}</span>`;
         break;
       case 'changed':
-        html += `<span class="bg-theme-accent-100 text-theme-accent-800 line-through decoration-2 decoration-theme-accent-600">${escape(change.originalContent || '')}</span>`;
-        html += `<span class="bg-theme-secondary-100 text-theme-secondary-800 underline decoration-2 decoration-theme-secondary-600">${escape(change.revisedContent || '')}</span>`;
+        html += `<span class="bg-theme-accent-100 text-theme-accent-800 border border-theme-accent-300 line-through decoration-2 decoration-theme-accent-600">${escape(change.originalContent || '')}</span>`;
+        html += `<span class="bg-theme-secondary-100 text-theme-secondary-800 border border-theme-secondary-300 underline decoration-2 decoration-theme-secondary-600">${escape(change.revisedContent || '')}</span>`;
         break;
       default:
         html += `<span>${escape(change.content || '')}</span>`;

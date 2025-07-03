@@ -1,3 +1,7 @@
+## [0.2.4] - 2025-07-03
+### Fixed
+- **Redline Visual Styling:** Fixed critical issue where colored borders and backgrounds for additions/deletions were not displaying in the redline output panel. Root cause was an overly aggressive CSS rule in `glassmorphism.css` that used a wildcard selector (`*`) to reset all child element styling within chunk containers, inadvertently removing the theme-based borders and backgrounds from redlined text spans. Fixed by removing the wildcard selector while preserving the glass effect optimization, ensuring redline text now displays with proper light blue backgrounds for additions, light orange backgrounds for deletions, and colored borders around all changes.
+
 ## [0.2.3] - 2025-07-02
 ### Fixed
 - **Paragraph Break Preservation:** Fixed critical issue where paragraph breaks (double newlines `\n\n`) were being lost during document comparison, causing all text to appear as a single paragraph in redline output. Root cause was in the single-pass paragraph splitting optimization where separators were not fully preserved during reconstruction. Fixed by updating `splitIntoParagraphsSinglePass()` to capture complete paragraph content including full separators (e.g., `\n\n`) instead of stopping at first newline. Also enhanced both RedlineOutput and EnhancedRedlineOutput components with explicit `white-space: pre-wrap` styling to ensure proper whitespace rendering in the browser.

@@ -11,7 +11,7 @@
 
 import React, { useMemo, useCallback, useRef, useEffect, useState } from 'react';
 import { Copy } from 'lucide-react';
-import { DiffChange } from '../types';
+import { DiffChange } from '../../types';
 import { 
   analyzeRenderingStrategy, 
   createSemanticChunks, 
@@ -19,7 +19,7 @@ import {
   RenderingProgress,
   RENDERING_THRESHOLDS,
   RenderingDecision 
-} from './RenderingStrategy';
+} from '../RenderingStrategy';
 
 interface EnhancedRedlineOutputProps {
   changes: DiffChange[];

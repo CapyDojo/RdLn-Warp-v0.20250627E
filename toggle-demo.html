@@ -1,0 +1,433 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Toggle Demo</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+
+        .toggle-container {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 1.2em;
+        }
+
+        .status {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        /* Option A: Traditional Sliding Toggle */
+        .sliding-toggle {
+            position: relative;
+            width: 120px;
+            height: 34px;
+            background: #e0e0e0;
+            border-radius: 17px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .sliding-toggle.active {
+            background: #4CAF50;
+        }
+
+        .sliding-toggle .labels {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .sliding-toggle .labels span {
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .sliding-toggle.active .labels span:first-child {
+            color: white;
+        }
+
+        .sliding-toggle:not(.active) .labels span:last-child {
+            color: white;
+        }
+
+        .sliding-toggle .thumb {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+        }
+
+        .sliding-toggle.active .thumb {
+            transform: translateX(86px);
+        }
+
+        /* Option B: Pill Switch */
+        .pill-switch {
+            display: inline-flex;
+            border: 2px solid #4CAF50;
+            border-radius: 25px;
+            overflow: hidden;
+            cursor: pointer;
+            background: white;
+        }
+
+        .pill-switch .option {
+            padding: 8px 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: white;
+            color: #4CAF50;
+            border: none;
+            cursor: pointer;
+        }
+
+        .pill-switch .option.active {
+            background: #4CAF50;
+            color: white;
+        }
+
+        /* Option C: iOS Segmented Control */
+        .segmented-control {
+            position: relative;
+            display: inline-flex;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            padding: 2px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .segmented-control .segment {
+            position: relative;
+            z-index: 2;
+            padding: 8px 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #666;
+            transition: color 0.25s ease;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .segmented-control .segment.active {
+            color: #333;
+        }
+
+        .segmented-control .sliding-background {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: calc(50% - 2px);
+            height: calc(100% - 4px);
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        .segmented-control.manual .sliding-background {
+            transform: translateX(100%);
+        }
+
+        /* Option D: Tab-style Toggle */
+        .tab-toggle {
+            display: flex;
+            border-bottom: 3px solid #e9ecef;
+            background: transparent;
+        }
+
+        .tab-toggle .tab {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-toggle .tab:hover {
+            color: #4CAF50;
+        }
+
+        .tab-toggle .tab.active {
+            color: #4CAF50;
+        }
+
+        .tab-toggle .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #4CAF50;
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* Current Implementation (What we built) */
+        .current-implementation {
+            position: relative;
+            display: inline-flex;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 2px;
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+        }
+
+        .current-implementation .segment {
+            position: relative;
+            z-index: 2;
+            padding: 6px 16px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            color: #666;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            min-width: 64px;
+            text-align: center;
+        }
+
+        .current-implementation .segment.active {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .current-implementation .sliding-indicator {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: calc(50% - 2px);
+            height: calc(100% - 4px);
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.9) 0%, rgba(76, 175, 80, 0.7) 100%);
+            border: 1px solid rgba(76, 175, 80, 0.6);
+            border-radius: 6px;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
+            z-index: 1;
+        }
+
+        .current-implementation.manual .sliding-indicator {
+            transform: translateX(100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎛️ Interactive Toggle Demo</h1>
+
+        <!-- Option A: Traditional Sliding Toggle -->
+        <div class="toggle-container">
+            <h2>Option A: Traditional Sliding Toggle</h2>
+            <div class="sliding-toggle" id="sliding" onclick="toggleSliding()">
+                <div class="labels">
+                    <span>Auto</span>
+                    <span>Manual</span>
+                </div>
+                <div class="thumb"></div>
+            </div>
+            <div class="status" id="sliding-status">Current: Auto</div>
+        </div>
+
+        <!-- Option B: Pill Switch -->
+        <div class="toggle-container">
+            <h2>Option B: Pill Switch</h2>
+            <div class="pill-switch">
+                <button class="option active" onclick="setPill('auto')">Auto</button>
+                <button class="option" onclick="setPill('manual')">Manual</button>
+            </div>
+            <div class="status" id="pill-status">Current: Auto</div>
+        </div>
+
+        <!-- Option C: iOS Segmented Control -->
+        <div class="toggle-container">
+            <h2>Option C: iOS Segmented Control</h2>
+            <div class="segmented-control" id="segmented" onclick="toggleSegmented()">
+                <div class="segment active">Auto</div>
+                <div class="segment">Manual</div>
+                <div class="sliding-background"></div>
+            </div>
+            <div class="status" id="segmented-status">Current: Auto</div>
+        </div>
+
+        <!-- Option D: Tab-style Toggle -->
+        <div class="toggle-container">
+            <h2>Option D: Tab-style Toggle</h2>
+            <div class="tab-toggle">
+                <button class="tab active" onclick="setTab('auto')">Auto</button>
+                <button class="tab" onclick="setTab('manual')">Manual</button>
+            </div>
+            <div class="status" id="tab-status">Current: Auto</div>
+        </div>
+
+        <!-- Current Implementation -->
+        <div class="toggle-container">
+            <h2>Current Implementation (What We Built)</h2>
+            <div class="current-implementation" id="current" onclick="toggleCurrent()">
+                <button class="segment active">Auto</button>
+                <button class="segment">Manual</button>
+                <div class="sliding-indicator"></div>
+            </div>
+            <div class="status" id="current-status">Current: Auto</div>
+        </div>
+    </div>
+
+    <script>
+        // Option A: Traditional Sliding Toggle
+        let slidingState = 'auto';
+        function toggleSliding() {
+            const toggle = document.getElementById('sliding');
+            const status = document.getElementById('sliding-status');
+            
+            if (slidingState === 'auto') {
+                slidingState = 'manual';
+                toggle.classList.add('active');
+                status.textContent = 'Current: Manual';
+            } else {
+                slidingState = 'auto';
+                toggle.classList.remove('active');
+                status.textContent = 'Current: Auto';
+            }
+        }
+
+        // Option B: Pill Switch
+        function setPill(option) {
+            const buttons = document.querySelectorAll('.pill-switch .option');
+            const status = document.getElementById('pill-status');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (option === 'auto') {
+                buttons[0].classList.add('active');
+                status.textContent = 'Current: Auto';
+            } else {
+                buttons[1].classList.add('active');
+                status.textContent = 'Current: Manual';
+            }
+        }
+
+        // Option C: iOS Segmented Control
+        let segmentedState = 'auto';
+        function toggleSegmented() {
+            const control = document.getElementById('segmented');
+            const segments = control.querySelectorAll('.segment');
+            const status = document.getElementById('segmented-status');
+            
+            if (segmentedState === 'auto') {
+                segmentedState = 'manual';
+                control.classList.add('manual');
+                segments[0].classList.remove('active');
+                segments[1].classList.add('active');
+                status.textContent = 'Current: Manual';
+            } else {
+                segmentedState = 'auto';
+                control.classList.remove('manual');
+                segments[1].classList.remove('active');
+                segments[0].classList.add('active');
+                status.textContent = 'Current: Auto';
+            }
+        }
+
+        // Option D: Tab-style Toggle
+        function setTab(option) {
+            const tabs = document.querySelectorAll('.tab-toggle .tab');
+            const status = document.getElementById('tab-status');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            if (option === 'auto') {
+                tabs[0].classList.add('active');
+                status.textContent = 'Current: Auto';
+            } else {
+                tabs[1].classList.add('active');
+                status.textContent = 'Current: Manual';
+            }
+        }
+
+        // Current Implementation
+        let currentState = 'auto';
+        function toggleCurrent() {
+            const control = document.getElementById('current');
+            const segments = control.querySelectorAll('.segment');
+            const status = document.getElementById('current-status');
+            
+            if (currentState === 'auto') {
+                currentState = 'manual';
+                control.classList.add('manual');
+                segments[0].classList.remove('active');
+                segments[1].classList.add('active');
+                status.textContent = 'Current: Manual';
+            } else {
+                currentState = 'auto';
+                control.classList.remove('manual');
+                segments[1].classList.remove('active');
+                segments[0].classList.add('active');
+                status.textContent = 'Current: Auto';
+            }
+        }
+    </script>
+</body>
+</html>

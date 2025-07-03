@@ -458,6 +458,7 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
         className="mb-4" 
       />
       
+      
       {/* SSMR CHUNKING: Progress now shown in output area during processing */}
       
       

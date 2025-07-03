@@ -25,7 +25,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-theme-primary-300 to-theme-primary-700 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
               style={{ flexShrink: 0, aspectRatio: '1/1' }}
             >
-              <span className="text-white text-xl font-bold font-serif leading-none tracking-tighter">
+              <span className="bg-gradient-to-t from-red-700 to-green-700 bg-clip-text text-transparent text-xl font-bold font-mono leading-none tracking-tighter">
                 RdLn
               </span>
             </div>
@@ -34,7 +34,6 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Controls */}
           <div className="flex items-center gap-3">
-            <ThemeSelector />
             {/* Dev Toggle Buttons */}
             {onToggleAdvancedOcr && (
               <button
@@ -71,6 +70,8 @@ export const Header: React.FC<HeaderProps> = ({
             >
               Logo Test
             </a>
+            
+            <ThemeSelector />
           </div>
         </div>
       </nav>
