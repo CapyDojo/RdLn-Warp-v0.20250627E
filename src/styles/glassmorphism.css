@@ -540,11 +540,11 @@
   box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
 }
 
-/* Disable transform effects for resize handles */
-[data-resize-handle],
-[data-resize-handle]:hover,
-.output-resize-handle,
-.output-resize-handle:hover {
+/* Disable transform effects for data panels */
+[data-input-panel],
+[data-input-panel]:hover,
+[data-output-panel],
+[data-output-panel]:hover {
   transform: none !important;
 }
 
