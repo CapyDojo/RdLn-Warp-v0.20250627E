@@ -389,7 +389,7 @@ className="chunk-container"
       {/* Header */}
       <div className="glass-panel-header-footer px-4 py-3 border-b border-theme-neutral-200 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-theme-primary-900">
-          Comparison Redline
+          Compared Redline
         </h3>
         <div className="flex gap-2">
           <button

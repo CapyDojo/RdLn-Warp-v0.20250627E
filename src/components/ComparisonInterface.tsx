@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback, startTransition } from 'react';
-import { Play, RotateCcw, AlertCircle, CheckCircle, Image, Globe, ArrowLeftRight, Zap, ZapOff, GripHorizontal } from 'lucide-react';
+import { Play, RotateCcw, AlertCircle, CheckCircle, Image, Globe, ArrowLeftRight, Zap, ZapOff, GripHorizontal, Lock } from 'lucide-react';
 import { useComparison } from '../hooks/useComparison';
 import { TextInputPanel } from './TextInputPanel';
 import { RedlineOutput } from './RedlineOutput';
@@ -69,13 +69,106 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
     // });
   }, [result]);
 
-  // CHUNKING DEBUG: Temporarily disabled to prevent infinite loops
-  // React.useEffect(() => {
-  //   console.log('🏗️ ComparisonInterface chunking state:', chunkingProgress);
-  // }, [chunkingProgress.progress, chunkingProgress.stage, chunkingProgress.isChunking, chunkingProgress.enabled]);
+// CHUNKING DEBUG: Temporarily disabled to prevent infinite loops
+// React.useEffect(() => {
+//   console.log('🏗️ ComparisonInterface chunking state:', chunkingProgress);
+// }, [chunkingProgress.progress, chunkingProgress.stage, chunkingProgress.isChunking, chunkingProgress.enabled]);
+
+  const redlineOutputRef = useRef<HTMLDivElement>(null);
 
   const [copySuccess, setCopySuccess] = React.useState(false);
   const [autoCompareCountdown, setAutoCompareCountdown] = React.useState(0);
+  
+  // SSMR Step 1: Scroll lock state (Safe - no functionality yet)
+  const [isScrollLocked, setIsScrollLocked] = useState(false);
+  
+  // SSMR Step 2: Scroll synchronization refs (Modular - element detection only)
+  const scrollRefs = useRef({
+    input1: null as HTMLElement | null,
+    input2: null as HTMLElement | null,
+    output: null as HTMLElement | null
+  });
+  const isScrolling = useRef(false); // Prevent infinite loops
+  
+  // SSMR Step 2: Safe element detection using ref-based approach (Elegant Fix)
+  const updateScrollRefs = useCallback(() => {
+    // Safe selector strategy with fallbacks
+    const inputPanels = document.querySelectorAll('[data-input-panel] .glass-panel-inner-content textarea');
+    
+    // ELEGANT FIX: Use ref-based detection for output panel instead of DOM queries
+    const outputPanel = redlineOutputRef.current;
+    
+    scrollRefs.current = {
+      input1: inputPanels[0] as HTMLElement || null,
+      input2: inputPanels[1] as HTMLElement || null,
+      output: outputPanel || null
+    };
+    
+    // Debug logging (safe - read-only operations)
+    console.log('🔄 SSMR Elegant Fix: Scroll elements detected via ref:', {
+      input1: !!scrollRefs.current.input1,
+      input2: !!scrollRefs.current.input2,
+      output: !!scrollRefs.current.output,
+      outputRefDirect: !!redlineOutputRef.current,
+      isScrollLocked
+    });
+  }, [isScrollLocked]);
+  
+  // SSMR Step 2: Test element detection when scroll lock state changes (safe testing)
+  useEffect(() => {
+    // Only run element detection for testing purposes (no event listeners yet)
+    updateScrollRefs();
+  }, [isScrollLocked, updateScrollRefs]);
+  
+  // SSMR Step 3: Scroll synchronization logic (Reversible - controlled by isScrollLocked)
+  const syncScroll = useCallback((sourceElement: HTMLElement, scrollTop: number) => {
+    if (!isScrollLocked || isScrolling.current) return;
+    
+    isScrolling.current = true;
+    
+    const sourceScrollPercentage = scrollTop / (sourceElement.scrollHeight - sourceElement.clientHeight);
+    
+    Object.values(scrollRefs.current).forEach(element => {
+      if (element && element !== sourceElement) {
+        const targetScrollTop = sourceScrollPercentage * (element.scrollHeight - element.clientHeight);
+        element.scrollTop = Math.max(0, targetScrollTop);
+      }
+    });
+    
+    // Use RAF to reset flag for smooth performance
+    requestAnimationFrame(() => {
+      isScrolling.current = false;
+    });
+  }, [isScrollLocked]);
+  
+  // SSMR Step 3: Event listener management (Reversible - only when locked)
+  useEffect(() => {
+    if (!isScrollLocked) return;
+    
+    updateScrollRefs();
+    
+    const handleScroll = (e: Event) => {
+      const target = e.target as HTMLElement;
+      syncScroll(target, target.scrollTop);
+    };
+    
+    // Add listeners to all scroll areas
+    Object.values(scrollRefs.current).forEach(element => {
+      if (element) {
+        element.addEventListener('scroll', handleScroll, { passive: true });
+        console.log('🔗 SSMR Step 3: Added scroll listener to:', element.tagName);
+      }
+    });
+    
+    return () => {
+      Object.values(scrollRefs.current).forEach(element => {
+        if (element) {
+          element.removeEventListener('scroll', handleScroll);
+          console.log('🔓 SSMR Step 3: Removed scroll listener from:', element.tagName);
+        }
+      });
+    };
+  }, [isScrollLocked, syncScroll, updateScrollRefs]);
   
   // SSMR FIX: CSS-based resize to prevent React re-renders
   // SAFE: Fallback to React state if CSS manipulation fails
@@ -123,8 +216,8 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
       return;
     }
     
-    // SSMR: Target RedlineOutput glass-panel-inner-content directly
-    const outputElement = document.querySelector('.glass-panel.glass-content-panel:not([data-input-panel] .glass-panel) .glass-panel-inner-content');
+    // ELEGANT FIX: Use proper data-output-panel container selector
+    const outputElement = document.querySelector('[data-output-panel] .glass-panel-inner-content');
     if (outputElement) {
       (outputElement as HTMLElement).style.height = `${height - 120}px`; // Account for header/footer
     }
@@ -417,7 +510,8 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
       const outputElement = outputElements[outputElements.length - 1];
       if (outputElement) {
         const computedHeight = outputElement.getBoundingClientRect().height;
-        outputStartHeight.current = computedHeight;
+        // Add 120px to match what setOutputHeightCSS expects (total panel height)
+        outputStartHeight.current = computedHeight + 120;
       } else {
         outputStartHeight.current = 500; // fallback
       }
@@ -585,10 +679,11 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
       )}
 
       {/* Control Bar - Enhanced with glassmorphism and Quick Compare */}
-      <div className="glass-panel p-4 mb-6 shadow-lg transition-all duration-300">
+      <div data-control-bar className="glass-panel p-4 mb-6 shadow-lg transition-all duration-300">
         <div className="flex items-center justify-center gap-4">
           {!quickCompareEnabled && (
             <button
+              data-compare-button
               onClick={() => compareDocuments()}
               disabled={isProcessing || !originalText.trim() || !revisedText.trim()}
               className="enhanced-button flex items-center gap-2 px-6 py-2.5 bg-theme-primary-600 text-white rounded-lg hover:bg-theme-primary-700 disabled:bg-theme-neutral-400 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-lg"
@@ -599,6 +694,7 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
           )}
           
           <button
+            data-reset-button
             onClick={resetComparison}
             className="enhanced-button flex items-center gap-2 px-4 py-2.5 bg-theme-neutral-600 text-white rounded-lg hover:bg-theme-neutral-700 transition-all duration-200 shadow-lg"
           >
@@ -609,6 +705,7 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
           
           {/* Auto-Compare Toggle */}
           <button
+            data-auto-compare-toggle
             onClick={toggleQuickCompare}
             className={`enhanced-button flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-200 shadow-lg ${
               quickCompareEnabled 
@@ -625,6 +722,7 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
           
           {/* System Protection Toggle for stress testing */}
           <button
+            data-system-protection-toggle
             onClick={toggleSystemProtection}
             className={`enhanced-button flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-200 shadow-lg ${
               systemProtectionEnabled 
@@ -642,6 +740,7 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
           {/* Cancel Button - Enhanced visibility and robustness */}
           {(isProcessing || isCancelling) && (
             <button
+              data-cancel-button
               onClick={cancelComparison}
               disabled={isCancelling}
               className="enhanced-button flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-red-700 disabled:cursor-not-allowed transition-all duration-200 shadow-lg animate-pulse"
@@ -709,6 +808,7 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
         {/* Resizable Panels Handle - Glassmorphic and thumb-friendly */}
         <div className="flex justify-center mt-4 mb-2">
           <div
+            data-resize-handle="input-panels"
             ref={resizeHandleRef}
             className="glass-panel flex items-center justify-center w-20 h-8 bg-theme-neutral-200/60 hover:bg-theme-neutral-300/70 cursor-row-resize rounded-lg transition-all duration-300 touch-none select-none backdrop-blur-md border border-theme-neutral-300/30 shadow-lg hover:shadow-xl hover:scale-105"
             onMouseDown={handleMouseDown}
@@ -718,21 +818,44 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
           </div>
         </div>
 
-        {/* Centered Swap Button - Enhanced with hover effects */}
+
+        {/* Vertical Controls Panel - Centered between input panels */}
         <div className="hidden lg:flex absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-          <button
-            onClick={handleSwapContent}
-            disabled={isProcessing || (!originalText.trim() && !revisedText.trim())}
-            className="enhanced-button flex items-center justify-center w-12 h-12 bg-theme-accent-500 text-white rounded-full hover:bg-theme-accent-600 disabled:bg-theme-neutral-400 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
-            title="Swap original and revised content"
-          >
-            <ArrowLeftRight className="w-5 h-5" />
-          </button>
+          <div className="flex flex-col gap-3">
+            {/* Swap Content Button */}
+            <button
+              data-swap-content-button
+              onClick={handleSwapContent}
+              disabled={isProcessing || (!originalText.trim() && !revisedText.trim())}
+              className="enhanced-button flex items-center justify-center w-12 h-12 bg-theme-accent-500 text-white rounded-full hover:bg-theme-accent-600 disabled:bg-theme-neutral-400 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
+              title="Swap original and revised content"
+            >
+              <ArrowLeftRight className="w-5 h-5" />
+            </button>
+            
+            {/* Scroll Lock Button - Circular design below swap button */}
+            <button
+              data-scroll-lock-toggle
+              onClick={() => setIsScrollLocked(!isScrollLocked)}
+              className={`enhanced-button flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl relative ${
+                isScrollLocked 
+                  ? 'bg-theme-primary-500 text-white hover:bg-theme-primary-600' 
+                  : 'bg-theme-neutral-300 text-theme-neutral-700 hover:bg-theme-neutral-400'
+              }`}
+              title={isScrollLocked ? "Unlock scroll synchronization" : "Lock scroll synchronization"}
+            >
+              <Lock className={`w-5 h-5 transition-all duration-300 ${isScrollLocked ? '' : 'opacity-60'}`} />
+              {isScrollLocked && (
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-theme-primary-300 rounded-full animate-pulse"></div>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Swap Button - Enhanced with hover effects */}
         <div className="lg:hidden flex justify-center mt-4">
           <button
+            data-swap-content-button-mobile
             onClick={handleSwapContent}
             disabled={isProcessing || (!originalText.trim() && !revisedText.trim())}
             className="enhanced-button flex items-center gap-2 px-4 py-2.5 bg-theme-accent-500 text-white rounded-lg hover:bg-theme-accent-600 disabled:bg-theme-neutral-400 disabled:cursor-not-allowed transition-all duration-200 shadow-lg"
@@ -797,19 +920,23 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
                 </div>
               </div>
             ) : (
-              // SSMR: Direct RedlineOutput with no wrapper - matches TextInputPanel structure exactly
-              <RedlineOutput
-                changes={result.changes} 
-                onCopy={handleCopy}
-                height={USE_CSS_RESIZE ? 9999 : outputHeight} // Height controlled by inner-content CSS
-                isProcessing={false}
-                processingStatus=""
-              />
+              // SSMR: Direct RedlineOutput with proper container identity
+              <div data-output-panel>
+                <RedlineOutput
+                  changes={result.changes} 
+                  onCopy={handleCopy}
+                  height={USE_CSS_RESIZE ? 9999 : outputHeight} // Height controlled by inner-content CSS
+                  isProcessing={false}
+                  processingStatus=""
+                  scrollRef={redlineOutputRef}
+                />
+              </div>
             )}
             
             {/* Output Resize Handle - Positioned at bottom center of output */}
             <div className="flex justify-center mt-4">
               <div
+                data-resize-handle="output-panel"
                 ref={outputResizeHandleRef}
                 className="glass-panel output-resize-handle flex items-center justify-center w-20 h-8 bg-theme-primary-200/60 hover:bg-theme-primary-300/70 cursor-row-resize rounded-lg transition-all duration-300 touch-none select-none backdrop-blur-md border border-theme-primary-300/30 shadow-lg hover:shadow-xl hover:scale-105"
                 onMouseDown={handleOutputMouseDown}

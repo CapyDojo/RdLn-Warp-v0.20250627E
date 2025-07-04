@@ -1,3 +1,7 @@
+## [0.2.5] - 2025-07-03
+### Added
+- **Waterfall Theme Selector:** Implemented elegant cascading hover effect for theme selection with physics-based animations. Theme cards now "waterfall down" with staggered bounce timing when hovering over the themes button and "roll back up" in reverse order when leaving. Each theme card displays authentic previews using that theme's actual colors, gradients, and styling. Cards cascade straight down, right-aligned to the themes button, with compact 240px width. Features React Portal rendering to avoid header clipping, continuous hover area for seamless interaction, and always-on drag-and-drop reordering with persistent localStorage. Enhanced with 3D perspective transforms (rotateX, scale) and dual easing curves for natural physics feel.
+
 ## [0.2.4] - 2025-07-03
 ### Fixed
 - **Redline Visual Styling:** Fixed critical issue where colored borders and backgrounds for additions/deletions were not displaying in the redline output panel. Root cause was an overly aggressive CSS rule in `glassmorphism.css` that used a wildcard selector (`*`) to reset all child element styling within chunk containers, inadvertently removing the theme-based borders and backgrounds from redlined text spans. Fixed by removing the wildcard selector while preserving the glass effect optimization, ensuring redline text now displays with proper light blue backgrounds for additions, light orange backgrounds for deletions, and colored borders around all changes.

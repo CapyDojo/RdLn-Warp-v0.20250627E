@@ -25,7 +25,17 @@ export const Header: React.FC<HeaderProps> = ({
               className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-theme-primary-300 to-theme-primary-700 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
               style={{ flexShrink: 0, aspectRatio: '1/1' }}
             >
-              <span className="bg-gradient-to-t from-red-700 to-green-700 bg-clip-text text-transparent text-xl font-bold font-mono leading-none tracking-tighter">
+              <span 
+                className="text-2xl font-bold leading-none tracking-tighter"
+                style={{
+                  fontFamily: 'noto sans, sans-serif',
+                  background: 'linear-gradient(to top,rgb(84, 4, 4),rgb(0, 119, 44))',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  color: 'transparent'
+                }}
+              >
                 RdLn
               </span>
             </div>

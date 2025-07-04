@@ -44,7 +44,7 @@ export const bambooTheme: ThemeConfig = {
       200: '#fbf4a3',  // Light gold
       300: '#f7e96a',  // Medium-light gold
       400: '#f1d73a',  // Medium gold
-      500: '#2e0e01',  // Base gold - accent color (extremely dark ochre)
+      500: '#FF8C00',  // Dark orange - vibrant accent color
       600: '#250b01',  // Medium-dark gold
       700: '#1c0801',  // Dark gold
       800: '#130600',  // Darker gold
@@ -60,7 +60,7 @@ export const bambooTheme: ThemeConfig = {
       500: '#5a645a',  // Darker neutral for readable text
       600: '#3d453d',  // Dark neutral for headings
       700: '#2a322a',  // Very dark for strong contrast
-      800: '#1a201a',  // Near black for maximum contrast
+      800: '#FF8C00',  // Dark orange for input/output text
       900: '#0f140f',  // Almost black for ultimate contrast
     },
   },

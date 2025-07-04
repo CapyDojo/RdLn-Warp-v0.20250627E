@@ -160,7 +160,53 @@ project_rules:
 - **MyersAlgorithm.ts**: Core comparison logic - extreme caution required
 - **OCRService.ts**: OCR functionality - test with actual images
 - **ComparisonInterface.tsx**: Main UI - verify all interactions work
+- **RedlineOutput.tsx**: Output panel with ref-based architecture - see scroll sync notes
 - **Testing modules**: Development only - remove for production
+
+### Architectural Improvements (2025-01-04)
+#### Scroll Synchronization - Elegant Ref-Based Fix
+**Problem Solved**: Output panel was "homeless" in DOM, requiring complex negative selectors  
+**Solution**: Implemented dual approach for maximum reliability:
+
+1. **Tactical Fix**: Direct ref passing
+   - `redlineOutputRef` passed from ComparisonInterface to RedlineOutput
+   - Eliminates DOM queries in scroll detection
+   - Provides instant, reliable access to scroll container
+
+2. **Strategic Fix**: Proper container identity
+   - Added `data-output-panel` wrapper (matches `data-input-panel` pattern)
+   - Updated selectors: `[data-output-panel] .glass-panel-inner-content`
+   - Consistent architecture across all major panels
+
+**Future Benefits**:
+- All panel access now follows same pattern
+- Direct selectors faster than negative selectors
+- Easier debugging with clear panel identity
+- Prevents similar "panel hunting" issues
+
+**Debug Verification**:
+```
+🔄 SSMR Elegant Fix: Scroll elements detected via ref: {
+  outputRefDirect: true  // ← Confirms ref-based access working
+}
+```
+
+**Key Files Modified**:
+- `src/components/ComparisonInterface.tsx`: Added ref creation and container wrapper
+- `src/components/RedlineOutput.tsx`: Added scrollRef prop and dual ref assignment
+
+**Architectural Pattern Established**:
+```typescript
+// Input panels (existing pattern)
+<div data-input-panel>
+  <TextInputPanel />
+</div>
+
+// Output panel (new consistent pattern)
+<div data-output-panel>
+  <RedlineOutput scrollRef={redlineOutputRef} />
+</div>
+```
 
 ## 11. Emergency Protocol
 

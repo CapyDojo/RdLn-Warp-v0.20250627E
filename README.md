@@ -6,13 +6,19 @@
 
 RdLn is a sophisticated document comparison tool designed for legal professionals and organizations requiring precise document analysis. Built with React, TypeScript, and modern UI technologies, it provides client-side document processing with complete confidentiality.
 
-## ✨ Latest Updates - Version 0.2.2
+## ✨ Latest Updates - Version 0.2.5
 
-### Glass Panel Visual Consistency Fix
-- **✅ RESOLVED**: Output panel visual inconsistency where it appeared to have "multiple layers of effects"
-- **Root Cause**: DOM structural differences between input and output panels
-- **Solution**: Streamlined component architecture and unified CSS background normalization
-- **Result**: All panels now display identical, beautiful glassmorphism effects
+### Waterfall Theme Selector
+- **🌊 NEW**: Elegant cascading hover effect for theme selection with physics-based animations
+- **🎨 AUTHENTIC PREVIEWS**: Each theme card displays using that theme's actual colors and styling
+- **✨ 3D ANIMATIONS**: Cards "waterfall down" with bounce physics and "roll back up" in reverse
+- **🎯 DRAG & DROP**: Always-on reordering with persistent localStorage
+- **🚀 PORTAL RENDERING**: React Portal prevents header clipping for seamless interaction
+
+### Previous Updates - Version 0.2.2
+- **Glass Panel Visual Consistency**: Unified glassmorphism effects across all panels
+- **Performance Optimization**: Chunked rendering for large documents
+- **DOM Structure**: Streamlined component architecture
 
 ## 🚀 Key Features
 

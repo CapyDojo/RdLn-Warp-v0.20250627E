@@ -8,6 +8,7 @@ interface RedlineOutputProps {
   height?: number;
   isProcessing?: boolean;
   processingStatus?: string;
+  scrollRef?: React.RefObject<HTMLDivElement>;
 }
 
 // SSMR: Chunked Static Rendering Implementation
@@ -19,7 +20,8 @@ const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
   onCopy,
   height = 500,
   isProcessing = false,
-  processingStatus = 'Processing...'
+  processingStatus = 'Processing...',
+  scrollRef
 }) => {
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
@@ -57,7 +59,7 @@ const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
     <div className="glass-panel glass-content-panel overflow-hidden shadow-lg transition-all duration-300">
       <div className="glass-panel-header-footer px-4 py-3 border-b border-theme-neutral-200 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h3 className="text-lg font-semibold text-theme-primary-900">Comparison Redline</h3>
+          <h3 className="text-lg font-semibold text-theme-primary-900">Compared Redline</h3>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -71,14 +73,19 @@ const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
         </div>
       </div>
       <div
-        ref={scrollContainerRef}
+        ref={(el) => {
+          scrollContainerRef.current = el;
+          if (scrollRef && el) {
+            scrollRef.current = el;
+          }
+        }}
         className="glass-panel-inner-content overflow-y-auto"
         style={{
           height: `${height - 120}px`,
           minHeight: '200px',
         }}
       >
-        <div className="glass-input-field font-serif text-theme-neutral-800 leading-relaxed whitespace-pre-wrap libertinus-math-output libertinus-math-text p-6">
+        <div className="glass-input-field font-serif text-theme-neutral-800 leading-relaxed whitespace-pre-wrap libertinus-math-output libertinus-math-text py-6 px-8">
           {isProcessing ? (
             <div className="mt-4 p-3 bg-theme-primary-50 border border-theme-primary-200 rounded-lg">
               <div className="flex items-center gap-2 text-theme-primary-700">

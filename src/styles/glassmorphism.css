@@ -110,20 +110,20 @@
   box-shadow: 0 8px 32px 0 rgba(232, 196, 31, var(--glass-focus));
   backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.4);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.4);
-  color: #2e0e01 !important; /* Extremely dark ochre - enhanced with backdrop */
+  color: #471e01 !important; /* Extremely dark ochre - enhanced with backdrop */
 }
 
 /* Bamboo theme text hierarchy */
 [data-theme="bamboo"] .text-body,
 [data-theme="bamboo"] .libertinus-math-text {
-  color: #2e0e01 !important; /* Extremely dark ochre - enhanced readability */
+  color: #471e01 !important; /* Extremely dark ochre - enhanced readability */
 }
 
 [data-theme="bamboo"] h1,
 [data-theme="bamboo"] h2,
 [data-theme="bamboo"] h3,
 [data-theme="bamboo"] .text-header {
-  color: #2e0e01 !important; /* Extremely dark ochre - enhanced readability */
+  color: #471e01 !important; /* Extremely dark ochre - enhanced readability */
   font-weight: 600;
 }
 
@@ -137,7 +137,7 @@
 [data-theme="bamboo"] .text-theme-accent-500,
 [data-theme="bamboo"] button:not(.glass-panel),
 [data-theme="bamboo"] a {
-  color: #2e0e01 !important; /* Extremely dark ochre - enhanced readability */
+  color: #471e01 !important; /* Extremely dark ochre - enhanced readability */
 }
 
 [data-theme="bamboo"] .text-success,
@@ -560,7 +560,7 @@
   border: 1px solid rgba(93, 138, 58, var(--glass-focus)) !important;
   backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
-  color: #2e0e01 !important;
+  color: #471e01 !important;
 }
 
 [data-theme="bamboo"] .glass-input-field:focus {
@@ -1062,7 +1062,7 @@ header .flex {
 [data-theme="bamboo"] .text-sm,
 [data-theme="bamboo"] .font-medium,
 [data-theme="bamboo"] .font-semibold {
-  color: #2e0e01 !important;
+  color: #471e01 !important;
 }
 
 /* Additional bamboo theme text coverage for edge cases */

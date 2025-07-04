@@ -81,12 +81,12 @@ body {
 
 /* Bamboo theme global text */
 [data-theme="bamboo"] {
-  --text-body: #2e0e01;
-  --text-header: #2e0e01;
-  --text-secondary: #2e0e01;
-  --text-interactive: #2e0e01;
-  --text-success: #2e0e01;
-  --text-on-glass: #2e0e01;
+  --text-body: #471e01;
+  --text-header: #471e01;
+  --text-secondary: #471e01;
+  --text-interactive: #471e01;
+  --text-success: #471e01;
+  --text-on-glass: #471e01;
 }
 
 /* Apple Light theme global text */

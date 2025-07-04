@@ -101,21 +101,21 @@ export const ThemeSelector: React.FC = () => {
     dragIndex: null,
     dragOverIndex: null
   });
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const themesButtonRef = React.useRef<HTMLDivElement>(null);
   const [buttonRect, setButtonRect] = useState<DOMRect | null>(null);
 
   // Initialize and update button position
   React.useEffect(() => {
-    if (containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
+    if (themesButtonRef.current) {
+      const rect = themesButtonRef.current.getBoundingClientRect();
       setButtonRect(rect);
     }
   }, [isHovered]); // Update on hover state change
 
   // Set initial position on mount
   React.useEffect(() => {
-    if (containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
+    if (themesButtonRef.current) {
+      const rect = themesButtonRef.current.getBoundingClientRect();
       setButtonRect(rect);
     }
   }, []);
@@ -176,7 +176,7 @@ export const ThemeSelector: React.FC = () => {
 
   return (
     <div 
-      ref={containerRef}
+      ref={themesButtonRef}
       className="relative"
     >
       {/* Main Themes Button */}

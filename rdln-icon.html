@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RdLn App Icon Mockup</title>
+  <style>
+    body {
+      background-color: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .icon {
+      width: 300px;
+      height: 300px;
+      background-color: #16573E; /* forest green */
+      border-radius: 64px; /* squircle effect */
+      position: relative;
+      font-family: 'Helvetica Neue', sans-serif;
+      color: white;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+      overflow: hidden;
+    }
+
+    .rdln-text {
+      text-align: center;
+      font-size: 72px;
+      font-weight: 700;
+      padding-top: 48px;
+      user-select: none;
+    }
+
+    .document {
+      position: absolute;
+      left: 50%;
+      top: 58%;
+      width: 140px;
+      height: 160px;
+      background-color: white;
+      border-radius: 16px;
+      transform: translate(-50%, -50%);
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Clipped corner */
+    .document::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      border-top: 32px solid #eee;
+      border-left: 32px solid transparent;
+    }
+
+    .line {
+      height: 14px;
+      width: 80px;
+      border-radius: 7px;
+      margin: 28px auto;
+    }
+
+    .line-red {
+      background-color: #C62828;
+    }
+
+    .line-green {
+      background-color: #2E7D32;
+    }
+  </style>
+</head>
+<body>
+  <div class="icon">
+    <div class="rdln-text">RdLn</div>
+    <div class="document">
+      <div class="line line-red"></div>
+      <div class="line line-green"></div>
+    </div>
+  </div>
+</body>
+</html>
