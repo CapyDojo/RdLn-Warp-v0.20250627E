@@ -303,6 +303,12 @@
   transform: translateY(-3px);
 }
 
+/* Disable transforms for data input and output panels */
+[data-input-panel] .glass-panel:hover,
+[data-output-panel] .glass-panel:hover {
+  transform: none !important;
+}
+
 /* New York theme glassmorphism - Unified opacity system */
 [data-theme="new-york"] .glass-panel {
   background: rgba(33, 33, 33, var(--glass-panel)) !important;
@@ -540,13 +546,6 @@
   box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
 }
 
-/* Disable transform effects for data panels */
-[data-input-panel],
-[data-input-panel]:hover,
-[data-output-panel],
-[data-output-panel]:hover {
-  transform: none !important;
-}
 
 /* Input field glassmorphism base - Unified opacity system */
 .glass-input-field {
@@ -742,6 +741,12 @@ html[data-theme="kyoto"] .glass-panel input.text-theme-neutral-800 {
   border-color: rgba(220, 8, 8, 0.6);
   box-shadow: 0 24px 64px 0 rgba(220, 8, 8, 0.6), 0 10px 36px 0 rgba(220, 8, 8, 0.4);
   transform: translateY(-2px);
+}
+
+/* Override transforms for content panels inside data input/output panels */
+[data-input-panel] .glass-panel.glass-content-panel:hover,
+[data-output-panel] .glass-panel.glass-content-panel:hover {
+  transform: none !important;
 }
 
 /* Libertinus Math font styles */
