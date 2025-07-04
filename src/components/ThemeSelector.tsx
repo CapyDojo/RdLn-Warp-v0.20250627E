@@ -181,14 +181,14 @@ export const ThemeSelector: React.FC = () => {
     >
       {/* Main Themes Button - Rounded Square */}
       <button
-        className="w-12 h-12 flex items-center justify-center bg-theme-primary-100 hover:bg-theme-primary-200 rounded-lg transition-all duration-200 text-theme-primary-800 shadow-md shrink-0 relative group"
+        className="flex items-center justify-center bg-theme-primary-100 hover:bg-theme-primary-200 rounded-lg transition-all duration-200 text-theme-primary-800 shadow-md shrink-0 relative group"
         title="Hover to see themes"
         aria-label="Theme selector - hover to view available themes"
         onMouseEnter={() => setIsHovered(true)}
-        style={{ aspectRatio: '1/1' }}
+        style={{ width: '48px', height: '48px', aspectRatio: '1/1' }}
       >
         <div className="flex flex-col items-center justify-center">
-          <Palette className="w-5 h-5" aria-hidden="true" />
+          <Palette className="w-6 h-6" aria-hidden="true" />
           <ChevronDown 
             className={`w-2.5 h-2.5 transition-transform duration-300 ${isHovered ? 'rotate-180' : ''} mt-0.5`} 
             aria-hidden="true"
@@ -203,10 +203,10 @@ export const ThemeSelector: React.FC = () => {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           style={{
-            left: buttonRect.right - 240, // Right-align cards (w-60 = 240px)
+            left: buttonRect.right - 208, // Right-align cards (w-52 = 208px)
             top: buttonRect.top, // Start from button top
-            width: 240, // Match w-60 card width
-            height: buttonRect.height + 8 + (availableThemes.length * 60) + 20, // Cover button + gap + all cards
+            width: 208, // Match w-52 card width
+            height: buttonRect.height + 8 + (availableThemes.length * 45) + 20, // Cover button + gap + all cards (45px gaps)
             paddingTop: buttonRect.height + 8, // Space for button + gap
             pointerEvents: isHovered ? 'auto' : 'none', // Only allow interaction when button is hovered
           }}
@@ -232,7 +232,7 @@ export const ThemeSelector: React.FC = () => {
                 `}
                 style={{
                   transform: isHovered 
-                    ? `translateY(${index * 60}px) scale(1) rotateX(0deg)` 
+                    ? `translateY(${index * 45}px) scale(1) rotateX(0deg)` 
                     : `translateY(-30px) scale(0.8) rotateX(-15deg)`,
                   transformOrigin: 'top center',
                   transitionDelay: isHovered ? `${delay}ms` : `${(availableThemes.length - index - 1) * 50}ms`,
@@ -245,7 +245,7 @@ export const ThemeSelector: React.FC = () => {
               >
                 <button
                   onClick={() => handleSelectTheme(theme.name, dragState.isDragging)}
-                  className="w-60 px-4 py-3 text-left rounded-lg flex items-center gap-3 group transition-all duration-200 border shadow-lg hover:shadow-xl"
+                  className="w-52 px-4 py-3 text-left rounded-lg flex items-center gap-3 group transition-all duration-200 border shadow-lg hover:shadow-xl"
                   style={getThemeButtonStyle(theme, currentTheme === theme.name)}
                   onMouseEnter={(e) => {
                     if (currentTheme !== theme.name) {
