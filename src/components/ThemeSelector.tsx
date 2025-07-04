@@ -179,15 +179,21 @@ export const ThemeSelector: React.FC = () => {
       ref={themesButtonRef}
       className="relative"
     >
-      {/* Main Themes Button */}
+      {/* Main Themes Button - Rounded Square */}
       <button
-        className="flex items-center gap-2 px-3 py-2 bg-theme-primary-100 hover:bg-theme-primary-200 rounded-lg transition-all duration-200 text-theme-primary-800 shadow-lg shrink-0"
+        className="w-16 h-16 flex items-center justify-center bg-theme-primary-100 hover:bg-theme-primary-200 rounded-xl transition-all duration-200 text-theme-primary-800 shadow-lg shrink-0 relative group"
         title="Hover to see themes"
+        aria-label="Theme selector - hover to view available themes"
         onMouseEnter={() => setIsHovered(true)}
+        style={{ aspectRatio: '1/1' }}
       >
-        <Palette className="w-4 h-4" />
-        <span className="hidden sm:inline whitespace-nowrap">Themes</span>
-        <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isHovered ? 'rotate-180' : ''}`} />
+        <div className="flex flex-col items-center justify-center">
+          <Palette className="w-6 h-6" aria-hidden="true" />
+          <ChevronDown 
+            className={`w-3 h-3 transition-transform duration-300 ${isHovered ? 'rotate-180' : ''} mt-0.5`} 
+            aria-hidden="true"
+          />
+        </div>
       </button>
 
       {/* Cascading Theme Cards - Rendered via Portal */}

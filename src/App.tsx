@@ -10,9 +10,6 @@ import './styles/resize-overrides.css'; // SSMR CSS resize fixes
 function AppContent() {
   const { currentTheme, themeConfig } = useTheme();
   
-  // Dev toggle state for cards that won't make it to production
-  const [showAdvancedOcrCard, setShowAdvancedOcrCard] = React.useState(true);
-  const [showPerformanceDemoCard, setShowPerformanceDemoCard] = React.useState(true);
 
   // Cleanup OCR worker on app unmount
   useEffect(() => {
@@ -23,17 +20,9 @@ function AppContent() {
 
   return (
     <div className="min-h-screen">
-      <Header 
-        showAdvancedOcrCard={showAdvancedOcrCard}
-        showPerformanceDemoCard={showPerformanceDemoCard}
-        onToggleAdvancedOcr={() => setShowAdvancedOcrCard(!showAdvancedOcrCard)}
-        onTogglePerformanceDemo={() => setShowPerformanceDemoCard(!showPerformanceDemoCard)}
-      />
+      <Header />
       <main className="pt-24">
-        <ComparisonInterface 
-          showAdvancedOcrCard={showAdvancedOcrCard}
-          showPerformanceDemoCard={showPerformanceDemoCard}
-        />
+        <ComparisonInterface />
       </main>
       
       {/* Footer - Enhanced with glassmorphism to match top sections */}

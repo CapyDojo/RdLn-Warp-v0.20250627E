@@ -23,6 +23,19 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
   showPerformanceDemoCard = true
 }) => {
   
+  // State for developer mode toggles (moved from App to manage locally)
+  const [showAdvancedOcrCardState, setShowAdvancedOcrCardState] = React.useState(showAdvancedOcrCard);
+  const [showPerformanceDemoCardState, setShowPerformanceDemoCardState] = React.useState(showPerformanceDemoCard);
+  
+  // Toggle functions for developer mode controls
+  const handleToggleAdvancedOcr = () => {
+    setShowAdvancedOcrCardState(!showAdvancedOcrCardState);
+  };
+  
+  const handleTogglePerformanceDemo = () => {
+    setShowPerformanceDemoCardState(!showPerformanceDemoCardState);
+  };
+  
   // Performance tracking (silent in production)
   const renderStartTime = performance.now();
   
@@ -557,7 +570,7 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
       
       
       {/* Enhanced OCR Feature Notice - Enhanced with glassmorphism */}
-      {showAdvancedOcrCard && (
+      {showAdvancedOcrCardState && (
         <div className="glass-panel border border-theme-primary-200 rounded-lg p-4 mb-6 shadow-lg transition-all duration-300">
           <div className="flex items-start gap-3">
             <div className="flex items-center gap-2">
@@ -584,7 +597,7 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
       )}
 
       {/* Demo Performance Test Buttons */}
-      {showPerformanceDemoCard && (
+      {showPerformanceDemoCardState && (
         <div className="glass-panel border border-theme-accent-200 rounded-lg p-6 mb-6 shadow-lg transition-all duration-300">
           <div className="text-center mb-4">
             <h3 className="text-lg font-semibold text-theme-primary-900 mb-2">🚀 Performance Demo Scenarios</h3>
@@ -949,7 +962,13 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
           
           {result && (
             <div>
-              <ComparisonStats stats={result.stats} />
+              <ComparisonStats 
+                stats={result.stats} 
+                showAdvancedOcrCard={showAdvancedOcrCardState}
+                showPerformanceDemoCard={showPerformanceDemoCardState}
+                onToggleAdvancedOcr={handleToggleAdvancedOcr}
+                onTogglePerformanceDemo={handleTogglePerformanceDemo}
+              />
             </div>
           )}
         </>
