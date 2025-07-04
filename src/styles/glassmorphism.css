@@ -540,6 +540,14 @@
   box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
 }
 
+/* Disable transform effects for resize handles */
+[data-resize-handle],
+[data-resize-handle]:hover,
+.output-resize-handle,
+.output-resize-handle:hover {
+  transform: none !important;
+}
+
 /* Input field glassmorphism base - Unified opacity system */
 .glass-input-field {
   background: rgba(255, 255, 255, var(--glass-subtle)) !important;
