@@ -823,7 +823,7 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
           <div
             data-resize-handle="input-panels"
             ref={resizeHandleRef}
-            className="glass-panel flex items-center justify-center w-20 h-8 bg-theme-neutral-200/60 hover:bg-theme-neutral-300/70 cursor-row-resize rounded-lg transition-all duration-300 touch-none select-none backdrop-blur-md border border-theme-neutral-300/30 shadow-lg hover:shadow-xl hover:scale-105"
+                className="glass-panel flex items-center justify-center w-20 h-8 bg-theme-neutral-200/60 hover:bg-theme-neutral-300/70 cursor-row-resize rounded-lg transition-all duration-300 touch-none select-none backdrop-blur-md border border-theme-neutral-300/30 shadow-lg hover:shadow-xl"
             onMouseDown={handleMouseDown}
             title="Drag to resize input panels"
           >
@@ -951,7 +951,7 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
               <div
                 data-resize-handle="output-panel"
                 ref={outputResizeHandleRef}
-                className="glass-panel output-resize-handle flex items-center justify-center w-20 h-8 bg-theme-primary-200/60 hover:bg-theme-primary-300/70 cursor-row-resize rounded-lg transition-all duration-300 touch-none select-none backdrop-blur-md border border-theme-primary-300/30 shadow-lg hover:shadow-xl hover:scale-105"
+                className="glass-panel output-resize-handle flex items-center justify-center w-20 h-8 bg-theme-primary-200/60 hover:bg-theme-primary-300/70 cursor-row-resize rounded-lg transition-all duration-300 touch-none select-none backdrop-blur-md border border-theme-primary-300/30 shadow-lg hover:shadow-xl"
                 onMouseDown={handleOutputMouseDown}
                 title="Drag to resize output panel"
               >
