@@ -27,12 +27,12 @@ function AppContent() {
       
       {/* Footer - Enhanced with glassmorphism to match top sections */}
       <footer className="mt-16 glass-panel border-t border-theme-neutral-200 shadow-lg transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-3 py-6">
           <div className="text-center text-theme-neutral-600">
-            <p className="text-sm font-serif libertinus-math-text leading-relaxed">
+            <p className="text-xs font-serif libertinus-math-text leading-relaxed">
               Built for legal professionals. All processing happens in your browser - your documents never leave your device.
             </p>
-            <p className="text-xs mt-2 text-theme-neutral-500 font-serif libertinus-math-text leading-relaxed">
+            <p className="text-xs mt-1 text-theme-neutral-500 font-serif libertinus-math-text leading-relaxed">
               Proprietary algorithm tuned for surgical, semantic redlines. 
               Features advanced OCR powered by Tesseract.js for screenshot-to-text conversion.
             </p>

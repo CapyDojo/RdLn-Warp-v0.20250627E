@@ -359,6 +359,38 @@ textarea:focus {
 }
 
 /* ==================================================================
+   OPTIMIZED WEB APP SCALING - Better Information Density
+   ================================================================== */
+
+/* Scale optimization for better 100% zoom experience */
+@media (min-width: 1024px) {
+  html {
+    font-size: 14px; /* Reduce base font size from 16px to 14px for desktop */
+  }
+}
+
+/* Compact component spacing */
+.glass-panel {
+  --panel-padding: 1rem; /* Reduce from default 1.5rem */
+}
+
+/* Optimize button sizes for web app density */
+button {
+  font-size: 0.875rem; /* 14px instead of 16px */
+  padding: 0.5rem 0.75rem; /* More compact than default */
+}
+
+/* Dense layout for text content */
+p, span, div {
+  line-height: 1.5; /* Tighter than default 1.6 */
+}
+
+/* Headings optimization */
+h1 { font-size: 1.5rem; } /* 21px instead of 24px */
+h2 { font-size: 1.25rem; } /* 17.5px instead of 20px */
+h3 { font-size: 1.125rem; } /* 15.75px instead of 18px */
+
+/* ==================================================================
    SEGMENTED CONTROL COMPONENT - iOS-style Toggle
    ================================================================== */
 
