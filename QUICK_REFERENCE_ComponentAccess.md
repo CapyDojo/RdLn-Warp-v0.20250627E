@@ -4,10 +4,13 @@
 
 ## 📍 **MAJOR PANELS** (Data Addresses)
 
-### Input Panels
+### Input Panels (Desktop + Mobile Unified Layout)
 - **Container**: `[data-input-panel]` 
 - **Inner Content**: `[data-input-panel] .glass-panel-inner-content`
 - **Text Areas**: `[data-input-panel] .glass-panel-inner-content textarea`
+- **Desktop Layout**: Side-by-side panels (`grid grid-cols-2 gap-6`)
+- **Mobile Layout**: Stacked panels with integrated resize handle between them
+- **Mobile Special Classes**: `.mobile-top-panel`, `.mobile-bottom-panel` for unified corners
 
 ### Output Panel ✨ (Elegant Architecture)
 - **Container**: `[data-output-panel]`
@@ -15,22 +18,28 @@
 
 ## 🎛️ **CONTROL ELEMENTS** (Data Addresses)
 
-### Main Control Bar
+### Status Control Bar ✨ (Simplified)
 - **Container**: `[data-control-bar]`
-- **Compare Button**: `[data-compare-button]`
-- **Reset Button**: `[data-reset-button]`
-- **Auto-Compare Toggle**: `[data-auto-compare-toggle]`
-- **System Protection Toggle**: `[data-system-protection-toggle]`
-- **Cancel Button**: `[data-cancel-button]`
+- **Cancel Button**: `[data-cancel-button]` (only when processing)
 
-### Interactive Controls
+### Consolidated Vertical Controls Array 🎯 (Primary Interface)
+**Desktop**: Circular buttons in vertical center between input panels
+**Mobile**: Horizontal row with same functionality + visual indicators
+
+- **Compare Button**: `[data-compare-button]` (only when auto-compare disabled)
+- **Auto-Compare Toggle**: `[data-auto-compare-toggle]` ⚡ (with animated indicator)
 - **Swap Content (Desktop)**: `[data-swap-content-button]`
 - **Swap Content (Mobile)**: `[data-swap-content-button-mobile]`
-- **Scroll Lock Toggle**: `[data-scroll-lock-toggle]`
+- **Scroll Lock Toggle**: `[data-scroll-lock-toggle]` 🔒 (with animated indicator)
+- **System Protection Toggle**: `[data-system-protection-toggle]`
+- **Reset Button**: `[data-reset-button]` ⚠️ (separated with gap to prevent accidents)
 
-### Resize Handles
+### Resize Handles (Smart Layout Detection)
 - **Input Panels Resize**: `[data-resize-handle="input-panels"]`
+  - **Desktop**: Handle below both panels with character counts
+  - **Mobile**: Handle between panels with unified design (left: original chars, center: dots, right: revised chars)
 - **Output Panel Resize**: `[data-resize-handle="output-panel"]`
+- **Smart Functionality**: Automatically detects visible layout using `offsetParent` visibility detection
 
 ## 📞 **DIRECT PHONE LINES** (React Refs)
 
@@ -42,11 +51,14 @@
 - **Scroll Container**: `scrollRef` (passed from parent)
 - **Internal Scroll**: `scrollContainerRef` (internal component ref)
 
-### ComparisonInterface (Master Controller)
-- **Input Panels Container**: `inputPanelsRef` → Input panels wrapper
+### ComparisonInterface (Master Controller) - Enhanced Mobile Support
+- **Desktop Input Panels**: `desktopInputPanelsRef` → Desktop layout wrapper
+- **Mobile Input Panels**: `mobileInputPanelsRef` → Mobile layout wrapper  
 - **Output Panel Direct**: `redlineOutputRef` → Output scroll container
-- **Input Resize Handle**: `resizeHandleRef` → Input resize control
+- **Desktop Resize Handle**: `desktopResizeHandleRef` → Desktop input resize control
+- **Mobile Resize Handle**: `mobileResizeHandleRef` → Mobile input resize control
 - **Output Resize Handle**: `outputResizeHandleRef` → Output resize control
+- **Smart Resize Logic**: Uses visibility detection to target active layout automatically
 
 ### ThemeSelector Component
 - **Themes Button**: `themesButtonRef` → Theme button positioning
@@ -59,18 +71,18 @@
 [data-input-panel]                    /* Input panel containers */
 [data-output-panel]                   /* Output panel container */
 
-/* CONTROL BAR */
-[data-control-bar]                    /* Main control container */
-[data-compare-button]                 /* Primary compare action */
-[data-reset-button]                   /* Reset/new comparison */
-[data-auto-compare-toggle]            /* Auto-compare on/off */
-[data-system-protection-toggle]       /* System protection mode */
-[data-cancel-button]                  /* Cancel operation */
+/* STATUS CONTROL BAR (Simplified) */
+[data-control-bar]                    /* Status display + cancel button */
+[data-cancel-button]                  /* Cancel operation (when processing) */
 
-/* INTERACTIVE CONTROLS */
+/* CONSOLIDATED VERTICAL CONTROLS (Primary Interface) */
+[data-compare-button]                 /* Compare action (when auto-compare off) */
+[data-auto-compare-toggle]            /* Auto-compare toggle with indicator */
 [data-swap-content-button]            /* Desktop content swap */
 [data-swap-content-button-mobile]     /* Mobile content swap */
-[data-scroll-lock-toggle]             /* Scroll synchronization */
+[data-scroll-lock-toggle]             /* Scroll sync with indicator */
+[data-system-protection-toggle]       /* System protection mode */
+[data-reset-button]                   /* Reset/new comparison (isolated) */
 
 /* RESIZE HANDLES */
 [data-resize-handle="input-panels"]    /* Input panels resize */
@@ -83,10 +95,12 @@
 
 ### 📞 **Direct Ref Access** (JavaScript/React)
 ```typescript
-// MAIN COMPONENT REFS
+// MAIN COMPONENT REFS (Enhanced Mobile Support)
 redlineOutputRef.current              // Output panel scroll container
-inputPanelsRef.current                // Input panels wrapper
-resizeHandleRef.current               // Input resize handle
+desktopInputPanelsRef.current         // Desktop input panels wrapper
+mobileInputPanelsRef.current          // Mobile input panels wrapper
+desktopResizeHandleRef.current        // Desktop input resize handle
+mobileResizeHandleRef.current         // Mobile input resize handle
 outputResizeHandleRef.current         // Output resize handle
 
 // TEXTINPUTPANEL REFS

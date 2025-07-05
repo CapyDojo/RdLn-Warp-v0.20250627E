@@ -49,13 +49,6 @@ const generateButtonVariables = (themeConfig: ThemeConfig): Array<[string, strin
       light: { bg: '#f4f4f5', border: '#e4e4e7', text: '#1f2937', hover: '#e4e4e7', hoverText: '#111827' },
       light2: { bg: '#e4e4e7', border: '#d4d4d8', text: '#1f2937' }
     },
-    'apple-light': {
-      primary: { bg: '#1e40af', border: '#1d4ed8', text: '#ffffff', hover: '#1e3a8a' },
-      accent: { bg: '#7c2d12', border: '#9a3412', text: '#ffffff', hover: '#7c2d12' },
-      neutral: { bg: '#374151', border: '#4b5563', text: '#ffffff', hover: '#1f2937' },
-      light: { bg: '#f1f5f9', border: '#e2e8f0', text: '#1e293b', hover: '#e2e8f0', hoverText: '#0f172a' },
-      light2: { bg: '#e2e8f0', border: '#cbd5e1', text: '#1e293b' }
-    },
     'apple-dark': {
       primary: { bg: '#3b82f6', border: '#60a5fa', text: '#ffffff', hover: '#3b82f6' },
       accent: { bg: '#dc2626', border: '#ef4444', text: '#ffffff', hover: '#dc2626' },

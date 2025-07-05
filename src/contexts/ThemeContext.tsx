@@ -29,7 +29,6 @@ interface ThemeProviderProps {
 const DEFAULT_THEME_ORDER: ThemeName[] = [
   'professional',
   'bamboo',
-  'apple-light',
   'apple-dark',
   'kyoto',
   'new-york',
@@ -111,8 +110,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     localStorage.setItem(THEME_ORDER_STORAGE_KEY, JSON.stringify(newOrder));
   };
 
-  // Create availableThemes in the custom order
-  const availableThemes = themeOrder.map(themeName => themes[themeName]);
+  // Create availableThemes in the custom order, filtering out any undefined themes
+  const availableThemes = themeOrder
+    .map(themeName => themes[themeName])
+    .filter((theme): theme is ThemeConfig => theme !== undefined);
 
   const value: ThemeContextType = {
     currentTheme,

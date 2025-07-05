@@ -6,19 +6,19 @@
 
 RdLn is a sophisticated document comparison tool designed for legal professionals and organizations requiring precise document analysis. Built with React, TypeScript, and modern UI technologies, it provides client-side document processing with complete confidentiality.
 
-## ✨ Latest Updates - Version 0.2.5
+## ✨ Latest Updates - Version 0.2.6
 
-### Waterfall Theme Selector
-- **🌊 NEW**: Elegant cascading hover effect for theme selection with physics-based animations
-- **🎨 AUTHENTIC PREVIEWS**: Each theme card displays using that theme's actual colors and styling
+### SSMR Refactoring Program (Steps 1-7B) ✅
+- **🏗️ COMPONENT MODULARIZATION**: Complete extraction of layout components for better performance
+- **📱 MOBILE OPTIMIZATION**: Dedicated mobile and desktop layout components for enhanced customization
+- **⚡ PERFORMANCE GAINS**: ~350 lines extracted from ComparisonInterface, reduced DOM complexity
+- **🛡️ SSMR METHODOLOGY**: Safe, Step-by-step, Modular, Reversible approach with zero breaking changes
+- **📊 MONITORING INTEGRATION**: Multi-layered performance tracking with memory usage monitoring
+
+### Recent Updates - Version 0.2.5
+- **🌊 Waterfall Theme Selector**: Elegant cascading hover effect with physics-based animations
+- **🎨 AUTHENTIC PREVIEWS**: Theme cards display using actual colors and styling
 - **✨ 3D ANIMATIONS**: Cards "waterfall down" with bounce physics and "roll back up" in reverse
-- **🎯 DRAG & DROP**: Always-on reordering with persistent localStorage
-- **🚀 PORTAL RENDERING**: React Portal prevents header clipping for seamless interaction
-
-### Previous Updates - Version 0.2.2
-- **Glass Panel Visual Consistency**: Unified glassmorphism effects across all panels
-- **Performance Optimization**: Chunked rendering for large documents
-- **DOM Structure**: Streamlined component architecture
 
 ## 🚀 Key Features
 
@@ -32,9 +32,13 @@ RdLn is a sophisticated document comparison tool designed for legal professional
 ## 🏗️ Architecture
 
 ### Core Components
+- **ComparisonInterface**: Main orchestration component (streamlined with extracted layouts)
+- **DesktopInputLayout**: Desktop side-by-side input layout with shared resize handle
+- **MobileInputLayout**: Mobile stacked input layout with vertical resize handle
+- **ProcessingDisplay**: Modularized processing states with progress bars
+- **OutputLayout**: RedlineOutput display with resize handle and stats
 - **TextInputPanel**: Input areas with OCR and drag-drop support
 - **RedlineOutput**: Chunked rendering for diff visualization
-- **ComparisonInterface**: Main orchestration component
 - **MyersAlgorithm**: Core comparison engine
 
 ### Visual Consistency

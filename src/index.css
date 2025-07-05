@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Layout styles imported directly in LayoutContext */
+
 /* Enhanced Glassmorphic Design with Vivid Dynamic Effects */
 :root {
   /* Default fallback values - will be overridden by ThemeContext */
@@ -293,7 +295,7 @@ textarea:focus {
   transform: translateX(-50%) !important;
   z-index: 9999 !important;
   width: 100% !important;
-  max-width: 72rem !important;
+  max-width: 90rem !important;
   padding-left: 1rem !important;
   padding-right: 1rem !important;
 }

@@ -8,7 +8,6 @@ import { ThemeName, ThemeConfig } from '../types/theme';
 // Import all theme definitions
 import { professionalTheme } from './definitions/professional';
 import { bambooTheme } from './definitions/bamboo';
-import { appleLightTheme } from './definitions/apple-light';
 import { appleDarkTheme } from './definitions/apple-dark';
 import { kyotoTheme } from './definitions/kyoto';
 import { newYorkTheme } from './definitions/new-york';
@@ -30,7 +29,6 @@ export { isValidTheme, getSafeTheme, getThemeFromStorage } from './utils/validat
 export const themes: Record<ThemeName, ThemeConfig> = {
   professional: professionalTheme,
   bamboo: bambooTheme,
-  'apple-light': appleLightTheme,
   'apple-dark': appleDarkTheme,
   kyoto: kyotoTheme,
   'new-york': newYorkTheme,
@@ -43,7 +41,6 @@ export const themes: Record<ThemeName, ThemeConfig> = {
 export {
   professionalTheme,
   bambooTheme,
-  appleLightTheme,
   appleDarkTheme,
   kyotoTheme,
   newYorkTheme,

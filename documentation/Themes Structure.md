@@ -7,7 +7,7 @@ Based on my exploration, here's the comprehensive structure of your theming syst
 ### **Core Theme Architecture**
 
 1. **Theme Definitions** (`src/themes/definitions/`):
-   - 9 themes available: `professional`, `bamboo`, `apple-light`, `apple-dark`, `kyoto`, `new-york`, `autumn`, `classic-light`, `classic-dark`
+   - 8 themes available: `professional`, `bamboo`, `apple-dark`, `kyoto`, `new-york`, `autumn`, `classic-light`, `classic-dark`
    - Each theme defines color palettes (primary, secondary, accent, neutral) with 50-900 shades
    - Glassmorphism effects configuration (blur, opacity, shadows, animations)
 

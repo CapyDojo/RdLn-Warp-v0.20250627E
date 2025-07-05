@@ -17,8 +17,10 @@ As a user comparing two documents, I want to lock the scroll position across all
 - **Input Panels**: `<textarea>` elements with `overflow-y-auto` (line 270 in TextInputPanel.tsx)
 - **Output Panel**: `<div>` with chunked content and `overflow-y-auto` (lines 74-80 in RedlineOutput.tsx)
 
-### Button Placement
-Position between input resize handle (lines 710-720) and swap button area (lines 722-746) in ComparisonInterface.tsx
+### Button Placement ✨ (Updated)
+**Desktop**: Consolidated vertical controls array - circular button in center between input panels  
+**Mobile**: Horizontal controls row with visual indicator dot when active  
+**Position**: Part of the minimalist operation buttons array for streamlined UX
 
 ## Technical Implementation Plan
 
@@ -34,23 +36,47 @@ const scrollRefs = useRef({
 const isScrolling = useRef(false); // Prevent infinite loops
 ```
 
-### 2. Scroll Lock Button Component
+### 2. Scroll Lock Button Component ✨ (Updated)
+
+#### Desktop (Circular Button in Vertical Array)
 ```jsx
-{/* Scroll Lock Button - Position after input resize handle */}
-<div className="flex justify-center mt-2 mb-4">
-  <button
-    onClick={() => setIsScrollLocked(!isScrollLocked)}
-    className={`glass-panel flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
-      isScrollLocked 
-        ? 'bg-theme-primary-200/60 text-theme-primary-800 border-theme-primary-300/30' 
-        : 'bg-theme-neutral-200/60 text-theme-neutral-700 border-theme-neutral-300/30'
-    } hover:shadow-lg backdrop-blur-md border`}
-    title={isScrollLocked ? "Unlock scroll synchronization" : "Lock scroll synchronization"}
-  >
-    <Lock className={`w-4 h-4 ${isScrollLocked ? '' : 'opacity-50'}`} />
-    <span className="text-sm">{isScrollLocked ? 'Scroll Locked' : 'Lock Scroll'}</span>
-  </button>
-</div>
+{/* Scroll Lock Button - Part of consolidated vertical controls */}
+<button
+  data-scroll-lock-toggle
+  onClick={() => setIsScrollLocked(!isScrollLocked)}
+  className={`enhanced-button flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl relative ${
+    isScrollLocked 
+      ? 'bg-theme-primary-500 text-white hover:bg-theme-primary-600' 
+      : 'bg-theme-neutral-300 text-theme-neutral-700 hover:bg-theme-neutral-400'
+  }`}
+  title={isScrollLocked ? "Unlock scroll synchronization" : "Lock scroll synchronization"}
+>
+  <Lock className={`w-5 h-5 transition-all duration-300 ${isScrollLocked ? '' : 'opacity-60'}`} />
+  {isScrollLocked && (
+    <div className="absolute -top-1 -right-1 w-3 h-3 bg-theme-primary-300 rounded-full animate-pulse"></div>
+  )}
+</button>
+```
+
+#### Mobile (Horizontal Row with Enhanced Indicator)
+```jsx
+{/* Scroll Lock Button - Mobile version with larger indicator */}
+<button
+  data-scroll-lock-toggle
+  onClick={() => setIsScrollLocked(!isScrollLocked)}
+  className={`enhanced-button flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-200 shadow-lg relative overflow-visible ${
+    isScrollLocked 
+      ? 'bg-theme-primary-500 text-white hover:bg-theme-primary-600' 
+      : 'bg-theme-neutral-300 text-theme-neutral-700 hover:bg-theme-neutral-400'
+  }`}
+  title={isScrollLocked ? "Unlock scroll synchronization" : "Lock scroll synchronization"}
+>
+  <Lock className={`w-4 h-4 transition-all duration-300 ${isScrollLocked ? '' : 'opacity-60'}`} />
+  <span>Scroll</span>
+  {isScrollLocked && (
+    <div className="absolute -top-2 -right-2 w-4 h-4 bg-blue-400 rounded-full animate-pulse z-20 border-2 border-white shadow-lg"></div>
+  )}
+</button>
 ```
 
 ### 3. Scroll Synchronization Logic
@@ -190,16 +216,40 @@ useEffect(() => {
 4. ✅ Works with both CSS and React resize modes
 5. ✅ Graceful handling of dynamic content changes
 6. ✅ Accessible keyboard navigation
+7. ✅ **NEW**: Consolidated into minimalist vertical button array
+8. ✅ **NEW**: Mobile support with enhanced visual indicators
+9. ✅ **NEW**: Animated indicator dots for clear active state feedback
+10. ✅ **NEW**: Consistent design language across desktop and mobile
 
 ## Future Enhancements
 - Keyboard shortcut (Ctrl+L) for toggle
 - Smart scroll alignment for matching content
 - Scroll position memory between lock/unlock
-- Visual indicators showing synchronized positions
+- ~~Visual indicators showing synchronized positions~~ ✅ **IMPLEMENTED**
+
+## Recent Enhancements ✨ (2025-07-04)
+
+### Mobile Optimization
+- **Enhanced indicator dots**: Larger size (4x4 vs 3x3) for better visibility
+- **Better positioning**: Improved top-right placement with overflow handling
+- **Visual contrast**: White borders and shadows for clarity
+- **Touch-friendly**: Meets accessibility guidelines for touch targets
+
+### Design Consolidation
+- **Minimalist approach**: Part of unified vertical controls array
+- **Consistent styling**: Matches other operational buttons
+- **Safety considerations**: Logical grouping away from destructive actions
+- **Responsive design**: Graceful degradation from circular to rectangular buttons
+
+### Technical Improvements
+- **Layout adaptation**: Automatic detection of Option C vs other layouts
+- **Ref-based architecture**: Uses elegant output panel ref detection
+- **Performance optimized**: RequestAnimationFrame for smooth scrolling
+- **Cross-platform**: Works consistently across desktop and mobile
 
 ---
 
 *Created: 2025-07-04*  
-*Status: Ready for Implementation*  
+*Status: ✅ Fully Implemented & Enhanced*  
 *Priority: Enhancement*  
 *Complexity: Medium*

@@ -1,8 +1,9 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import { FileText, Image, AlertCircle, Loader, ChevronDown, Languages } from 'lucide-react';
 import { useOCR } from '../hooks/useOCR';
 import { OCRLanguage } from '../types/ocr-types';
+import { LanguageSettingsDropdown } from './LanguageSettingsDropdown';
+import { useLayout } from '../contexts/LayoutContext';
 
 interface TextInputPanelProps {
   title: string;
@@ -26,6 +27,10 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   const [showLanguageSettings, setShowLanguageSettings] = useState(false);
   const [isPasteInProgress, setIsPasteInProgress] = useState(false);
   const [controlRect, setControlRect] = useState<DOMRect | null>(null);
+  
+  // Detect layout to conditionally apply dynamic scaling behavior
+  const { currentLayout } = useLayout();
+  const isDynamicScaling = currentLayout === 'option-c' || currentLayout === 'current';
   
   const { 
     isProcessing, 
@@ -241,7 +246,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
       </div>
 
       
-      <div className="glass-panel-inner-content relative" style={{ height: `${height}px`, minHeight: '200px' }}>
+      <div className="glass-panel-inner-content relative" style={isDynamicScaling ? { minHeight: '200px' } : { height: `${height}px`, minHeight: '200px' }}>
         <textarea
           ref={textareaRef}
           value={value}
@@ -267,8 +272,10 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
           onDragOver={handleDragOver}
           placeholder={isProcessing ? '' : placeholder}
           disabled={disabled || isProcessing}
-          className="glass-input-field w-full h-full py-6 px-8 resize-none focus:ring-2 focus:ring-theme-primary-500 focus:border-transparent font-serif text-theme-neutral-800 leading-relaxed disabled:cursor-not-allowed transition-colors libertinus-math-text border-0 bg-transparent"
-          style={{ height: '100%' }}
+          className={`glass-input-field w-full py-6 px-8 resize-none focus:ring-2 focus:ring-theme-primary-500 focus:border-transparent font-serif text-theme-neutral-800 leading-relaxed disabled:cursor-not-allowed transition-colors libertinus-math-text border-0 bg-transparent ${
+            isDynamicScaling ? '' : 'h-full'
+          }`}
+          style={isDynamicScaling ? {} : { height: '100%' }}
         />
         
         {/* OCR Progress Bar */}
@@ -328,10 +335,6 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
               </span>
             </div>
           )}
-          
-          <div className="text-xs text-theme-neutral-500 bg-transparent border border-white/20 rounded px-2 py-1 ml-auto">
-            {value.length.toLocaleString()} characters
-          </div>
         </div>
         
         {/* OCR Instructions - Only show when not processing and no content */}
@@ -356,128 +359,19 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         )}
       </div>
       
-      {/* Floating Language Settings Dropdown - Rendered via Portal */}
-      {!autoDetect && showLanguageSettings && controlRect && createPortal(
-        <div className="fixed inset-0 z-[9999] pointer-events-none">
-          <div 
-            className="absolute pointer-events-auto"
-            style={{
-              top: controlRect.bottom,
-              left: controlRect.right - 500, // Align right edge of dropdown with right edge of control
-              width: '500px'
-            }}
-          >
-            <div className="glass-panel shadow-2xl border border-white/20 backdrop-blur-xl transition-all duration-300 rounded-xl overflow-hidden" style={{ width: '500px', maxHeight: '60vh' }}>
-              {/* Header */}
-              <div className="px-6 py-4 border-b border-white/10">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-theme-primary-900">Manual Language Selection</h3>
-                  <button
-                    onClick={() => setShowLanguageSettings(false)}
-                    className="text-theme-neutral-600 hover:text-theme-neutral-800 transition-colors"
-                  >
-                    <ChevronDown className="w-5 h-5 rotate-180" />
-                  </button>
-                </div>
-              </div>
-              
-              {/* Content */}
-              <div className="px-6 py-4 space-y-6 overflow-y-auto" style={{ maxHeight: 'calc(60vh - 80px)' }}>
-                {/* Detected Languages - Enhanced Display - Only show when there's content */}
-                {detectedLanguages.length > 0 && value.trim() && (
-                  <div>
-                    <label className="text-sm font-medium text-theme-neutral-700 mb-3 block">
-                      Detected Languages ({detectedLanguages.length})
-                    </label>
-                    <div className="grid grid-cols-1 gap-2">
-                      {detectedLanguages.map((langCode, index) => (
-                        <div
-                          key={langCode}
-                          className="flex items-center gap-3 px-4 py-3 bg-theme-secondary-50 border border-theme-secondary-200 rounded-lg"
-                        >
-                          <div className="flex items-center gap-2 flex-1">
-                            <span className="text-sm font-medium text-theme-secondary-800">
-                              {getLanguageDisplayName(langCode)}
-                            </span>
-                          </div>
-                          {index === 0 && (
-                            <span className="text-xs bg-theme-secondary-200 text-theme-secondary-800 px-2 py-1 rounded-full">
-                              Primary
-                            </span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                    <p className="text-xs text-theme-neutral-600 mt-3">
-                      Languages are listed in order of detection confidence. Primary language is used for specialized text processing.
-                    </p>
-                  </div>
-                )}
-
-                {/* Manual Language Selection */}
-                <div>
-                  <label className="text-sm font-medium text-theme-neutral-700 mb-3 block">
-                    Select Languages ({selectedLanguages.length} selected)
-                  </label>
-                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border border-theme-neutral-200 rounded-lg p-3">
-                    {supportedLanguages.map(language => (
-                      <label
-                        key={language.code}
-                        className="flex items-center gap-2 p-2 hover:bg-theme-neutral-100 rounded cursor-pointer transition-colors"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedLanguages.includes(language.code)}
-                          onChange={() => handleLanguageToggle(language.code)}
-                          className="rounded border-theme-neutral-300 text-theme-primary-600 focus:ring-theme-primary-500"
-                        />
-                        <span className="text-sm flex-1">
-                          {language.flag} {language.name}
-                        </span>
-                        <span className="text-xs text-theme-neutral-500">
-                          {language.downloadSize}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Quick Language Presets */}
-                <div>
-                  <label className="text-sm font-medium text-theme-neutral-700 mb-3 block">Quick Presets</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => setSelectedLanguages(['eng'])}
-                      className="px-4 py-2 text-sm bg-theme-primary-100 text-theme-primary-800 rounded-lg hover:bg-theme-primary-200 transition-colors"
-                    >
-                      English Only
-                    </button>
-                    <button
-                      onClick={() => setSelectedLanguages(['eng', 'chi_sim', 'chi_tra'])}
-                      className="px-4 py-2 text-sm bg-theme-primary-100 text-theme-primary-800 rounded-lg hover:bg-theme-primary-200 transition-colors"
-                    >
-                      English + Chinese
-                    </button>
-                    <button
-                      onClick={() => setSelectedLanguages(['eng', 'deu', 'spa', 'fra'])}
-                      className="px-4 py-2 text-sm bg-theme-primary-100 text-theme-primary-800 rounded-lg hover:bg-theme-primary-200 transition-colors"
-                    >
-                      English + European
-                    </button>
-                    <button
-                      onClick={() => setSelectedLanguages(['eng', 'jpn', 'kor'])}
-                      className="px-4 py-2 text-sm bg-theme-primary-100 text-theme-primary-800 rounded-lg hover:bg-theme-primary-200 transition-colors"
-                    >
-                      English + Asian
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
+      {/* Language Settings Dropdown */}
+      <LanguageSettingsDropdown
+        isOpen={!autoDetect && showLanguageSettings}
+        onClose={() => setShowLanguageSettings(false)}
+        controlRect={controlRect}
+        detectedLanguages={detectedLanguages}
+        selectedLanguages={selectedLanguages}
+        supportedLanguages={supportedLanguages}
+        value={value}
+        onLanguageToggle={handleLanguageToggle}
+        onSetSelectedLanguages={setSelectedLanguages}
+        getLanguageDisplayName={getLanguageDisplayName}
+      />
     </div>
   );
 };

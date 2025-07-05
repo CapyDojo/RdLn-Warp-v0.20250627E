@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart3, Plus, Minus, FileText, RefreshCw, Settings, Zap, Image } from 'lucide-react';
+import { BarChart3, Plus, Minus, FileText, RefreshCw } from 'lucide-react';
 
 interface ComparisonStatsProps {
   stats: {
@@ -9,19 +9,10 @@ interface ComparisonStatsProps {
     changed: number;
     totalChanges: number;
   };
-  // Developer mode props
-  showAdvancedOcrCard?: boolean;
-  showPerformanceDemoCard?: boolean;
-  onToggleAdvancedOcr?: () => void;
-  onTogglePerformanceDemo?: () => void;
 }
 
 export const ComparisonStats: React.FC<ComparisonStatsProps> = ({ 
-  stats,
-  showAdvancedOcrCard = true,
-  showPerformanceDemoCard = true,
-  onToggleAdvancedOcr,
-  onTogglePerformanceDemo
+  stats
 }) => {
   const total = stats.additions + stats.deletions + stats.unchanged + stats.changed;
   const additionPercent = total > 0 ? (stats.additions / total) * 100 : 0;
@@ -98,53 +89,6 @@ export const ComparisonStats: React.FC<ComparisonStatsProps> = ({
             className="bg-theme-accent-500" 
             style={{ width: `${changedPercent}%` }}
           ></div>
-        </div>
-      </div>
-      <div className="mt-6">
-        {/* Developer Mode Controls */}
-        <h3 className="text-lg font-semibold text-theme-primary-900 mb-2 flex items-center gap-2">
-          <Settings className="w-5 h-5 text-theme-primary-900" aria-label="Developer Mode" />
-          Developer Mode
-        </h3>
-        <div className="flex gap-2">
-          {onToggleAdvancedOcr && (
-            <button
-              onClick={onToggleAdvancedOcr}
-              className={`px-2 py-1 text-xs rounded transition-all ${
-                showAdvancedOcrCard 
-                  ? 'bg-green-500 text-white hover:bg-green-600' 
-                  : 'bg-gray-500 text-white hover:bg-gray-600'
-              }`}
-              title="Toggle Advanced OCR card visibility"
-              aria-label={`Toggle Advanced OCR card visibility ${showAdvancedOcrCard ? 'ON' : 'OFF'}`}
-            >
-              <Zap className="w-4 h-4" />
-              <span className="ml-1">OCR {showAdvancedOcrCard ? 'ON' : 'OFF'}</span>
-            </button>
-          )}
-          {onTogglePerformanceDemo && (
-            <button
-              onClick={onTogglePerformanceDemo}
-              className={`px-2 py-1 text-xs rounded transition-all ${
-                showPerformanceDemoCard 
-                  ? 'bg-green-500 text-white hover:bg-green-600' 
-                  : 'bg-gray-500 text-white hover:bg-gray-600'
-              }`}
-              title="Toggle Performance Demo card visibility"
-              aria-label={`Toggle Performance Demo card visibility ${showPerformanceDemoCard ? 'ON' : 'OFF'}`}
-            >
-              <Image className="w-4 h-4" />
-              <span className="ml-1">Demo {showPerformanceDemoCard ? 'ON' : 'OFF'}</span>
-            </button>
-          )}
-          <a 
-            href="/logo-test" 
-            className="px-3 py-2 bg-theme-primary-100/50 hover:bg-theme-primary-200/50 text-theme-primary-700 hover:text-theme-primary-800 text-sm font-medium rounded-lg border border-theme-primary-200/50 transition-all duration-200"
-            title="View logo concept designs"
-            aria-label="View logo concept designs"
-          >
-            Logo Test
-          </a>
         </div>
       </div>
     </div>

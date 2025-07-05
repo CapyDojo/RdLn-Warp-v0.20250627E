@@ -1,14 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Header } from './components/Header';
 import { ComparisonInterface } from './components/ComparisonInterface';
+import { DeveloperModeCard } from './components/DeveloperModeCard';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { useTheme } from './contexts/ThemeContext';
+import { LayoutProvider } from './contexts/LayoutContext';
 import { OCRService } from './utils/OCRService';
 import { LogoTestPage } from './pages/LogoTestPage'; // Import the new LogoTestPage
 import './styles/resize-overrides.css'; // SSMR CSS resize fixes
 
 function AppContent() {
   const { currentTheme, themeConfig } = useTheme();
+  
+  // State for developer mode toggles
+  const [showAdvancedOcrCardState, setShowAdvancedOcrCardState] = useState(true);
+  const [showPerformanceDemoCardState, setShowPerformanceDemoCardState] = useState(true);
+  
+  // Toggle functions for developer mode controls
+  const handleToggleAdvancedOcr = () => {
+    setShowAdvancedOcrCardState(!showAdvancedOcrCardState);
+  };
+  
+  const handleTogglePerformanceDemo = () => {
+    setShowPerformanceDemoCardState(!showPerformanceDemoCardState);
+  };
   
 
   // Cleanup OCR worker on app unmount
@@ -22,12 +37,25 @@ function AppContent() {
     <div className="min-h-screen">
       <Header />
       <main className="pt-24">
-        <ComparisonInterface />
+        <ComparisonInterface 
+          showAdvancedOcrCard={showAdvancedOcrCardState}
+          showPerformanceDemoCard={showPerformanceDemoCardState}
+        />
       </main>
+      
+      {/* Developer Mode Card - Always Visible */}
+      <div className="comparison-interface-container mb-6">
+        <DeveloperModeCard
+          showAdvancedOcrCard={showAdvancedOcrCardState}
+          showPerformanceDemoCard={showPerformanceDemoCardState}
+          onToggleAdvancedOcr={handleToggleAdvancedOcr}
+          onTogglePerformanceDemo={handleTogglePerformanceDemo}
+        />
+      </div>
       
       {/* Footer - Enhanced with glassmorphism to match top sections */}
       <footer className="mt-16 glass-panel border-t border-theme-neutral-200 shadow-lg transition-all duration-300">
-        <div className="max-w-6xl mx-auto px-3 py-6">
+        <div className="footer-container">
           <div className="text-center text-theme-neutral-600">
             <p className="text-xs font-serif libertinus-math-text leading-relaxed">
               Built for legal professionals. All processing happens in your browser - your documents never leave your device.
@@ -75,12 +103,14 @@ function AppContent() {
 function App() {
   return (
     <ThemeProvider>
-      {/* Conditional rendering for the logo test page */}
-      {window.location.pathname === '/logo-test' ? (
-        <LogoTestPage />
-      ) : (
-        <AppContent />
-      )}
+      <LayoutProvider>
+        {/* Conditional rendering for the logo test page */}
+        {window.location.pathname === '/logo-test' ? (
+          <LogoTestPage />
+        ) : (
+          <AppContent />
+        )}
+      </LayoutProvider>
     </ThemeProvider>
   );
 }

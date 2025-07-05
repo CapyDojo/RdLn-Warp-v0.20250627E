@@ -28,22 +28,6 @@ export const backgroundStyles: Record<ThemeName, string> = {
     margin: 0 !important;
     padding: 0 !important;
   `,
-  'apple-light': `
-    background: linear-gradient(135deg, #e0f2fe 0%, #f8fafc 25%, #ffffff 50%, #f8fafc 75%, #e0f2fe 100%) !important;
-    background-image: 
-      radial-gradient(ellipse 650px 450px at 25% 15%, rgba(56, 189, 248, 0.32) 0%, transparent 60%),
-      radial-gradient(ellipse 750px 300px at 75% 85%, rgba(125, 211, 252, 0.28) 0%, transparent 65%),
-      radial-gradient(ellipse 400px 700px at 10% 50%, rgba(186, 230, 253, 0.25) 0%, transparent 55%),
-      radial-gradient(ellipse 550px 400px at 90% 30%, rgba(224, 242, 254, 0.18) 0%, transparent 50%),
-      radial-gradient(ellipse 300px 600px at 45% 95%, rgba(241, 245, 249, 0.25) 0%, transparent 45%),
-      radial-gradient(ellipse 500px 250px at 70% 5%, rgba(226, 232, 240, 0.22) 0%, transparent 40%) !important;
-    background-repeat: no-repeat !important;
-    background-attachment: fixed !important;
-    background-size: 100% 100% !important;
-    min-height: 100vh !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  `,
   'apple-dark': `
     background: #0a0a0a !important;
     background-image: 

@@ -60,8 +60,8 @@ export const kyotoTheme: ThemeConfig = {
       500: '#a8a29e',
       600: '#d6d3d1',
       700: '#e7e5e4',
-      800: '#fef7e6',  // Changed from white to peach
-      900: '#fef7e6',  // Changed from white to peach
+      800: '#2c2825',  // Darker color for better text readability
+      900: '#1f1e1b',  // Even darker for high contrast text
     },
   },
   effects: GLASSMORPHISM_EFFECTS.premium,

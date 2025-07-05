@@ -24,30 +24,30 @@ export const classicDarkTheme: ThemeConfig = {
       800: '#075985',  // Darker blue
       900: '#0c4a6e',  // Darkest blue
     },
-    // Pure Grey palette - main interface colors
+    // Pure Grey palette - main interface colors (optimized for dark mode readability)
     secondary: {
       50: '#fafafa',
-      100: '#f5f5f5',
+      100: '#29405D',  // Dark blue-grey background for additions
       200: '#e5e5e5',
-      300: '#d4d4d4',
+      300: '#1E2F42',  // Darker blue border for additions (darker than background)
       400: '#a3a3a3',
       500: '#737373',
-      600: '#525252',
+      600: '#7BA8D6',  // Light blue decoration color for additions
       700: '#404040',
-      800: '#262626',
+      800: '#f5f5f5',  // Light grey for text on dark backgrounds (additions)
       900: '#171717',
     },
-    // Orange accent palette - for warnings, highlights, and action items
+    // Orange accent palette - for warnings, highlights, and action items (optimized for dark mode readability)
     accent: {
       50: '#fff7ed',   // Very light orange tint
-      100: '#ffedd5',  // Light orange
+      100: '#C13F17',  // Darker red-orange background for deletions
       200: '#fed7aa',  // Medium-light orange
-      300: '#fdba74',  // Medium orange
+      300: '#9A3012',  // Darker red border for deletions (darker than background)
       400: '#fb923c',  // Medium-bright orange
       500: '#f97316',  // Base orange - secondary accent
-      600: '#ea580c',  // Medium-dark orange
+      600: '#F4804A',  // Orange decoration color for deletions (strikethrough)
       700: '#c2410c',  // Dark orange
-      800: '#9a3412',  // Darker orange
+      800: '#fbbf24',  // Light orange for text on dark backgrounds (deletions)
       900: '#7c2d12',  // Darkest orange
     },
     // Pure neutral greys - for text and subtle backgrounds
