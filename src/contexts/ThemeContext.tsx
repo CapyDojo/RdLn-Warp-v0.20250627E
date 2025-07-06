@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { ThemeName, ThemeConfig } from '../types/theme';
 import { themes, hexToRgb, hexToRgba, backgroundStyles } from '../themes';
-import { generateColorVariables, generateGlassmorphismVariables, applyCSSVariables } from '../themes/utils/cssVariables';
+import { generateColorVariables, generateGlassmorphismVariables, generateAllThemeVariables, applyCSSVariables } from '../themes/utils/cssVariables';
 import { getThemeFromStorage } from '../themes/utils/validation';
 
 interface ThemeContextType {
@@ -77,10 +77,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       // Set data-theme attribute first for immediate CSS cascade
       document.documentElement.setAttribute('data-theme', currentTheme);
       
-      // Generate and apply all CSS variables in one batch
-      const colorVariables = generateColorVariables(themeConfig);
-      const glassVariables = generateGlassmorphismVariables(themeConfig);
-      const allVariables = [...colorVariables, ...glassVariables];
+      // SSMR: Use unified variable generator for cleaner code and better performance
+      // FALLBACK: Keep old functions available for gradual migration
+      const allVariables = generateAllThemeVariables(themeConfig);
       applyCSSVariables(allVariables);
       
       // Apply background styles

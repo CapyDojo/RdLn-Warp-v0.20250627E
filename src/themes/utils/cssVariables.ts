@@ -189,6 +189,42 @@ export const generateGlassmorphismVariables = (themeConfig: ThemeConfig): Array<
   return glassVariables;
 };
 
+// SSMR: Simple cache for theme variable generation to improve performance
+const themeVariableCache = new Map<string, Array<[string, string]>>();
+
+/**
+ * Unified CSS variable generator - consolidates all theme variables
+ * SSMR: Safe consolidation of existing generateColorVariables and generateGlassmorphismVariables
+ * Enhanced with caching for better performance on repeated theme switches
+ */
+export const generateAllThemeVariables = (themeConfig: ThemeConfig): Array<[string, string]> => {
+  // PERFORMANCE: Check cache first
+  const cacheKey = themeConfig.name;
+  if (themeVariableCache.has(cacheKey)) {
+    return themeVariableCache.get(cacheKey)!;
+  }
+  
+  // SAFE: Use existing functions to maintain compatibility
+  const colorVariables = generateColorVariables(themeConfig);
+  const glassVariables = generateGlassmorphismVariables(themeConfig);
+  
+  // MODULAR: Combine all variables in single array for batch application
+  const allVariables = [...colorVariables, ...glassVariables];
+  
+  // PERFORMANCE: Cache result for future use
+  themeVariableCache.set(cacheKey, allVariables);
+  
+  return allVariables;
+};
+
+/**
+ * Clear theme variable cache - useful for development or dynamic theme updates
+ * REVERSIBLE: Provides way to clear cache if needed
+ */
+export const clearThemeVariableCache = (): void => {
+  themeVariableCache.clear();
+};
+
 /**
  * Apply CSS variables to document root efficiently
  */
