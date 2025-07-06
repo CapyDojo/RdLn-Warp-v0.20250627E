@@ -28,14 +28,18 @@ import { useScrollSync } from '../hooks/useScrollSync';
 // Mouse handling utilities (kept for reference in hook)
 // import { startDragOperation, endDragOperation, calculateResizeHeight } from '../utils/mouseHandlers';
 
-interface ComparisonInterfaceProps {
+import { BaseComponentProps } from '../types/components';
+
+interface ComparisonInterfaceProps extends BaseComponentProps {
   showAdvancedOcrCard?: boolean;
   showPerformanceDemoCard?: boolean;
 }
 
 export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
   showAdvancedOcrCard = true,
-  showPerformanceDemoCard = true
+  showPerformanceDemoCard = true,
+  style,
+  className,
 }) => {
   
   // Performance tracking (silent in production)
