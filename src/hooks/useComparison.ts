@@ -2,6 +2,13 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { MyersAlgorithm } from '../algorithms/MyersAlgorithm';
 import { ComparisonState } from '../types';
 import { SYSTEM_CONFIG, STORAGE_CONFIG, UI_CONFIG } from '../config/appConfig';
+import { 
+  safeAsync, 
+  ErrorCategory, 
+  ErrorFactory, 
+  ErrorManager,
+  AppError 
+} from '../utils/errorHandling';
 
 // System resource guardrails to prevent browser crashes
 const checkSystemResources = (originalText: string, revisedText: string) => {
@@ -436,24 +443,70 @@ export const useComparison = () => {
         }, 500); // Give enough time for any pending auto-compare calls to be blocked
       }
     } catch (error) {
-      // console.error('🚨 COMPARISON ERROR:', error);
-      
-      // Provide specific error message for different types of failures
-      let errorMessage = 'An error occurred while comparing documents.';
+      // Use standardized error handling
+      let appError: AppError;
       
       if (error instanceof Error) {
+        // Auto-categorize and create appropriate error types
         if (error.message.includes('exceeds the UI limit')) {
-          errorMessage = 'The documents are too different or contain too many changes to display effectively. This typically happens with documents that have been extensively rewritten or are fundamentally different in structure. Try comparing smaller sections or documents with fewer changes.';
+          appError = ErrorFactory.createAlgorithmError(
+            error.message,
+            'The documents are too different or contain too many changes to display effectively. This typically happens with documents that have been extensively rewritten or are fundamentally different in structure. Try comparing smaller sections or documents with fewer changes.',
+            {
+              originalLength: actualOriginal.length,
+              revisedLength: actualRevised.length,
+              isAutoCompare,
+              operation: 'compare_documents'
+            }
+          );
         } else if (error.message.includes('memory') || error.message.includes('Maximum')) {
-          errorMessage = 'The documents are too large to process. Please try with smaller documents or break them into smaller sections.';
+          appError = ErrorFactory.createSystemError(
+            error.message,
+            'The documents are too large to process. Please try with smaller documents or break them into smaller sections.',
+            {
+              originalLength: actualOriginal.length,
+              revisedLength: actualRevised.length,
+              memoryInfo: (performance as any)?.memory,
+              operation: 'compare_documents'
+            }
+          );
         } else {
-          errorMessage = `Comparison failed: ${error.message}`;
+          appError = ErrorFactory.createAlgorithmError(
+            error.message,
+            `Comparison failed: ${error.message}`,
+            {
+              originalLength: actualOriginal.length,
+              revisedLength: actualRevised.length,
+              isAutoCompare,
+              operation: 'compare_documents'
+            }
+          );
         }
+      } else {
+        appError = ErrorFactory.createSystemError(
+          'Unknown comparison error',
+          'An unexpected error occurred while comparing documents.',
+          {
+            originalError: error,
+            operation: 'compare_documents'
+          }
+        );
       }
+      
+      // Add retry function for retryable errors
+      if (appError.category === ErrorCategory.SYSTEM || appError.category === ErrorCategory.ALGORITHM) {
+        appError.retry = () => {
+          // Retry with the same parameters
+          compareDocuments(isAutoCompare, preserveFocus, overrideOriginal, overrideRevised);
+        };
+      }
+      
+      // Log to centralized error manager
+      ErrorManager.addError(appError);
       
       setState(prev => ({
         ...prev,
-        error: errorMessage,
+        error: appError.userMessage,
         isProcessing: false
       }));
       

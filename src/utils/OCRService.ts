@@ -13,6 +13,13 @@ import { Converter } from 'opencc-js';
 import { SUPPORTED_LANGUAGES } from '../config/ocrConfig';
 // STEP 2: Import Background Language Loader for smart worker usage (SSMR Implementation)
 import { BackgroundLanguageLoader } from '../services/BackgroundLanguageLoader';
+// PHASE 2: Import standardized error handling
+import { 
+  safeAsync, 
+  ErrorCategory, 
+  ErrorFactory, 
+  ErrorManager 
+} from './errorHandling';
 
 // Note: Re-exports removed to avoid module resolution conflicts
 
