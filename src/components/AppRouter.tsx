@@ -1,8 +1,9 @@
-﻿import React from 'react';
+import React from 'react';
 import { LogoTestPage } from '../pages/LogoTestPage';
 import { Header } from './Header';
 import { ComparisonInterface } from './ComparisonInterface';
 import { useTheme } from '../contexts/ThemeContext';
+import { BaseComponentProps } from '../types/components';
 
 interface AppContentProps {
   isLogoTestPage: boolean;
@@ -79,9 +80,13 @@ function AppContent({ isLogoTestPage }: AppContentProps) {
   );
 }
 
-export const AppRouter: React.FC = () => {
+export const AppRouter: React.FC<BaseComponentProps> = ({ style, className }) => {
   // Simple routing logic based on pathname
   const isLogoTestPage = window.location.pathname === '/logo-test';
   
-  return <AppContent isLogoTestPage={isLogoTestPage} />;
+  return (
+    <div className={className} style={style}>
+      <AppContent isLogoTestPage={isLogoTestPage} />
+    </div>
+  );
 };

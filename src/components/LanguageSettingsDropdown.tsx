@@ -2,8 +2,9 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, Languages } from 'lucide-react';
 import { OCRLanguage } from '../types/ocr-types';
+import { BaseComponentProps } from '../types/components';
 
-interface LanguageSettingsDropdownProps {
+interface LanguageSettingsDropdownProps extends BaseComponentProps {
   isOpen: boolean;
   onClose: () => void;
   controlRect: DOMRect | null;
@@ -31,12 +32,14 @@ export const LanguageSettingsDropdown: React.FC<LanguageSettingsDropdownProps> =
   value,
   onLanguageToggle,
   onSetSelectedLanguages,
-  getLanguageDisplayName
+  getLanguageDisplayName,
+  style,
+  className
 }) => {
   if (!isOpen || !controlRect) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] pointer-events-none">
+    <div className={`fixed inset-0 z-[9999] pointer-events-none ${className || ''}`} style={style}>
       <div 
         className="absolute pointer-events-auto"
         style={{

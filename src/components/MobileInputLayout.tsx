@@ -1,8 +1,10 @@
 import React from 'react';
 import { GripHorizontal } from 'lucide-react';
 import { TextInputPanel } from './TextInputPanel';
+import { FEATURE_FLAGS } from '../config/appConfig';
+import { BaseComponentProps } from '../types/components';
 
-interface MobileInputLayoutProps {
+interface MobileInputLayoutProps extends BaseComponentProps {
   /** Original text content */
   originalText: string;
   /** Revised text content */
@@ -12,7 +14,7 @@ interface MobileInputLayoutProps {
   /** Panel height for fallback React state */
   panelHeight: number;
   /** Whether to use CSS-based resize */
-  USE_CSS_RESIZE: boolean;
+  USE_CSS_RESIZE?: boolean;
   /** Callback for original text changes */
   onOriginalTextChange: (value: string, isPasteAction?: boolean) => void;
   /** Callback for revised text changes */
@@ -44,14 +46,16 @@ export const MobileInputLayout: React.FC<MobileInputLayoutProps> = ({
   revisedText,
   isProcessing,
   panelHeight,
-  USE_CSS_RESIZE,
+  USE_CSS_RESIZE = FEATURE_FLAGS.ENABLE_CSS_RESIZE,
   onOriginalTextChange,
   onRevisedTextChange,
   panelResizeHandlers,
-  mobileResizeHandleRef
+  mobileResizeHandleRef,
+  style,
+  className
 }) => {
   return (
-    <div className="lg:hidden">
+    <div className={`lg:hidden ${className || ''}`} style={style}>
       <div ref={panelResizeHandlers.mobileInputPanelsRef}>
         {/* Original Panel */}
         <div data-input-panel className="mb-0 mobile-top-panel">

@@ -16,6 +16,7 @@ import {
   CategoryFilter,
   TestSuiteProps 
 } from '../types/test-suite-types';
+import { BaseComponentProps } from '../types/components';
 import {
   loadTestCases,
   getCategories,
@@ -28,7 +29,12 @@ import {
   getStatusColorClass
 } from '../utils/testSuiteUtils';
 
-export const TestSuite: React.FC<TestSuiteProps> = ({ onLoadTest, onTestComplete }) => {
+export const TestSuite: React.FC<TestSuiteProps & BaseComponentProps> = ({ 
+  onLoadTest, 
+  onTestComplete, 
+  style, 
+  className 
+}) => {
   // Load test cases and initialize state
   const testCases = useMemo(() => loadTestCases(), []);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -94,7 +100,7 @@ export const TestSuite: React.FC<TestSuiteProps> = ({ onLoadTest, onTestComplete
   }, [compareFunction, onTestComplete]);
   
   return (
-    <div className="glass-panel border border-theme-neutral-300 rounded-lg overflow-hidden mb-6 shadow-lg transition-all duration-300">
+    <div className={`glass-panel border border-theme-neutral-300 rounded-lg overflow-hidden mb-6 shadow-lg transition-all duration-300 ${className || ''}`} style={style}>
       <div 
         className="bg-theme-primary-50 border-b border-theme-primary-200 p-4 cursor-pointer hover:bg-theme-primary-100 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}

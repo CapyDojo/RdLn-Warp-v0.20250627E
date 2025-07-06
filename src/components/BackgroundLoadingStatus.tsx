@@ -15,17 +15,18 @@ import React, { useState, useEffect } from 'react';
 import { Download, CheckCircle, AlertCircle, Clock } from 'lucide-react';
 import { BackgroundLanguageLoader, LanguageLoadingStatus } from '../services/BackgroundLanguageLoader';
 import { OCRLanguage } from '../types/ocr-types';
+import { BaseComponentProps } from '../types/components';
 
-interface BackgroundLoadingStatusProps {
+interface BackgroundLoadingStatusProps extends BaseComponentProps {
   enabled?: boolean; // Easy disable switch
   compact?: boolean; // Compact vs full display
-  className?: string;
 }
 
 export const BackgroundLoadingStatus: React.FC<BackgroundLoadingStatusProps> = ({
   enabled = true, // ROLLBACK: Set to false to hide completely
   compact = true,
-  className = ''
+  className,
+  style
 }) => {
   const [loadingStatus, setLoadingStatus] = useState<Map<OCRLanguage, LanguageLoadingStatus>>(new Map());
   const [isVisible, setIsVisible] = useState(false);
@@ -76,7 +77,7 @@ export const BackgroundLoadingStatus: React.FC<BackgroundLoadingStatusProps> = (
 
   if (compact) {
     return (
-      <div className={`glass-panel px-3 py-2 text-xs text-theme-neutral-600 border border-theme-neutral-200 rounded-lg ${className}`}>
+      <div className={`glass-panel px-3 py-2 text-xs text-theme-neutral-600 border border-theme-neutral-200 rounded-lg ${className || ''}`} style={style}>
         <div className="flex items-center gap-2">
           <Download className="w-3 h-3 text-blue-500" />
           <span>Loading OCR languages: {stats.ready}/{stats.total}</span>
@@ -91,7 +92,7 @@ export const BackgroundLoadingStatus: React.FC<BackgroundLoadingStatusProps> = (
   }
 
   return (
-    <div className={`glass-panel p-4 border border-theme-neutral-200 rounded-lg ${className}`}>
+    <div className={`glass-panel p-4 border border-theme-neutral-200 rounded-lg ${className || ''}`} style={style}>
       <div className="flex items-center gap-2 mb-3">
         <Download className="w-4 h-4 text-blue-500" />
         <h3 className="text-sm font-medium text-theme-neutral-800">

@@ -1,9 +1,10 @@
 import React from 'react';
 import { Scale, FileText, ArrowLeftRight, Search, Type, Zap, Eye, Target } from 'lucide-react';
+import { BaseComponentProps } from '../types/components';
 
-export const LogoShowcase: React.FC = () => {
+export const LogoShowcase: React.FC<BaseComponentProps> = ({ style, className }) => {
   return (
-    <div className="p-8 bg-theme-neutral-100 min-h-screen flex flex-col items-center justify-center">
+    <div className={`p-8 bg-theme-neutral-100 min-h-screen flex flex-col items-center justify-center ${className || ''}`} style={style}>
       <h2 className="text-4xl font-bold text-theme-primary-900 mb-4 text-center font-serif">RdLn Logo Concepts</h2>
       <p className="text-lg text-theme-neutral-700 mb-12 text-center max-w-3xl">
         Four sophisticated logo concepts for the professional legal document comparison tool. 

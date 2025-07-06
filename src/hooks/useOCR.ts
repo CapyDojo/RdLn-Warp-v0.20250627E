@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { OCRService } from '../utils/OCRService';
 import { OCROptions, OCRLanguage } from '../types/ocr-types';
 import { SUPPORTED_LANGUAGES } from '../config/ocrConfig';
+import { BaseHookReturn } from '../types/components';
 
 export interface OCRState {
   isProcessing: boolean;
@@ -12,7 +13,31 @@ export interface OCRState {
   autoDetect: boolean;
 }
 
-export const useOCR = () => {
+interface OCRActions {
+  extractTextFromImage: (imageFile: File | Blob) => Promise<string>;
+  resetOCRState: () => void;
+  clearDetectedLanguages: () => void;
+  setSelectedLanguages: (languages: OCRLanguage[]) => void;
+  setAutoDetect: (autoDetect: boolean) => void;
+}
+
+interface OCRReturn extends BaseHookReturn<OCRState, OCRActions> {
+  // Legacy flat structure for compatibility
+  isProcessing: boolean;
+  progress: number;
+  error: string | null;
+  detectedLanguages: OCRLanguage[];
+  selectedLanguages: OCRLanguage[];
+  autoDetect: boolean;
+  extractTextFromImage: (imageFile: File | Blob) => Promise<string>;
+  resetOCRState: () => void;
+  clearDetectedLanguages: () => void;
+  setSelectedLanguages: (languages: OCRLanguage[]) => void;
+  setAutoDetect: (autoDetect: boolean) => void;
+  supportedLanguages: typeof SUPPORTED_LANGUAGES;
+}
+
+export const useOCR = (): OCRReturn => {
   const [state, setState] = useState<OCRState>({
     isProcessing: false,
     progress: 0,
@@ -113,13 +138,31 @@ export const useOCR = () => {
     }));
   }, []);
 
+  const actions: OCRActions = {
+    extractTextFromImage,
+    resetOCRState,
+    clearDetectedLanguages,
+    setSelectedLanguages,
+    setAutoDetect
+  };
+
   return {
+    // Legacy flat structure for compatibility
     ...state,
     extractTextFromImage,
     resetOCRState,
     clearDetectedLanguages,
     setSelectedLanguages,
     setAutoDetect,
-    supportedLanguages: SUPPORTED_LANGUAGES
+    supportedLanguages: SUPPORTED_LANGUAGES,
+    
+    // New structured interface
+    state,
+    actions,
+    status: { 
+      ready: !state.isProcessing, 
+      loading: state.isProcessing, 
+      error: state.error 
+    }
   };
 };

@@ -3,13 +3,26 @@
  */
 
 import { useState, useEffect, useRef, RefObject } from 'react';
+import { BaseHookReturn } from '../types/components';
 
 interface UseDropdownProps {
   initialOpen?: boolean;
   onToggle?: (isOpen: boolean) => void;
 }
 
-interface UseDropdownReturn {
+interface UseDropdownState {
+  isOpen: boolean;
+  referenceRef: RefObject<HTMLElement>;
+  popperRef: RefObject<HTMLElement>;
+}
+
+interface UseDropdownActions {
+  toggle: () => void;
+  open: () => void;
+  close: () => void;
+}
+
+interface UseDropdownReturn extends BaseHookReturn<UseDropdownState, UseDropdownActions> {
   isOpen: boolean;
   toggle: () => void;
   open: () => void;
@@ -79,12 +92,30 @@ export const useDropdown = ({
     }
   }, [isOpen]);
 
+  const state: UseDropdownState = {
+    isOpen,
+    referenceRef,
+    popperRef
+  };
+
+  const actions: UseDropdownActions = {
+    toggle,
+    open,
+    close
+  };
+
   return {
+    // Legacy flat structure for compatibility
     isOpen,
     toggle,
     open,
     close,
     referenceRef,
     popperRef,
+    
+    // New structured interface
+    state,
+    actions,
+    status: { ready: true, loading: false, error: null }
   };
 };

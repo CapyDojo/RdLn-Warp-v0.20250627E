@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { Palette, Check, ChevronDown, GripVertical } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { ThemeConfig } from '../types/theme';
+import { BaseComponentProps } from '../types/components';
 
 interface DragState {
   isDragging: boolean;
@@ -93,7 +94,7 @@ const hexToRgb = (hex: string): string => {
   return `${r}, ${g}, ${b}`;
 };
 
-export const ThemeSelector: React.FC = () => {
+export const ThemeSelector: React.FC<BaseComponentProps> = ({ style, className }) => {
   const { currentTheme, setTheme, availableThemes, reorderThemes } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
   const [dragState, setDragState] = useState<DragState>({
@@ -177,7 +178,8 @@ export const ThemeSelector: React.FC = () => {
   return (
     <div 
       ref={themesButtonRef}
-      className="relative"
+      className={`relative ${className || ''}`}
+      style={style}
     >
       {/* Main Themes Button - Rounded Square */}
       <button

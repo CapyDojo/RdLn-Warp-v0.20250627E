@@ -14,13 +14,13 @@
 
 import React from 'react';
 import { Zap } from 'lucide-react';
+import { BaseComponentProps } from '../types/components';
 
-interface ChunkingProgressIndicatorProps {
+interface ChunkingProgressIndicatorProps extends BaseComponentProps {
   progress: number;
   stage: string;
   isChunking: boolean;
   enabled?: boolean; // ROLLBACK: Set to false to hide completely
-  className?: string;
 }
 
 export const ChunkingProgressIndicator: React.FC<ChunkingProgressIndicatorProps> = ({
@@ -28,7 +28,8 @@ export const ChunkingProgressIndicator: React.FC<ChunkingProgressIndicatorProps>
   stage,
   isChunking,
   enabled = true, // SAFE: Default enabled, easy to disable
-  className = ''
+  className,
+  style
 }) => {
   // TESTING: Show component when enabled and progress > 0, regardless of isChunking state
   // ROLLBACK: Easy disable
@@ -37,7 +38,7 @@ export const ChunkingProgressIndicator: React.FC<ChunkingProgressIndicatorProps>
   }
 
   return (
-    <div className={`glass-panel px-3 py-2 text-xs text-theme-neutral-600 border border-theme-neutral-200 rounded-lg ${className}`}>
+    <div className={`glass-panel px-3 py-2 text-xs text-theme-neutral-600 border border-theme-neutral-200 rounded-lg ${className || ''}`} style={style}>
       <div className="flex items-center gap-2">
         <Zap className="w-3 h-3 text-purple-500" />
         <span>{stage}</span>

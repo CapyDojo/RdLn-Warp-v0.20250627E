@@ -14,6 +14,7 @@
 
 import React from 'react';
 import { DiffChange } from '../types';
+import { BaseComponentProps } from '../types/components';
 
 // Smart thresholds based on expert recommendations (Junio Hamano & Neil Fraser)
 export const RENDERING_THRESHOLDS = {
