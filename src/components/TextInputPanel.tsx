@@ -4,8 +4,9 @@ import { useOCR } from '../hooks/useOCR';
 import { OCRLanguage } from '../types/ocr-types';
 import { LanguageSettingsDropdown } from './LanguageSettingsDropdown';
 import { useLayout } from '../contexts/LayoutContext';
+import { BaseComponentProps } from '../types/components';
 
-interface TextInputPanelProps {
+interface TextInputPanelProps extends BaseComponentProps {
   title: string;
   value: string;
   onChange: ((value: string) => void) | ((value: string, isPasteAction?: boolean) => void);
@@ -20,7 +21,9 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   onChange,
   placeholder,
   disabled = false,
-  height = 400
+  height = 400,
+  style,
+  className
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const segmentedControlRef = useRef<HTMLDivElement>(null);

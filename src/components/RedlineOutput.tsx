@@ -1,8 +1,9 @@
 import React from 'react';
 import { Copy } from 'lucide-react';
 import { DiffChange } from '../types';
+import { BaseComponentProps } from '../types/components';
 
-interface RedlineOutputProps {
+interface RedlineOutputProps extends BaseComponentProps {
   changes: DiffChange[];
   onCopy: () => void;
   height?: number;
@@ -21,7 +22,9 @@ const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
   height = 500,
   isProcessing = false,
   processingStatus = 'Processing...',
-  scrollRef
+  scrollRef,
+  style,
+  className
 }) => {
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 

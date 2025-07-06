@@ -1,8 +1,9 @@
 import React from 'react';
 import { Settings, Zap, Image, Layout, Monitor, Smartphone, Maximize } from 'lucide-react';
 import { useLayout, LayoutMode } from '../contexts/LayoutContext';
+import { BaseComponentProps } from '../types/components';
 
-interface DeveloperModeCardProps {
+interface DeveloperModeCardProps extends BaseComponentProps {
   showAdvancedOcrCard?: boolean;
   showPerformanceDemoCard?: boolean;
   onToggleAdvancedOcr?: () => void;
@@ -13,7 +14,9 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
   showAdvancedOcrCard = true,
   showPerformanceDemoCard = true,
   onToggleAdvancedOcr,
-  onTogglePerformanceDemo
+  onTogglePerformanceDemo,
+  style,
+  className
 }) => {
   const { currentLayout, setLayout, supportsContainerQueries } = useLayout();
   return (
