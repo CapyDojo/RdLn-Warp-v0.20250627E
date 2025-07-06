@@ -844,8 +844,9 @@ header .flex {
     margin-top: 0 !important;
   }
   
-  /* Handle bar: rounded corners for cupping effect */
+  /* Handle bar: no rounded corners to integrate seamlessly */
   .lg\:hidden [data-resize-handle="input-panels"] {
+    border-radius: 0 !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
   }

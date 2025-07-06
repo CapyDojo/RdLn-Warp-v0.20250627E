@@ -1,5 +1,5 @@
 import React from 'react';
-import { GripVertical } from 'lucide-react';
+import { GripHorizontal } from 'lucide-react';
 import { TextInputPanel } from './TextInputPanel';
 
 interface MobileInputLayoutProps {
@@ -51,9 +51,10 @@ export const MobileInputLayout: React.FC<MobileInputLayoutProps> = ({
   mobileResizeHandleRef
 }) => {
   return (
-    <div className="block lg:hidden">
-      <div ref={panelResizeHandlers.mobileInputPanelsRef} className="space-y-4">
-        <div data-input-panel>
+    <div className="lg:hidden">
+      <div ref={panelResizeHandlers.mobileInputPanelsRef}>
+        {/* Original Panel */}
+        <div data-input-panel className="mb-0 mobile-top-panel">
           <TextInputPanel
             title="Original Version"
             value={originalText}
@@ -64,56 +65,55 @@ export const MobileInputLayout: React.FC<MobileInputLayoutProps> = ({
           />
         </div>
         
-        {/* Mobile Handle - Between panels */}
-        <div className="flex justify-center">
-          <div className="glass-panel bg-theme-neutral-200/60 hover:bg-theme-neutral-300/70 rounded-lg transition-all duration-300 backdrop-blur-md border border-theme-neutral-300/30 shadow-sm hover:shadow-md px-2 py-1">
-            {/* Mobile layout: vertical */}
-            <div className="flex flex-col items-center gap-2">
-              {/* Original character count */}
-              <div className="text-xs text-theme-neutral-600 whitespace-nowrap">
-                <span className="font-medium">Original:</span> {originalText.length.toLocaleString()} chars
-              </div>
-              
-              {/* Resize handle grip */}
-              <div
-                data-resize-handle="input-panels"
-                ref={mobileResizeHandleRef}
-                className="flex items-center justify-center w-6 h-12 cursor-col-resize touch-none select-none"
-                onMouseDown={panelResizeHandlers.handleMouseDown}
-                onMouseEnter={() => {
-                  // Apply hover effects to input panels - same as handle bar
-                  const inputPanels = document.querySelectorAll('[data-input-panel] .glass-panel');
-                  inputPanels.forEach(panel => {
-                    const element = panel as HTMLElement;
-                    // Apply same hover state as the handle bar
-                    element.classList.add('hover-from-handle');
-                    element.style.transform = 'translateY(-1px)';
-                    element.style.transition = 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)';
-                  });
-                }}
-                onMouseLeave={() => {
-                  // Remove hover effects from input panels
-                  const inputPanels = document.querySelectorAll('[data-input-panel] .glass-panel');
-                  inputPanels.forEach(panel => {
-                    const element = panel as HTMLElement;
-                    element.classList.remove('hover-from-handle');
-                    element.style.transform = '';
-                  });
-                }}
-                title="Drag to resize input panels"
-              >
-                <GripVertical className="w-6 h-6 text-theme-neutral-700" />
-              </div>
-              
-              {/* Revised character count */}
-              <div className="text-xs text-theme-neutral-600 whitespace-nowrap">
-                <span className="font-medium">Revised:</span> {revisedText.length.toLocaleString()} chars
-              </div>
+        {/* Mobile Handle - Between panels for integrated unit */}
+        <div 
+          className="glass-panel bg-theme-neutral-200/60 hover:bg-theme-neutral-300/70 transition-all duration-300 backdrop-blur-md border-l border-r border-theme-neutral-300/30 shadow-sm hover:shadow-md px-3 py-2"
+          data-resize-handle="input-panels"
+          ref={mobileResizeHandleRef}
+          onMouseDown={panelResizeHandlers.handleMouseDown}
+          onMouseEnter={() => {
+            // Apply hover effects to input panels - same as handle bar
+            const inputPanels = document.querySelectorAll('[data-input-panel] .glass-panel');
+            inputPanels.forEach(panel => {
+              const element = panel as HTMLElement;
+              // Apply same hover state as the handle bar
+              element.classList.add('hover-from-handle');
+              element.style.transform = 'translateY(-1px)';
+              element.style.transition = 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+          }}
+          onMouseLeave={() => {
+            // Remove hover effects from input panels
+            const inputPanels = document.querySelectorAll('[data-input-panel] .glass-panel');
+            inputPanels.forEach(panel => {
+              const element = panel as HTMLElement;
+              element.classList.remove('hover-from-handle');
+              element.style.transform = '';
+            });
+          }}
+          title="Drag to resize input panels"
+        >
+          {/* Mobile layout: single line with left/center/right alignment */}
+          <div className="flex justify-between items-center w-full text-xs text-theme-neutral-600 cursor-row-resize touch-none select-none">
+            {/* Original character count - left aligned */}
+            <div className="text-left">
+              <span className="font-medium">Original:</span> {originalText.length.toLocaleString()} chars
+            </div>
+            
+            {/* Grip handle - center aligned */}
+            <div className="flex items-center justify-center">
+              <GripHorizontal className="w-6 h-6 text-theme-neutral-700" />
+            </div>
+            
+            {/* Revised character count - right aligned */}
+            <div className="text-right">
+              <span className="font-medium">Revised:</span> {revisedText.length.toLocaleString()} chars
             </div>
           </div>
         </div>
         
-        <div data-input-panel>
+        {/* Revised Panel */}
+        <div data-input-panel className="mt-0 mobile-bottom-panel">
           <TextInputPanel
             title="Revised Version"
             value={revisedText}

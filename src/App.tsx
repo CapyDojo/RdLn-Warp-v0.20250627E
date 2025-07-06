@@ -7,6 +7,7 @@ import { useTheme } from './contexts/ThemeContext';
 import { LayoutProvider } from './contexts/LayoutContext';
 import { OCRService } from './utils/OCRService';
 import { LogoTestPage } from './pages/LogoTestPage'; // Import the new LogoTestPage
+import { CuppingTestPage } from './pages/CuppingTestPage'; // Import the cupping test page
 import './styles/resize-overrides.css'; // SSMR CSS resize fixes
 
 function AppContent() {
@@ -104,9 +105,11 @@ function App() {
   return (
     <ThemeProvider>
       <LayoutProvider>
-        {/* Conditional rendering for the logo test page */}
+        {/* Conditional rendering for test pages */}
         {window.location.pathname === '/logo-test' ? (
           <LogoTestPage />
+        ) : window.location.pathname === '/cupping-test' ? (
+          <CuppingTestPage />
         ) : (
           <AppContent />
         )}

@@ -78,7 +78,7 @@ export const DesktopInputLayout: React.FC<DesktopInputLayoutProps> = ({
       
       {/* Desktop Handle - Below both panels */}
       <div className="flex justify-center mb-2">
-        <div className="glass-panel bg-theme-neutral-200/60 hover:bg-theme-neutral-300/70 rounded-lg transition-all duration-300 backdrop-blur-md border border-theme-neutral-300/30 shadow-sm hover:shadow-md px-2 py-1">
+        <div className="glass-panel bg-theme-neutral-200/60 hover:bg-theme-neutral-300/70 transition-all duration-300 backdrop-blur-md border border-theme-neutral-300/30 shadow-sm hover:shadow-md px-2 py-1">
           {/* Desktop layout: horizontal */}
           <div className="flex items-center gap-4">
             {/* Original character count */}

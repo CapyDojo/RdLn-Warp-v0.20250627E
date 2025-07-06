@@ -64,7 +64,7 @@ export const OutputLayout: React.FC<OutputLayoutProps> = ({
         <div
           data-resize-handle="output-panel"
           ref={outputResizeHandlers.outputResizeHandleRef}
-          className="glass-panel output-resize-handle relative flex items-center w-full h-8 bg-theme-primary-200/60 hover:bg-theme-primary-300/70 cursor-row-resize rounded-lg transition-all duration-300 touch-none select-none backdrop-blur-md border border-theme-primary-300/30 shadow-sm hover:shadow-md px-4"
+          className="glass-panel output-resize-handle relative flex items-center w-full h-8 bg-theme-primary-200/60 hover:bg-theme-primary-300/70 cursor-row-resize transition-all duration-300 touch-none select-none backdrop-blur-md border border-theme-primary-300/30 shadow-sm hover:shadow-md px-4"
           onMouseDown={outputResizeHandlers.handleMouseDown}
           onMouseEnter={() => {
             // Apply hover effects to output panel - same as handle bar
@@ -100,7 +100,7 @@ export const OutputLayout: React.FC<OutputLayoutProps> = ({
             </span>
           </div>
           <div className="absolute left-1/2 transform -translate-x-1/2">
-            <GripHorizontal className="w-6 h-6 text-theme-primary-700" />
+            <GripHorizontal className="w-6 h-6 text-theme-neutral-700" />
           </div>
         </div>
       </div>

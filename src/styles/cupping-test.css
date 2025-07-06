@@ -1,0 +1,139 @@
+/* CUPPING EFFECT OPTIONS - INVESTIGATION */
+
+/* OPTION 1: CSS clip-path - True concave curves */
+.cupping-test-1 {
+  /* Create concave top edge - curves INWARD like a cup */
+  clip-path: polygon(
+    0% 0%,             /* Start at top-left corner */
+    20% 20px,          /* Curve DOWN (concave) */
+    80% 20px,          /* Stay down across middle */
+    100% 0%,           /* Curve back UP to top-right */
+    100% 100%,         /* Normal bottom-right */
+    0% 100%            /* Normal bottom-left */
+  );
+  background: rgba(59, 130, 246, 0.3);
+  height: 40px;
+  width: 200px;
+  border: 1px solid #3b82f6;
+}
+
+/* OPTION 2: CSS clip-path with bezier-like curves */
+.cupping-test-2 {
+  /* SVG path creating smooth concave top - curves INWARD */
+  clip-path: path("M 0,0 Q 50,20 100,20 Q 150,20 200,0 L 200,40 L 0,40 Z");
+  background: rgba(16, 185, 129, 0.3);
+  height: 40px;
+  width: 200px;
+  border: 1px solid #10b981;
+}
+
+/* OPTION 3: Multiple border-radius with pseudo-elements */
+.cupping-test-3 {
+  position: relative;
+  background: rgba(245, 101, 101, 0.3);
+  height: 40px;
+  width: 200px;
+  border: 1px solid #f56565;
+  border-radius: 0 0 12px 12px;
+}
+
+.cupping-test-3::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 20px;
+  background: inherit;
+  border: inherit;
+  border-bottom: none;
+  border-radius: 50px 50px 0 0;
+  z-index: -1;
+}
+
+.cupping-test-3::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 25%;
+  right: 25%;
+  height: 10px;
+  background: white;
+  z-index: 0;
+}
+
+/* OPTION 4: SVG mask approach */
+.cupping-test-4 {
+  background: rgba(139, 92, 246, 0.3);
+  height: 40px;
+  width: 200px;
+  border: 1px solid #8b5cf6;
+  /* SVG mask with concave top - curves INWARD */
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='40'%3E%3Cpath d='M0,0 Q50,20 100,20 Q150,20 200,0 L200,40 L0,40 Z' fill='white'/%3E%3C/svg%3E");
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='40'%3E%3Cpath d='M0,0 Q50,20 100,20 Q150,20 200,0 L200,40 L0,40 Z' fill='white'/%3E%3C/svg%3E");
+}
+
+/* OPTION 5: Box-shadow technique */
+.cupping-test-5 {
+  position: relative;
+  background: rgba(236, 72, 153, 0.3);
+  height: 40px;
+  width: 200px;
+  border: 1px solid #ec4899;
+  border-radius: 0 0 12px 12px;
+}
+
+.cupping-test-5::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 30px;
+  border-radius: 50%;
+  box-shadow: 0 15px 0 0 rgba(236, 72, 153, 0.3);
+  border: 1px solid #ec4899;
+  border-bottom: none;
+}
+
+/* TEST CONTAINER */
+.cupping-tests {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 20px;
+  background: #f8fafc;
+}
+
+.test-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.test-label {
+  font-weight: bold;
+  color: #374151;
+  font-size: 14px;
+}
+
+/* MOBILE-SPECIFIC: Double cupping (top and bottom) */
+.cupping-mobile-test {
+  /* Double concave - curves INWARD on both top and bottom */
+  clip-path: polygon(
+    0% 0%,             /* Start at top-left */
+    20% 20px,          /* Top concave dips DOWN */
+    80% 20px,          /* Top concave stays down */
+    100% 0%,           /* Back up to top-right */
+    100% calc(100% - 20px), /* Down to bottom concave start */
+    80% calc(100% - 20px),  /* Bottom concave dips UP */
+    20% calc(100% - 20px),  /* Bottom concave stays up */
+    0% 100%            /* Back down to bottom-left */
+  );
+  background: rgba(245, 158, 11, 0.3);
+  height: 60px;
+  width: 200px;
+  border: 1px solid #f59e0b;
+}

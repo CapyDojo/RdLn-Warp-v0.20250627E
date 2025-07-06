@@ -129,7 +129,7 @@
 }
 
 .layout-current [data-resize-handle="input-panels"].glass-panel {
-  border-radius: 0.5rem !important; /* Full rounded corners for cupping effect */
+  border-radius: 0.5rem !important;
   margin-top: -1px !important; /* Overlap border for seamless connection */
 }
 
@@ -139,7 +139,7 @@
 }
 
 .layout-current [data-resize-handle="output-panel"].glass-panel {
-  border-radius: 0.5rem !important; /* Full rounded corners for cupping effect */
+  border-radius: 0.5rem !important;
   margin-top: -1px !important; /* Overlap border for seamless connection */
 }
 

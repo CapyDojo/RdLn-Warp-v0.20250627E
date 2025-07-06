@@ -165,6 +165,14 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
         >
           Logo Test
         </a>
+        <a 
+          href="/cupping-test" 
+          className="px-3 py-2 bg-theme-accent-100/50 hover:bg-theme-accent-200/50 text-theme-accent-700 hover:text-theme-accent-800 text-sm font-medium rounded-lg border border-theme-accent-200/50 transition-all duration-200"
+          title="View cupping effect investigations"
+          aria-label="View cupping effect investigations"
+        >
+          Cupping Test
+        </a>
       </div>
     </div>
   );
