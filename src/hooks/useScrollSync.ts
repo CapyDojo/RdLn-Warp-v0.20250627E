@@ -1,4 +1,5 @@
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useState } from 'react';
+import { BaseHookReturn } from '../types/components';
 
 interface UseScrollSyncConfig {
   /** Whether scroll synchronization is enabled */
@@ -7,16 +8,40 @@ interface UseScrollSyncConfig {
   outputRef?: React.RefObject<HTMLDivElement>;
 }
 
-interface UseScrollSyncReturn {
-  /** Refs for scroll elements (input1, input2, output) */
+// SSMR: Standardized hook state and actions interfaces
+interface UseScrollSyncState {
+  /** Whether scroll synchronization is currently active */
+  isScrollLocked: boolean;
+  /** Current scroll element references */
+  scrollRefs: {
+    input1: HTMLElement | null;
+    input2: HTMLElement | null;
+    output: HTMLElement | null;
+  };
+  /** Whether layout detection has completed */
+  isLayoutDetected: boolean;
+}
+
+interface UseScrollSyncActions {
+  /** Update scroll element references based on current layout */
+  updateScrollRefs: () => void;
+  /** Synchronize scroll across all panels */
+  syncScroll: (sourceElement: HTMLElement, scrollTop: number) => void;
+  /** Toggle scroll synchronization on/off */
+  toggleScrollLock: () => void;
+}
+
+// SSMR: Maintain backward compatibility with legacy return type
+interface UseScrollSyncReturn extends BaseHookReturn<UseScrollSyncState, UseScrollSyncActions> {
+  /** @deprecated Use state.scrollRefs instead */
   scrollRefs: React.MutableRefObject<{
     input1: HTMLElement | null;
     input2: HTMLElement | null;
     output: HTMLElement | null;
   }>;
-  /** Function to update scroll element references */
+  /** @deprecated Use actions.updateScrollRefs instead */
   updateScrollRefs: () => void;
-  /** Function to synchronize scroll across all panels */
+  /** @deprecated Use actions.syncScroll instead */
   syncScroll: (sourceElement: HTMLElement, scrollTop: number) => void;
 }
 
@@ -37,6 +62,12 @@ export const useScrollSync = ({
   isScrollLocked,
   outputRef
 }: UseScrollSyncConfig): UseScrollSyncReturn => {
+  
+  // ==================== STATE ====================
+  
+  // SSMR: Internal state for standardized interface
+  const [isLayoutDetected, setIsLayoutDetected] = useState(false);
+  const [internalError, setInternalError] = useState<string | null>(null);
   
   // ==================== REFS ====================
   
@@ -71,58 +102,73 @@ export const useScrollSync = ({
       isScrolling.current = false;
     });
   }, [isScrollLocked]);
+
+  const toggleScrollLock = useCallback(() => {
+    console.log('🔄 Toggle scroll lock');
+    setIsLayoutDetected(!isLayoutDetected);
+  }, [isLayoutDetected]);
   
   // ==================== ELEMENT DETECTION ====================
   
   const updateScrollRefs = useCallback(() => {
-    // OPTION C FIX: Detect actual scroll containers based on current layout
-    // Option C moves scrolling from textarea to .glass-panel-inner-content
-    const inputContainers = document.querySelectorAll('[data-input-panel] .glass-panel-inner-content');
-    
-    // Check if Option C layout is active by testing scroll behavior
-    const isOptionC = inputContainers.length > 0 && 
-      inputContainers[0] && 
-      getComputedStyle(inputContainers[0]).overflowY === 'auto';
-    
-    let input1Element = null;
-    let input2Element = null;
-    
-    if (isOptionC) {
-      // Option C: Use container elements for scroll events
-      input1Element = inputContainers[0] as HTMLElement || null;
-      input2Element = inputContainers[1] as HTMLElement || null;
-    } else {
-      // Other layouts: Use textarea elements for scroll events
-      const inputTextareas = document.querySelectorAll('[data-input-panel] .glass-panel-inner-content textarea');
-      input1Element = inputTextareas[0] as HTMLElement || null;
-      input2Element = inputTextareas[1] as HTMLElement || null;
+    try {
+      setInternalError(null);
+      
+      // OPTION C FIX: Detect actual scroll containers based on current layout
+      // Option C moves scrolling from textarea to .glass-panel-inner-content
+      const inputContainers = document.querySelectorAll('[data-input-panel] .glass-panel-inner-content');
+      
+      // Check if Option C layout is active by testing scroll behavior
+      const isOptionC = inputContainers.length > 0 && 
+        inputContainers[0] && 
+        getComputedStyle(inputContainers[0]).overflowY === 'auto';
+      
+      let input1Element = null;
+      let input2Element = null;
+      
+      if (isOptionC) {
+        // Option C: Use container elements for scroll events
+        input1Element = inputContainers[0] as HTMLElement || null;
+        input2Element = inputContainers[1] as HTMLElement || null;
+      } else {
+        // Other layouts: Use textarea elements for scroll events
+        const inputTextareas = document.querySelectorAll('[data-input-panel] .glass-panel-inner-content textarea');
+        input1Element = inputTextareas[0] as HTMLElement || null;
+        input2Element = inputTextareas[1] as HTMLElement || null;
+      }
+      
+      // ELEGANT FIX: Use ref-based detection for output panel instead of DOM queries
+      const outputPanel = outputRef?.current || null;
+      
+      scrollRefs.current = {
+        input1: input1Element,
+        input2: input2Element,
+        output: outputPanel
+      };
+      
+      // SSMR: Update layout detection status
+      setIsLayoutDetected(!!input1Element && !!input2Element);
+      
+      // Debug logging (safe - read-only operations)
+      console.log('🔄 SCROLL SYNC: Scroll elements detected via layout adaptation:', {
+        input1: !!scrollRefs.current.input1,
+        input2: !!scrollRefs.current.input2,
+        output: !!scrollRefs.current.output,
+        outputRefDirect: !!outputRef?.current,
+        isScrollLocked,
+        isOptionC,
+        layoutDetection: isOptionC ? 'Option C (container scroll)' : 'Other layout (textarea scroll)',
+        input1Type: input1Element?.tagName,
+        input2Type: input2Element?.tagName,
+        outputType: outputPanel?.tagName,
+        outputHasOverflow: outputPanel ? getComputedStyle(outputPanel).overflowY : 'no element',
+        outputScrollHeight: outputPanel?.scrollHeight,
+        outputClientHeight: outputPanel?.clientHeight
+      });
+    } catch (error) {
+      console.error('Error updating scroll refs:', error);
+      setInternalError(error instanceof Error ? error.message : 'Unknown error');
     }
-    
-    // ELEGANT FIX: Use ref-based detection for output panel instead of DOM queries
-    const outputPanel = outputRef?.current || null;
-    
-    scrollRefs.current = {
-      input1: input1Element,
-      input2: input2Element,
-      output: outputPanel
-    };
-    
-    // Debug logging (safe - read-only operations)
-    console.log('🔄 SCROLL SYNC: Scroll elements detected via layout adaptation:', {
-      input1: !!scrollRefs.current.input1,
-      input2: !!scrollRefs.current.input2,
-      output: !!scrollRefs.current.output,
-      outputRefDirect: !!outputRef?.current,
-      isScrollLocked,
-      isOptionC,
-      layoutDetection: isOptionC ? 'Option C (container scroll)' : 'Other layout (textarea scroll)',
-      input1Type: input1Element?.tagName,
-      input2Type: input2Element?.tagName,
-      outputType: outputPanel?.tagName,
-      outputHasOverflow: outputPanel ? getComputedStyle(outputPanel).overflowY : 'no element',
-      outputScrollHeight: outputPanel?.scrollHeight,
-      outputClientHeight: outputPanel?.clientHeight
-    });
   }, [isScrollLocked, outputRef]);
   
   // ==================== EVENT LISTENER MANAGEMENT ====================
@@ -158,7 +204,32 @@ export const useScrollSync = ({
   
   // ==================== RETURN INTERFACE ====================
   
+  // SSMR: Standardized state and actions
+  const hookState: UseScrollSyncState = {
+    isScrollLocked,
+    scrollRefs: scrollRefs.current,
+    isLayoutDetected
+  };
+  
+  const hookActions: UseScrollSyncActions = {
+    updateScrollRefs,
+    syncScroll,
+    toggleScrollLock
+  };
+  
+  const hookStatus = {
+    isInitialized: true,
+    error: internalError
+  };
+  
+  // SSMR: Return both standardized and legacy interfaces for backward compatibility
   return {
+    // Standardized interface
+    state: hookState,
+    actions: hookActions,
+    status: hookStatus,
+    
+    // Legacy interface (backward compatibility)
     scrollRefs,
     updateScrollRefs,
     syncScroll
