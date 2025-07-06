@@ -1,7 +1,8 @@
 import React from 'react';
 import { BarChart3, Plus, Minus, FileText, RefreshCw } from 'lucide-react';
+import { BaseComponentProps } from '../types/components';
 
-interface ComparisonStatsProps {
+interface ComparisonStatsProps extends BaseComponentProps {
   stats: {
     additions: number;
     deletions: number;
@@ -12,7 +13,9 @@ interface ComparisonStatsProps {
 }
 
 export const ComparisonStats: React.FC<ComparisonStatsProps> = ({ 
-  stats
+  stats,
+  style,
+  className
 }) => {
   const total = stats.additions + stats.deletions + stats.unchanged + stats.changed;
   const additionPercent = total > 0 ? (stats.additions / total) * 100 : 0;
@@ -20,7 +23,7 @@ export const ComparisonStats: React.FC<ComparisonStatsProps> = ({
   const changedPercent = total > 0 ? (stats.changed / total) * 100 : 0;
 
   return (
-    <div className="glass-panel border border-theme-neutral-300 rounded-lg p-4 shadow-lg transition-all duration-300">
+    <div className={`glass-panel border border-theme-neutral-300 rounded-lg p-4 shadow-lg transition-all duration-300 ${className || ''}`} style={style}>
       <div className="flex items-center gap-2 mb-4">
         <BarChart3 className="w-5 h-5 text-theme-primary-900" />
         <h3 className="text-lg font-semibold text-theme-primary-900">Comparison Statistics</h3>

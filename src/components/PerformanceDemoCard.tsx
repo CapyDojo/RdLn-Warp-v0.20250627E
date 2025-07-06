@@ -1,7 +1,8 @@
 import React from 'react';
 import { createMockDocument, createMockDiff } from '../utils/mockDocuments';
+import { BaseComponentProps } from '../types/components';
 
-interface PerformanceDemoCardProps {
+interface PerformanceDemoCardProps extends BaseComponentProps {
   /** Whether to show the performance demo card */
   visible?: boolean;
   /** Callback when a test scenario is loaded */
@@ -16,7 +17,9 @@ interface PerformanceDemoCardProps {
  */
 export const PerformanceDemoCard: React.FC<PerformanceDemoCardProps> = ({ 
   visible = true,
-  onLoadTest
+  onLoadTest,
+  style,
+  className
 }) => {
   if (!visible) return null;
 
@@ -31,7 +34,7 @@ export const PerformanceDemoCard: React.FC<PerformanceDemoCardProps> = ({
   };
 
   return (
-    <div className="glass-panel border border-theme-accent-200 rounded-lg p-6 mb-6 shadow-lg transition-all duration-300">
+    <div className={`glass-panel border border-theme-accent-200 rounded-lg p-6 mb-6 shadow-lg transition-all duration-300 ${className || ''}`} style={style}>
       <div className="text-center mb-4">
         <h3 className="text-lg font-semibold text-theme-primary-900 mb-2">🚀 Performance Demo Scenarios</h3>
         <p className="text-sm text-theme-neutral-600">

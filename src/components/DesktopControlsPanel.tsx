@@ -1,7 +1,8 @@
 import React from 'react';
 import { Play, RotateCcw, ArrowLeftRight, Zap, ZapOff, Lock } from 'lucide-react';
+import { BaseComponentProps } from '../types/components';
 
-interface DesktopControlsPanelProps {
+interface DesktopControlsPanelProps extends BaseComponentProps {
   /** Whether Quick Compare is enabled */
   quickCompareEnabled: boolean;
   /** Whether scroll lock is active */
@@ -46,10 +47,12 @@ export const DesktopControlsPanel: React.FC<DesktopControlsPanelProps> = ({
   onSwapContent,
   onToggleScrollLock,
   onToggleSystemProtection,
-  onResetComparison
+  onResetComparison,
+  style,
+  className
 }) => {
   return (
-    <div className="hidden lg:flex absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+    <div className={`hidden lg:flex absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 ${className || ''}`} style={style}>
       <div className="flex flex-col gap-3">
         {/* Compare Button - Only show when live compare is disabled */}
         {!quickCompareEnabled && (

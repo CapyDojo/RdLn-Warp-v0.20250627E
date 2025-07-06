@@ -3,8 +3,9 @@ import { GripHorizontal } from 'lucide-react';
 import { RedlineOutput } from './RedlineOutput';
 import { ComparisonStats } from './ComparisonStats';
 import { DiffChange, ComparisonStats as ComparisonStatsType } from '../types';
+import { BaseComponentProps } from '../types/components';
 
-interface OutputLayoutProps {
+interface OutputLayoutProps extends BaseComponentProps {
   /** Comparison result changes */
   changes: DiffChange[];
   /** Comparison statistics */
@@ -43,10 +44,12 @@ export const OutputLayout: React.FC<OutputLayoutProps> = ({
   outputHeight,
   onCopy,
   outputResizeHandlers,
-  scrollRef
+  scrollRef,
+  style,
+  className
 }) => {
   return (
-    <div className="mb-6"> {/* Match input panel structure for natural expansion */}
+    <div className={`mb-6 ${className || ''}`} style={style}> {/* Match input panel structure for natural expansion */}
       {/* SSMR: Direct RedlineOutput with proper container identity */}
       <div data-output-panel>
         <RedlineOutput

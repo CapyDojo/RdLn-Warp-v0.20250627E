@@ -1,7 +1,8 @@
 import React from 'react';
 import { Play, RotateCcw, ArrowLeftRight, Zap, ZapOff, Lock } from 'lucide-react';
+import { BaseComponentProps } from '../types/components';
 
-interface MobileControlsPanelProps {
+interface MobileControlsPanelProps extends BaseComponentProps {
   /** Whether Quick Compare is enabled */
   quickCompareEnabled: boolean;
   /** Whether scroll lock is active */
@@ -40,10 +41,12 @@ export const MobileControlsPanel: React.FC<MobileControlsPanelProps> = ({
   onToggleQuickCompare,
   onSwapContent,
   onToggleScrollLock,
-  onResetComparison
+  onResetComparison,
+  style,
+  className
 }) => {
   return (
-    <>
+    <div style={style} className={className}>
       {/* Mobile Controls - Enhanced with all operation buttons */}
       <div className="lg:hidden text-center">
         <div className="inline-flex flex-wrap justify-center items-center gap-3 mt-4">
@@ -123,6 +126,6 @@ export const MobileControlsPanel: React.FC<MobileControlsPanelProps> = ({
           <span>⚠️ New Comparison</span>
         </button>
       </div>
-    </>
+    </div>
   );
 };

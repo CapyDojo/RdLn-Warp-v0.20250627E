@@ -1,7 +1,8 @@
 import React from 'react';
 import { Image, Globe } from 'lucide-react';
+import { BaseComponentProps } from '../types/components';
 
-interface OCRFeatureCardProps {
+interface OCRFeatureCardProps extends BaseComponentProps {
   /** Whether to show the OCR feature card */
   visible?: boolean;
 }
@@ -13,12 +14,14 @@ interface OCRFeatureCardProps {
  * Extracted from ComparisonInterface for better modularity and reusability.
  */
 export const OCRFeatureCard: React.FC<OCRFeatureCardProps> = ({ 
-  visible = true 
+  visible = true,
+  style,
+  className
 }) => {
   if (!visible) return null;
 
   return (
-    <div className="glass-panel border border-theme-primary-200 rounded-lg p-4 mb-6 shadow-lg transition-all duration-300">
+    <div className={`glass-panel border border-theme-primary-200 rounded-lg p-4 mb-6 shadow-lg transition-all duration-300 ${className || ''}`} style={style}>
       <div className="flex items-start gap-3">
         <div className="flex items-center gap-2">
           <Image className="w-5 h-5 text-theme-primary-600" />

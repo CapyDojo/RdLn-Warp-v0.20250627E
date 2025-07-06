@@ -1,6 +1,7 @@
 import React from 'react';
+import { BaseComponentProps } from '../types/components';
 
-interface ProcessingDisplayProps {
+interface ProcessingDisplayProps extends BaseComponentProps {
   /** Chunking progress state */
   chunkingProgress: {
     progress: number;
@@ -29,10 +30,12 @@ interface ProcessingDisplayProps {
 export const ProcessingDisplay: React.FC<ProcessingDisplayProps> = ({
   chunkingProgress,
   isCancelling,
-  onCancel
+  onCancel,
+  style,
+  className
 }) => {
   return (
-    <div className="glass-panel shadow-lg transition-all duration-300">
+    <div className={`glass-panel shadow-lg transition-all duration-300 ${className || ''}`} style={style}>
       <div className="glass-panel-header-footer px-4 py-3 border-b border-theme-neutral-200 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-theme-primary-900">Processing Comparison...</h3>
       </div>
