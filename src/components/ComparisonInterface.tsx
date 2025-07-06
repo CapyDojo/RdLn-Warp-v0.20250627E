@@ -11,22 +11,11 @@ import { DesktopControlsPanel } from './DesktopControlsPanel';
 import { MobileControlsPanel } from './MobileControlsPanel';
 import { DesktopInputLayout } from './DesktopInputLayout';
 import { MobileInputLayout } from './MobileInputLayout';
-// Test suites commented out for production build optimization
-// import { TestSuite } from './TestSuite';
-// import { AdvancedTestSuite } from '../testing/AdvancedTestSuite';
-// import { ExtremeTestSuite } from '../testing/ExtremeTestSuite';
-// STEP 3: Background Loading Status (Safe, Modular, Reversible)
+// Background Loading Status
 import { BackgroundLoadingStatus } from './BackgroundLoadingStatus';
-// SSMR CHUNKING: Step 3 - Import chunking progress indicator  
-// import { ChunkingProgressIndicator } from './ChunkingProgressIndicator'; // Unused after extraction
-// Mock document utilities for performance testing
-// import { createMockDocument, createMockDiff } from '../utils/mockDocuments'; // Unused after extraction
-// Resize handlers hook
+// Resize and scroll handlers
 import { useResizeHandlers } from '../hooks/useResizeHandlers';
-// Scroll sync hook
 import { useScrollSync } from '../hooks/useScrollSync';
-// Mouse handling utilities (kept for reference in hook)
-// import { startDragOperation, endDragOperation, calculateResizeHeight } from '../utils/mouseHandlers';
 
 import { BaseComponentProps } from '../types/components';
 
@@ -42,8 +31,6 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
   className,
 }) => {
   
-  // Performance tracking (silent in production)
-  // const renderStartTime = performance.now(); // Unused after extraction
   
   const {
     originalText,
@@ -66,37 +53,11 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
     toggleSystemProtection
   } = useComparison();
   
-  // SSMR: DISABLED result size monitoring - was causing resize lag
-  // React.useEffect(() => {
-  //   if (result) {
-  //     console.log('📊 RESIZE DEBUG: Result object size:', {
-  //       changesCount: result.changes?.length || 0,
-  //       estimatedMemorySize: JSON.stringify(result).length,
-  //       timestamp: performance.now()
-  //     });
-  //   }
-  // }, [result]);
   
-  // DEBUG: Log result changes (DISABLED during resize debugging)
-  React.useEffect(() => {
-    // console.log('🎨 ComparisonInterface - result changed:', {
-    //   hasResult: !!result,
-    //   resultType: typeof result,
-    //   hasChanges: !!(result?.changes),
-    //   changesLength: result?.changes?.length,
-    //   resultKeys: result ? Object.keys(result) : 'no result'
-    // });
-  }, [result]);
-
-// CHUNKING DEBUG: Temporarily disabled to prevent infinite loops
-// React.useEffect(() => {
-//   console.log('🏗️ ComparisonInterface chunking state:', chunkingProgress);
-// }, [chunkingProgress.progress, chunkingProgress.stage, chunkingProgress.isChunking, chunkingProgress.enabled]);
 
   const redlineOutputRef = useRef<HTMLDivElement>(null);
 
   const [copySuccess, setCopySuccess] = React.useState(false);
-  // const [autoCompareCountdown, setAutoCompareCountdown] = React.useState(0); // Unused
   
   // SSMR Step 1: Scroll lock state (Safe - no functionality yet)
   const [isScrollLocked, setIsScrollLocked] = useState(false);
@@ -151,9 +112,6 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
   const desktopResizeHandleRef = useRef<HTMLDivElement>(null);
   const mobileResizeHandleRef = useRef<HTMLDivElement>(null);
   
-  // CSS manipulation helpers now provided by useResizeHandlers hook
-  
-  // CSS initialization and pre-warming now handled by useResizeHandlers hook
   
   // FIX: Apply output height CSS constraint when result changes
   useEffect(() => {

@@ -83,7 +83,7 @@ export const useComparison = () => {
     progress: 0,
     stage: '',
     isChunking: false,
-    enabled: true // ROLLBACK: Set to false to disable chunking progress
+    enabled: true
   });
 
   // SSMR: Cancellation support with AbortController
@@ -134,7 +134,6 @@ export const useComparison = () => {
             element.setSelectionRange(selectionStart, selectionEnd);
           }
         } catch (error) {
-          // Silently handle any focus restoration errors
           console.warn('Focus restoration failed:', error);
         }
       }, 0);

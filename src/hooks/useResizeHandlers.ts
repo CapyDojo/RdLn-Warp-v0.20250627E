@@ -134,8 +134,6 @@ export const useResizeHandlers = ({
   const handlePanelMouseMove = useCallback((e: MouseEvent) => {
     if (!isDraggingRef.current) return;
     
-    // const moveStartTime = performance.now(); // Unused
-    
     // Calculate new height using utility function
     const newHeight = calculateResizeHeight(
       e.clientY,
@@ -149,12 +147,6 @@ export const useResizeHandlers = ({
     startTransition(() => {
       setPanelHeightCSS(newHeight);
     });
-    
-    // const moveEndTime = performance.now(); // Unused
-    // const moveDuration = moveEndTime - moveStartTime; // Unused
-    
-    // Only log slow mouse moves to identify bottlenecks
-    // (Logging disabled for production)
   }, [minHeight, maxHeight, setPanelHeightCSS]);
   
   const handlePanelMouseUp = useCallback(() => {
