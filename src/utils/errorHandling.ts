@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import { BaseComponentProps } from './types/baseTypes';
+import { BaseComponentProps } from '../types/components';
 
 // ========================================
 // Core Error Types
