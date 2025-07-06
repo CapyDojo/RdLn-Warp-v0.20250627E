@@ -2,6 +2,7 @@ import React from 'react';
 import { Copy } from 'lucide-react';
 import { DiffChange } from '../types';
 import { BaseComponentProps } from '../types/components';
+import { UI_CONFIG } from '../config/appConfig';
 
 interface RedlineOutputProps extends BaseComponentProps {
   changes: DiffChange[];
@@ -12,9 +13,8 @@ interface RedlineOutputProps extends BaseComponentProps {
   scrollRef?: React.RefObject<HTMLDivElement>;
 }
 
-// SSMR: Chunked Static Rendering Implementation
-const CHUNK_SIZE = 1000; // Render 1000 changes per chunk
-const ESTIMATED_CHUNK_HEIGHT = 5000; // Estimated px height for a chunk for the scrollbar
+// SSMR: Use centralized configuration for consistent chunk rendering
+const { CHUNK_SIZE, ESTIMATED_CHUNK_HEIGHT, INTERSECTION_MARGIN } = UI_CONFIG.RENDERING;
 
 const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
   changes,
@@ -124,7 +124,7 @@ const Chunk: React.FC<{ html: string, estimatedHeight: number, root: Element | n
           setIsVisible(true);
         }
       },
-      { root, rootMargin: '200px' } // Preload chunks 200px before they become visible
+      { root, rootMargin: INTERSECTION_MARGIN } // Preload chunks before they become visible
     );
 
     if (placeholderRef.current) {

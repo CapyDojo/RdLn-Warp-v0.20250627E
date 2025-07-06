@@ -1,5 +1,6 @@
 import { useRef, useCallback, useEffect, startTransition, useState } from 'react';
 import { startDragOperation, endDragOperation, calculateResizeHeight } from '../utils/mouseHandlers';
+import { UI_CONFIG, FEATURE_FLAGS } from '../config/appConfig';
 
 interface UseResizeHandlersConfig {
   /** Whether to use CSS-based resize (true) or React state fallback (false) */
@@ -58,12 +59,12 @@ interface UseResizeHandlersReturn {
  * - Pre-warming system for StrictMode compatibility
  */
 export const useResizeHandlers = ({
-  USE_CSS_RESIZE,
-  minHeight,
-  minOutputHeight,
-  maxHeight = 800,
-  maxOutputHeight = 900
-}: UseResizeHandlersConfig): UseResizeHandlersReturn => {
+  USE_CSS_RESIZE = FEATURE_FLAGS.ENABLE_CSS_RESIZE,
+  minHeight = UI_CONFIG.PANEL_HEIGHTS.MIN_INPUT_HEIGHT,
+  minOutputHeight = UI_CONFIG.PANEL_HEIGHTS.MIN_OUTPUT_HEIGHT,
+  maxHeight = UI_CONFIG.PANEL_HEIGHTS.MAX_INPUT_HEIGHT,
+  maxOutputHeight = UI_CONFIG.PANEL_HEIGHTS.MAX_OUTPUT_HEIGHT
+}: UseResizeHandlersConfig = {}): UseResizeHandlersReturn => {
   
   // ==================== REFS ====================
   
@@ -82,8 +83,8 @@ export const useResizeHandlers = ({
   
   // ==================== FALLBACK REACT STATE ====================
   
-  const [panelHeight, setPanelHeight] = useState(400);
-  const [outputHeight, setOutputHeight] = useState(500);
+  const [panelHeight, setPanelHeight] = useState(UI_CONFIG.PANEL_HEIGHTS.DEFAULT_INPUT_HEIGHT);
+  const [outputHeight, setOutputHeight] = useState(UI_CONFIG.PANEL_HEIGHTS.DEFAULT_OUTPUT_HEIGHT);
   
   // ==================== CSS MANIPULATION HELPERS ====================
   
@@ -124,7 +125,7 @@ export const useResizeHandlers = ({
     // ELEGANT FIX: Use proper data-output-panel container selector
     const outputElement = document.querySelector('[data-output-panel] .glass-panel-inner-content');
     if (outputElement) {
-      (outputElement as HTMLElement).style.height = `${height - 120}px`; // Account for header/footer
+      (outputElement as HTMLElement).style.height = `${height - UI_CONFIG.PANEL_HEIGHTS.HEADER_FOOTER_HEIGHT}px`; // Account for header/footer
     }
   }, [USE_CSS_RESIZE]);
   
@@ -186,10 +187,10 @@ export const useResizeHandlers = ({
           const computedHeight = firstPanel.getBoundingClientRect().height;
           startHeight.current = computedHeight;
         } else {
-          startHeight.current = 400; // fallback
+          startHeight.current = UI_CONFIG.PANEL_HEIGHTS.DEFAULT_INPUT_HEIGHT; // fallback
         }
       } else {
-        startHeight.current = 400; // fallback
+        startHeight.current = UI_CONFIG.PANEL_HEIGHTS.DEFAULT_INPUT_HEIGHT; // fallback
       }
     } else {
       // Use React state for fallback mode

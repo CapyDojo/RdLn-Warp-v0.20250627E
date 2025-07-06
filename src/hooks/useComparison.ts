@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { MyersAlgorithm } from '../algorithms/MyersAlgorithm';
 import { ComparisonState } from '../types';
+import { SYSTEM_CONFIG, STORAGE_CONFIG, UI_CONFIG } from '../config/appConfig';
 
 // System resource guardrails to prevent browser crashes
 const checkSystemResources = (originalText: string, revisedText: string) => {
@@ -18,34 +19,37 @@ const checkSystemResources = (originalText: string, revisedText: string) => {
   //   usedMemory: memoryInfo ? `${(memoryInfo.usedJSHeapSize / 1024 / 1024).toFixed(1)}MB` : 'unknown'
   // });
   
-  // Extreme size protection (over 5M characters total - increased post-performance fix)
-  if (totalLength > 5000000) {
+  // Use centralized system configuration for consistent resource protection
+  const { LIMITS } = SYSTEM_CONFIG;
+  
+  // Extreme size protection
+  if (totalLength > LIMITS.MAX_DOCUMENT_LENGTH) {
     return {
       canProceed: false,
-      reason: 'Documents too large (>5M characters). Please break into smaller sections to prevent system crashes.'
+      reason: `Documents too large (>${(LIMITS.MAX_DOCUMENT_LENGTH / 1_000_000)}M characters). Please break into smaller sections to prevent system crashes.`
     };
   }
   
-  // High complexity protection (large docs with many potential changes - increased thresholds)
-  if (totalLength > 2000000 && estimatedChanges > 500000) {
+  // High complexity protection
+  if (totalLength > LIMITS.COMPLEX_DOCUMENT_THRESHOLD && estimatedChanges > LIMITS.COMPLEX_CHANGES_THRESHOLD) {
     return {
       canProceed: false,
       reason: 'Document combination too complex. Try smaller documents or documents with fewer differences.'
     };
   }
   
-  // Memory pressure protection (if memory info available)
-  if (availableMemory && availableMemory < 100 * 1024 * 1024) { // Less than 100MB available
+  // Memory pressure protection
+  if (availableMemory && availableMemory < LIMITS.MIN_AVAILABLE_MEMORY) {
     return {
       canProceed: false,
       reason: 'System memory low. Please close other browser tabs and try again.'
     };
   }
   
-  // Successive operation protection - check for rapid consecutive large operations (increased threshold)
+  // Successive operation protection
   const now = Date.now();
   const lastLargeOperation = (globalThis as any).lastLargeOperation || 0;
-  if (totalLength > 1000000 && (now - lastLargeOperation) < 5000) { // 5 second cooldown for very large docs (>1M chars)
+  if (totalLength > LIMITS.LARGE_OPERATION_THRESHOLD && (now - lastLargeOperation) < LIMITS.LARGE_OPERATION_COOLDOWN) {
     return {
       canProceed: false,
       reason: 'Please wait a moment before processing another very large document to prevent system overload.'
@@ -53,7 +57,7 @@ const checkSystemResources = (originalText: string, revisedText: string) => {
   }
   
   // Record this operation if it's very large
-  if (totalLength > 1000000) {
+  if (totalLength > LIMITS.LARGE_OPERATION_THRESHOLD) {
     (globalThis as any).lastLargeOperation = now;
   }
   
@@ -86,18 +90,16 @@ export const useComparison = () => {
   const abortControllerRef = useRef<AbortController | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
-  // Auto-Compare settings
+  // Auto-Compare settings using centralized storage configuration
   const [quickCompareEnabled, setQuickCompareEnabled] = useState(() => {
-    // Default to enabled for better UX, but respect user preference if stored
-    const stored = localStorage.getItem('rdln-auto-compare-enabled');
-    return stored === null ? true : stored === 'true';
+    const stored = localStorage.getItem(STORAGE_CONFIG.KEYS.AUTO_COMPARE_ENABLED);
+    return stored === null ? STORAGE_CONFIG.DEFAULTS.AUTO_COMPARE_ENABLED : stored === 'true';
   });
   
-  // System Protection Toggle for stress testing
+  // System Protection Toggle using centralized storage configuration
   const [systemProtectionEnabled, setSystemProtectionEnabled] = useState(() => {
-    // Default to enabled for safety, but allow disabling for stress testing
-    const stored = localStorage.getItem('rdln-system-protection-enabled');
-    return stored === null ? true : stored === 'true';
+    const stored = localStorage.getItem(STORAGE_CONFIG.KEYS.SYSTEM_PROTECTION_ENABLED);
+    return stored === null ? STORAGE_CONFIG.DEFAULTS.SYSTEM_PROTECTION_ENABLED : stored === 'true';
   });
   
   // Remove separate live typing state - it's now part of Auto-Compare
@@ -195,7 +197,7 @@ export const useComparison = () => {
     setTimeout(() => {
       setIsCancelling(false);
       // console.log('✅ Cancellation completed');
-    }, 1000);
+    }, UI_CONFIG.ANIMATION.CANCELLATION_FEEDBACK_DELAY);
   }, [state.isProcessing, isCancelling]);
 
   const compareDocuments = useCallback(async (isAutoCompare = false, preserveFocus = true, overrideOriginal?: string, overrideRevised?: string) => {
