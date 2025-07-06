@@ -1,6 +1,8 @@
 import { useRef, useCallback, useEffect, startTransition, useState } from 'react';
 import { startDragOperation, endDragOperation, calculateResizeHeight } from '../utils/mouseHandlers';
 import { UI_CONFIG, FEATURE_FLAGS } from '../config/appConfig';
+import { BaseHookReturn } from '../types/components';
+import { ErrorId, PerformanceTimestamp } from '../types/enhancedTypes';
 
 interface UseResizeHandlersConfig {
   /** Whether to use CSS-based resize (true) or React state fallback (false) */
@@ -31,7 +33,28 @@ interface OutputResizeHandlers {
   outputResizeHandleRef: React.RefObject<HTMLDivElement>;
 }
 
-interface UseResizeHandlersReturn {
+interface UseResizeHandlersState {
+  /** Fallback React state for panel height (when CSS resize disabled) */
+  panelHeight: number;
+  /** Fallback React state for output height (when CSS resize disabled) */
+  outputHeight: number;
+  /** Current resize configuration */
+  config: UseResizeHandlersConfig;
+}
+
+interface UseResizeHandlersActions {
+  /** Function to set panel height via CSS or React state */
+  setPanelHeightCSS: (height: number) => void;
+  /** Function to set output height via CSS or React state */
+  setOutputHeightCSS: (height: number) => void;
+  /** Handlers for input panel resizing */
+  panelResizeHandlers: PanelResizeHandlers;
+  /** Handlers for output panel resizing */
+  outputResizeHandlers: OutputResizeHandlers;
+}
+
+interface UseResizeHandlersReturn extends BaseHookReturn<UseResizeHandlersState, UseResizeHandlersActions> {
+  // Legacy flat structure for compatibility
   /** Handlers for input panel resizing */
   panelResizeHandlers: PanelResizeHandlers;
   /** Handlers for output panel resizing */
@@ -66,6 +89,20 @@ export const useResizeHandlers = ({
   maxOutputHeight = UI_CONFIG.PANEL_HEIGHTS.MAX_OUTPUT_HEIGHT
 }: UseResizeHandlersConfig = {}): UseResizeHandlersReturn => {
   
+  // Store configuration for structured interface
+  const config: UseResizeHandlersConfig = {
+    USE_CSS_RESIZE,
+    minHeight,
+    minOutputHeight,
+    maxHeight,
+    maxOutputHeight
+  };
+  
+  // Performance tracking
+  const initTime = useRef<PerformanceTimestamp>(Date.now() as PerformanceTimestamp);
+  const operationCount = useRef(0);
+  const [lastOperationTime, setLastOperationTime] = useState<PerformanceTimestamp>(Date.now() as PerformanceTimestamp);
+  
   // ==================== REFS ====================
   
   // DOM refs for direct manipulation
@@ -89,6 +126,9 @@ export const useResizeHandlers = ({
   // ==================== CSS MANIPULATION HELPERS ====================
   
   const setPanelHeightCSS = useCallback((height: number) => {
+    operationCount.current++;
+    setLastOperationTime(Date.now() as PerformanceTimestamp);
+    
     if (!USE_CSS_RESIZE) {
       setPanelHeight(height);
       return;
@@ -117,6 +157,9 @@ export const useResizeHandlers = ({
   }, [USE_CSS_RESIZE]);
   
   const setOutputHeightCSS = useCallback((height: number) => {
+    operationCount.current++;
+    setLastOperationTime(Date.now() as PerformanceTimestamp);
+    
     if (!USE_CSS_RESIZE) {
       setOutputHeight(height);
       return;
@@ -271,19 +314,52 @@ export const useResizeHandlers = ({
   
   // ==================== RETURN INTERFACE ====================
   
+  const panelResizeHandlers: PanelResizeHandlers = {
+    handleMouseDown: handlePanelMouseDown,
+    desktopInputPanelsRef,
+    mobileInputPanelsRef
+  };
+  
+  const outputResizeHandlers: OutputResizeHandlers = {
+    handleMouseDown: handleOutputMouseDown,
+    outputResizeHandleRef
+  };
+  
+  const state: UseResizeHandlersState = {
+    panelHeight,
+    outputHeight,
+    config
+  };
+  
+  const actions: UseResizeHandlersActions = {
+    setPanelHeightCSS,
+    setOutputHeightCSS,
+    panelResizeHandlers,
+    outputResizeHandlers
+  };
+  
   return {
-    panelResizeHandlers: {
-      handleMouseDown: handlePanelMouseDown,
-      desktopInputPanelsRef,
-      mobileInputPanelsRef
-    },
-    outputResizeHandlers: {
-      handleMouseDown: handleOutputMouseDown,
-      outputResizeHandleRef
-    },
+    // Legacy flat structure for compatibility
+    panelResizeHandlers,
+    outputResizeHandlers,
     panelHeight,
     outputHeight,
     setPanelHeightCSS,
-    setOutputHeightCSS
+    setOutputHeightCSS,
+    
+    // New structured interface
+    state,
+    actions,
+    status: {
+      isInitialized: true,
+      isLoading: isDraggingRef.current || isOutputDraggingRef.current,
+      error: null,
+      lastUpdated: lastOperationTime
+    },
+    performance: {
+      initializationTime: Date.now() - initTime.current,
+      lastOperationTime: lastOperationTime - initTime.current,
+      totalOperations: operationCount.current
+    }
   };
 };
