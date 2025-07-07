@@ -64,4 +64,31 @@ export interface ThemeConfig {
     animationLevel?: 'none' | 'subtle' | 'enhanced' | 'premium';
     textureOverlay?: boolean;
   };
+  // SSMR: Semantic color mappings for consistent theme application
+  semanticColors?: {
+    // Text colors - map to specific theme shades for consistency
+    textBody: string;           // Main body text
+    textHeader: string;         // Headings (h1, h2, h3)
+    textSecondary: string;      // Secondary/muted text
+    textInteractive: string;    // Links, buttons, interactive elements
+    textSuccess: string;        // Success states, active elements
+    
+    // Glass panel colors - unified glassmorphism styling
+    glassPanelBg: string;       // Main panel background
+    glassPanelBorder: string;   // Panel borders
+    glassPanelShadow: string;   // Panel shadow colors
+    glassPanelHover: string;    // Hover state background
+    
+    // Input field colors - form consistency
+    inputBg: string;            // Input field backgrounds
+    inputBorder: string;        // Input field borders
+    inputFocus: string;         // Focus state colors
+    inputPlaceholder: string;   // Placeholder text
+    
+    // Button colors - consistent interactive elements
+    buttonPrimary: string;      // Primary button background
+    buttonSecondary: string;    // Secondary button background
+    buttonText: string;         // Button text color
+    buttonHover: string;        // Button hover states
+  };
 }

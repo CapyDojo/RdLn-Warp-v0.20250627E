@@ -193,6 +193,98 @@ export const generateGlassmorphismVariables = (themeConfig: ThemeConfig): Array<
 const themeVariableCache = new Map<string, Array<[string, string]>>();
 
 /**
+ * Generate semantic color variables from theme configuration
+ * SSMR: Safe addition of semantic color system without affecting existing variables
+ */
+export const generateSemanticColorVariables = (themeConfig: ThemeConfig): Array<[string, string]> => {
+  const semanticVariables: Array<[string, string]> = [];
+  
+  if (!themeConfig.semanticColors) {
+    return semanticVariables;
+  }
+  
+  const semantic = themeConfig.semanticColors;
+  
+  // Text color variables
+  if (semantic.textBody) {
+    const rgb = hexToRgb(semantic.textBody);
+    semanticVariables.push(['--theme-text-body-rgb', rgb]);
+  }
+  if (semantic.textHeader) {
+    const rgb = hexToRgb(semantic.textHeader);
+    semanticVariables.push(['--theme-text-header-rgb', rgb]);
+  }
+  if (semantic.textSecondary) {
+    const rgb = hexToRgb(semantic.textSecondary);
+    semanticVariables.push(['--theme-text-secondary-rgb', rgb]);
+  }
+  if (semantic.textInteractive) {
+    const rgb = hexToRgb(semantic.textInteractive);
+    semanticVariables.push(['--theme-text-interactive-rgb', rgb]);
+  }
+  if (semantic.textSuccess) {
+    const rgb = hexToRgb(semantic.textSuccess);
+    semanticVariables.push(['--theme-text-success-rgb', rgb]);
+  }
+  
+  // Glass panel color variables
+  if (semantic.glassPanelBg) {
+    const rgb = hexToRgb(semantic.glassPanelBg);
+    semanticVariables.push(['--theme-glass-panel-bg-rgb', rgb]);
+  }
+  if (semantic.glassPanelBorder) {
+    const rgb = hexToRgb(semantic.glassPanelBorder);
+    semanticVariables.push(['--theme-glass-panel-border-rgb', rgb]);
+  }
+  if (semantic.glassPanelShadow) {
+    const rgb = hexToRgb(semantic.glassPanelShadow);
+    semanticVariables.push(['--theme-glass-panel-shadow-rgb', rgb]);
+  }
+  if (semantic.glassPanelHover) {
+    const rgb = hexToRgb(semantic.glassPanelHover);
+    semanticVariables.push(['--theme-glass-panel-hover-rgb', rgb]);
+  }
+  
+  // Input field color variables
+  if (semantic.inputBg) {
+    const rgb = hexToRgb(semantic.inputBg);
+    semanticVariables.push(['--theme-input-bg-rgb', rgb]);
+  }
+  if (semantic.inputBorder) {
+    const rgb = hexToRgb(semantic.inputBorder);
+    semanticVariables.push(['--theme-input-border-rgb', rgb]);
+  }
+  if (semantic.inputFocus) {
+    const rgb = hexToRgb(semantic.inputFocus);
+    semanticVariables.push(['--theme-input-focus-rgb', rgb]);
+  }
+  if (semantic.inputPlaceholder) {
+    const rgb = hexToRgb(semantic.inputPlaceholder);
+    semanticVariables.push(['--theme-input-placeholder-rgb', rgb]);
+  }
+  
+  // Button color variables
+  if (semantic.buttonPrimary) {
+    const rgb = hexToRgb(semantic.buttonPrimary);
+    semanticVariables.push(['--theme-button-primary-rgb', rgb]);
+  }
+  if (semantic.buttonSecondary) {
+    const rgb = hexToRgb(semantic.buttonSecondary);
+    semanticVariables.push(['--theme-button-secondary-rgb', rgb]);
+  }
+  if (semantic.buttonText) {
+    const rgb = hexToRgb(semantic.buttonText);
+    semanticVariables.push(['--theme-button-text-rgb', rgb]);
+  }
+  if (semantic.buttonHover) {
+    const rgb = hexToRgb(semantic.buttonHover);
+    semanticVariables.push(['--theme-button-hover-rgb', rgb]);
+  }
+  
+  return semanticVariables;
+};
+
+/**
  * Unified CSS variable generator - consolidates all theme variables
  * SSMR: Safe consolidation of existing generateColorVariables and generateGlassmorphismVariables
  * Enhanced with caching for better performance on repeated theme switches
@@ -208,8 +300,11 @@ export const generateAllThemeVariables = (themeConfig: ThemeConfig): Array<[stri
   const colorVariables = generateColorVariables(themeConfig);
   const glassVariables = generateGlassmorphismVariables(themeConfig);
   
+  // SSMR: Add semantic color variables (safe - only if semanticColors exist)
+  const semanticVariables = generateSemanticColorVariables(themeConfig);
+  
   // MODULAR: Combine all variables in single array for batch application
-  const allVariables = [...colorVariables, ...glassVariables];
+  const allVariables = [...colorVariables, ...glassVariables, ...semanticVariables];
   
   // PERFORMANCE: Cache result for future use
   themeVariableCache.set(cacheKey, allVariables);

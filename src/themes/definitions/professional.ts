@@ -65,4 +65,31 @@ export const professionalTheme: ThemeConfig = {
     },
   },
   effects: GLASSMORPHISM_EFFECTS.enhanced,
+  // SSMR: Semantic color mappings - extracted from current CSS for pixel-perfect matching
+  semanticColors: {
+    // Text colors - exact matches from glassmorphism.css
+    textBody: '#1e293b',        // Deep charcoal - line 43, 49
+    textHeader: '#0f172a',      // Navy blue - line 56
+    textSecondary: '#475569',   // Medium gray - line 63
+    textInteractive: '#ea580c', // Orange accent - line 70
+    textSuccess: '#1d4ed8',     // Dark blue - line 75
+    
+    // Glass panel colors - using existing variables and hard-coded values
+    glassPanelBg: '#ffffff',           // White background
+    glassPanelBorder: '#bfdbfe',       // primary-200 from theme
+    glassPanelShadow: '#1e40af',       // Hard-coded shadow color line 40
+    glassPanelHover: '#f8fafc',        // Light background on hover line 79
+    
+    // Input field colors - from glass-input-field section
+    inputBg: '#ffffff',         // White background
+    inputBorder: '#93c5fd',     // primary-300 from theme
+    inputFocus: '#3b82f6',      // primary-500 from theme
+    inputPlaceholder: '#52525b', // neutral-600 with opacity handled in CSS
+    
+    // Button colors - using theme primary colors
+    buttonPrimary: '#3b82f6',   // primary-500
+    buttonSecondary: '#e2e8f0', // secondary-200
+    buttonText: '#ffffff',      // White text
+    buttonHover: '#2563eb',     // primary-600
+  },
 };
