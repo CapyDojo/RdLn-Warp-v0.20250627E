@@ -1,7 +1,10 @@
-import React from 'react';
-import { Settings, Zap, Image, Layout, Monitor, Smartphone, Maximize } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Settings, Zap, Image, Layout, Monitor, Smartphone, Maximize, Activity, BarChart3 } from 'lucide-react';
 import { useLayout, LayoutMode } from '../contexts/LayoutContext';
 import { BaseComponentProps } from '../types/components';
+import { PerformanceDebugPanel, usePerformanceDebugPanel } from './PerformanceDebugPanel';
+import { setupPerformanceDebugUtils } from '../utils/performanceDebugUtils';
+import { appConfig } from '../config/appConfig';
 
 interface DeveloperModeCardProps extends BaseComponentProps {
   showAdvancedOcrCard?: boolean;
@@ -19,6 +22,36 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
   className
 }) => {
   const { currentLayout, setLayout, supportsContainerQueries } = useLayout();
+  const { isVisible: isPerfDebugVisible, toggle: togglePerfDebug } = usePerformanceDebugPanel();
+  const [perfMonitoringEnabled, setPerfMonitoringEnabled] = useState(() => {
+    try {
+      return localStorage.getItem('performance-monitoring-enabled') !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  // Setup performance debugging utilities on mount
+  useEffect(() => {
+    if (appConfig.dev.DEBUGGING.SHOW_PERFORMANCE_DEBUG) {
+      setupPerformanceDebugUtils();
+    }
+  }, []);
+
+  const handleTogglePerfMonitoring = () => {
+    const newValue = !perfMonitoringEnabled;
+    setPerfMonitoringEnabled(newValue);
+    try {
+      localStorage.setItem('performance-monitoring-enabled', newValue.toString());
+      if (newValue) {
+        console.log('✅ Performance monitoring enabled');
+      } else {
+        console.log('❌ Performance monitoring disabled');
+      }
+    } catch (error) {
+      console.warn('Failed to toggle performance monitoring:', error);
+    }
+  };
   return (
     <div className="glass-panel border border-theme-neutral-300 rounded-lg p-4 shadow-lg transition-all duration-300">
       <h3 className="text-lg font-semibold text-theme-primary-900 mb-2 flex items-center gap-2">
@@ -129,6 +162,72 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
         </div>
       </div>
       
+      {/* Performance Monitoring Section */}
+      {appConfig.dev.DEBUGGING.SHOW_PERFORMANCE_DEBUG && (
+        <div className="mb-4">
+          <h4 className="text-sm font-medium text-theme-neutral-700 mb-2 flex items-center gap-1">
+            <Activity className="w-4 h-4" />
+            Performance Monitoring
+          </h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            <button
+              onClick={handleTogglePerfMonitoring}
+              className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+                perfMonitoringEnabled
+                  ? 'bg-green-500 text-white hover:bg-green-600'
+                  : 'bg-gray-500 text-white hover:bg-gray-600'
+              }`}
+              title="Toggle performance data collection"
+            >
+              <BarChart3 className="w-3 h-3" />
+              Monitoring {perfMonitoringEnabled ? 'ON' : 'OFF'}
+            </button>
+            
+            <button
+              onClick={togglePerfDebug}
+              className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+                isPerfDebugVisible
+                  ? 'bg-blue-500 text-white hover:bg-blue-600'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+              title="Toggle performance debug panel visibility"
+            >
+              <Monitor className="w-3 h-3" />
+              Debug Panel {isPerfDebugVisible ? 'ON' : 'OFF'}
+            </button>
+            
+            <button
+              onClick={() => {
+                try {
+                  if (window.showPerfReport) {
+                    window.showPerfReport(60000); // Last minute
+                  } else {
+                    console.warn('Performance utilities not available. Enable monitoring first.');
+                  }
+                } catch (error) {
+                  console.warn('Failed to show performance report:', error);
+                }
+              }}
+              className="px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 bg-purple-200 text-purple-700 hover:bg-purple-300"
+              title="Show performance report in console (Ctrl+Shift+R)"
+            >
+              <Activity className="w-3 h-3" />
+              Show Report
+            </button>
+          </div>
+          
+          {/* Performance Shortcuts Info */}
+          <div className="mt-2 text-xs text-theme-neutral-600">
+            <div className="flex flex-wrap gap-x-4 gap-y-1">
+              <span>📊 <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl+Shift+R</kbd> Report</span>
+              <span>📈 <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl+Shift+M</kbd> Metrics</span>
+              <span>🔧 <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl+Shift+P</kbd> Panel</span>
+              <span>🗑️ <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl+Shift+C</kbd> Clear</span>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className="flex gap-2">
         {onToggleAdvancedOcr && (
           <button
@@ -177,6 +276,12 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
           Cupping Test
         </a>
       </div>
+      
+      {/* Performance Debug Panel */}
+      <PerformanceDebugPanel 
+        isVisible={isPerfDebugVisible && appConfig.dev.DEBUGGING.SHOW_PERFORMANCE_DEBUG} 
+        onToggle={togglePerfDebug}
+      />
     </div>
   );
 };
