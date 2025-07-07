@@ -9,6 +9,8 @@ import {
   ErrorManager,
   AppError 
 } from '../utils/errorHandling';
+import { usePerformanceMonitor } from './usePerformanceMonitor';
+import { PerformanceMonitor } from '../services/PerformanceMonitor';
 
 // System resource guardrails to prevent browser crashes
 const checkSystemResources = (originalText: string, revisedText: string) => {
@@ -72,6 +74,14 @@ const checkSystemResources = (originalText: string, revisedText: string) => {
 };
 
 export const useComparison = () => {
+  // SSMR SAFE: Performance monitoring integration with optional enable/disable
+  const performanceMonitor = usePerformanceMonitor({
+    category: 'comparison-service',
+    componentName: 'useComparison',
+    enabled: true, // Can be configured via environment or props
+    sampleRate: 0.1 // 10% sampling for production, overridden in development
+  });
+
   const [state, setState] = useState<ComparisonState>({
     originalText: '',
     revisedText: '',
@@ -207,16 +217,38 @@ export const useComparison = () => {
   }, [state.isProcessing, isCancelling]);
 
   const compareDocuments = useCallback(async (isAutoCompare = false, preserveFocus = true, overrideOriginal?: string, overrideRevised?: string) => {
+    // SSMR STEP-BY-STEP: Start performance tracking for the entire comparison operation
+    const operationId = `comparison_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Track operation start with context
+    performanceMonitor.trackMetric('comparison_started', {
+      operationId,
+      isAutoCompare,
+      preserveFocus,
+      hasOverrides: !!(overrideOriginal || overrideRevised),
+      timestamp: Date.now()
+    });
+
     // System resource guardrails - only check if protection is enabled
     if (systemProtectionEnabled) {
       const systemCheck = checkSystemResources(overrideOriginal ?? state.originalText, overrideRevised ?? state.revisedText);
       if (!systemCheck.canProceed) {
         console.warn('🚨 System resource guardrail triggered:', systemCheck.reason);
+        
+        // Track system protection triggered
+        performanceMonitor.trackMetric('system_protection_triggered', {
+          operationId,
+          reason: systemCheck.reason,
+          originalLength: (overrideOriginal ?? state.originalText).length,
+          revisedLength: (overrideRevised ?? state.revisedText).length
+        });
+        
         setState(prev => ({ ...prev, error: `System protection: ${systemCheck.reason}` }));
         return;
       }
     } else {
       console.log('🔥 System protection disabled - allowing unrestricted processing for stress testing');
+      performanceMonitor.trackMetric('system_protection_disabled', { operationId });
     }
     
     // Prevent concurrent operations
@@ -347,8 +379,32 @@ export const useComparison = () => {
         // });
       
       
-      // Use actual texts for comparison (either from state or overrides)
-      const result = await MyersAlgorithm.compare(actualOriginal, actualRevised, progressCallback);
+      // SSMR MODULAR: Wrap algorithm execution with performance tracking
+      const result = await performanceMonitor.trackOperation('myers_algorithm_execution', async () => {
+        // Track input characteristics for performance analysis
+        performanceMonitor.trackMetric('algorithm_input_metrics', {
+          operationId,
+          originalLength: actualOriginal.length,
+          revisedLength: actualRevised.length,
+          totalLength: actualOriginal.length + actualRevised.length,
+          estimatedComplexity: Math.min(actualOriginal.length, actualRevised.length)
+        });
+        
+        // Execute the actual algorithm
+        const algorithmResult = await MyersAlgorithm.compare(actualOriginal, actualRevised, progressCallback);
+        
+        // Track algorithm result characteristics
+        if (algorithmResult) {
+          performanceMonitor.trackMetric('algorithm_result_metrics', {
+            operationId,
+            changesCount: algorithmResult.changes?.length || 0,
+            hasStats: !!algorithmResult.stats,
+            resultSize: JSON.stringify(algorithmResult).length
+          });
+        }
+        
+        return algorithmResult;
+      });
         // console.log('✅ MyersAlgorithm.compare completed, result:', result);
         // console.log('🔍 Result structure:', {
         //   hasResult: !!result,
@@ -432,6 +488,15 @@ export const useComparison = () => {
         restoreFocus();
       }
       
+      // SSMR REVERSIBLE: Track successful completion with comprehensive metrics
+      performanceMonitor.trackMetric('comparison_completed_success', {
+        operationId,
+        isAutoCompare,
+        resultChangesCount: result?.changes?.length || 0,
+        memoryUsage: (performance as any)?.memory?.usedJSHeapSize || 0,
+        timestamp: Date.now()
+      });
+      
       // SSMR: Clear global signal on successful completion
       (globalThis as any).currentAbortSignal = null;
       
@@ -501,8 +566,35 @@ export const useComparison = () => {
         };
       }
       
-      // Log to centralized error manager
-      ErrorManager.addError(appError);
+      // SSMR: Track error with performance context for correlation
+      performanceMonitor.trackMetric('comparison_error', {
+        operationId,
+        errorCategory: appError.category,
+        errorMessage: appError.message,
+        isAutoCompare,
+        originalLength: actualOriginal.length,
+        revisedLength: actualRevised.length,
+        memoryUsage: (performance as any)?.memory?.usedJSHeapSize || 0,
+        timestamp: Date.now()
+      });
+      
+      // Log to centralized error manager with performance context
+      const performanceContext = {
+        recentMetrics: performanceMonitor.getRecentMetrics?.() || [],
+        memoryUsage: (performance as any)?.memory?.usedJSHeapSize || 0,
+        operationId,
+        componentMetrics: {
+          inputLag: performanceMonitor.getLastMetricValue?.('input_lag'),
+          renderTime: performanceMonitor.getLastMetricValue?.('render_time')
+        }
+      };
+      
+      // Add performance context to error if ErrorManager supports it
+      if (typeof ErrorManager.addError === 'function' && ErrorManager.addError.length > 1) {
+        (ErrorManager as any).addError(appError, performanceContext);
+      } else {
+        ErrorManager.addError(appError);
+      }
       
       setState(prev => ({
         ...prev,
@@ -534,7 +626,7 @@ export const useComparison = () => {
         // console.log('🔓 Manual operation failed - auto-compare re-enabled');
       }
     }
-  }, [state, captureFocus, restoreFocus]); // Added state to dependencies to ensure fresh state is captured
+  }, [state, captureFocus, restoreFocus, performanceMonitor, systemProtectionEnabled]); // Added performance monitor and protection state
 
   // Simplified auto-compare trigger - handles all real-time updates when enabled
   const triggerAutoCompare = useCallback((originalText: string, revisedText: string, isPasteAction = false) => {
@@ -587,6 +679,14 @@ export const useComparison = () => {
   }, [compareDocuments, quickCompareEnabled]);
 
   const setOriginalText = useCallback((text: string, isPasteAction = false) => {
+    // SSMR: Track text input performance for responsiveness monitoring
+    performanceMonitor.trackMetric('text_input_original', {
+      textLength: text.length,
+      isPasteAction,
+      quickCompareEnabled,
+      timestamp: Date.now()
+    });
+    
     console.log('📝 setOriginalText called:', { textLength: text.length, isPasteAction, quickCompareEnabled });
     console.log('📝 setOriginalText - text preview:', text.substring(0, 100));
     setState(prev => {
@@ -616,6 +716,14 @@ export const useComparison = () => {
   }, [quickCompareEnabled, triggerAutoCompare]);
 
   const setRevisedText = useCallback((text: string, isPasteAction = false) => {
+    // SSMR: Track text input performance for responsiveness monitoring
+    performanceMonitor.trackMetric('text_input_revised', {
+      textLength: text.length,
+      isPasteAction,
+      quickCompareEnabled,
+      timestamp: Date.now()
+    });
+    
     console.log('📝 setRevisedText called:', { textLength: text.length, isPasteAction, quickCompareEnabled });
     console.log('📝 setRevisedText - text preview:', text.substring(0, 100));
     setState(prev => {
@@ -714,6 +822,15 @@ export const useComparison = () => {
       stage: chunkingProgress.stage,
       isChunking: chunkingProgress.isChunking,
       enabled: chunkingProgress.enabled
+    },
+    // SSMR SAFE: Optional performance monitoring access
+    // REVERSIBLE: Can be ignored by consumers who don't need performance data
+    performance: {
+      monitor: performanceMonitor,
+      // Convenience methods for common performance queries
+      getLastComparisonDuration: () => performanceMonitor.getLastOperationTime?.() || 0,
+      getRecentMetrics: () => performanceMonitor.getRecentMetrics?.() || [],
+      isEnabled: performanceMonitor.isEnabled
     }
   };
 };

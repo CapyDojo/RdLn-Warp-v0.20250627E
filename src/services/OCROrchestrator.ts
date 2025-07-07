@@ -32,6 +32,9 @@ import {
   ErrorManager 
 } from '../utils/errorHandling';
 
+// Import centralized performance monitoring
+import { PerformanceMonitor } from './PerformanceMonitor';
+
 export interface OrchestrationResult {
   text: string;
   detectedLanguages: OCRLanguage[];
@@ -56,6 +59,8 @@ export interface OrchestrationOptions extends OCROptions {
 }
 
 export class OCROrchestrator {
+  // SSMR MODULAR: Centralized performance monitoring integration
+  private static performanceMonitor = PerformanceMonitor.getInstance();
 
   /**
    * Main orchestration method for OCR text extraction
@@ -64,6 +69,22 @@ export class OCROrchestrator {
     imageFile: File | Blob,
     options: OrchestrationOptions = {}
   ): Promise<OrchestrationResult> {
+    // SSMR STEP-BY-STEP: Create operation ID for correlation with component performance
+    const operationId = `ocr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Track OCR operation start in centralized monitor
+    this.performanceMonitor.recordMetric('ocr_operation_started', {
+      operationId,
+      imageSize: imageFile.size,
+      imageType: imageFile.type,
+      options: {
+        autoDetect: options.autoDetect,
+        useBackgroundLoader: options.useBackgroundLoader,
+        performanceTracking: options.performanceTracking
+      },
+      timestamp: Date.now()
+    });
+    
     const startTime = performance.now();
     let detectedLanguages: OCRLanguage[] = [];
     let extractionTime = 0;
@@ -110,6 +131,15 @@ export class OCROrchestrator {
       }
 
       performanceMetrics.languageDetectionMs = performance.now() - languageDetectionStart;
+      
+      // Track language detection performance in centralized monitor
+      this.performanceMonitor.recordMetric('ocr_language_detection', {
+        operationId,
+        duration: performanceMetrics.languageDetectionMs,
+        detectedLanguages,
+        success: detectedLanguages.length > 0,
+        autoDetectUsed: options.autoDetect !== false
+      });
 
       // Apply primary language priority if specified
       if (options.primaryLanguage && detectedLanguages.includes(options.primaryLanguage)) {
@@ -135,6 +165,15 @@ export class OCROrchestrator {
       }
 
       performanceMetrics.workerInitializationMs = performance.now() - workerInitStart;
+      
+      // Track worker initialization performance
+      this.performanceMonitor.recordMetric('ocr_worker_initialization', {
+        operationId,
+        duration: performanceMetrics.workerInitializationMs,
+        languages: detectedLanguages,
+        cacheHit,
+        backgroundLoaderUsed
+      });
 
       // Phase 3: OCR Text Extraction
       const extractionStart = performance.now();
@@ -154,6 +193,16 @@ export class OCROrchestrator {
 
       extractionTime = performance.now() - extractionStart;
       performanceMetrics.ocrExtractionMs = extractionTime;
+      
+      // Track text extraction performance
+      this.performanceMonitor.recordMetric('ocr_text_extraction', {
+        operationId,
+        duration: extractionTime,
+        textLength: text.length,
+        imageSize: imageFile.size,
+        languages: detectedLanguages
+      });
+      
       console.log(`⏱️ Text extraction completed in ${extractionTime}ms`);
 
       // Phase 4: Text Processing
@@ -187,8 +236,24 @@ export class OCROrchestrator {
       const totalTime = performance.now() - startTime;
 
       console.log(`✅ OCR orchestration completed in ${totalTime}ms (extraction: ${extractionTime}ms, processing: ${processingTime}ms)`);
+      
+      // SSMR REVERSIBLE: Track comprehensive completion metrics
+      this.performanceMonitor.recordMetric('ocr_operation_completed', {
+        operationId,
+        totalTime,
+        extractionTime,
+        processingTime,
+        textLength: processingResult.processedText.length,
+        detectedLanguages,
+        cacheHit,
+        backgroundLoaderUsed,
+        appliedProcessors,
+        imageSize: imageFile.size,
+        performanceMetrics,
+        timestamp: Date.now()
+      });
 
-      // Optional: Performance tracking
+      // Optional: Legacy performance tracking (maintain backward compatibility)
       if (options.performanceTracking !== false) {
         this.recordPerformanceMetrics({
           totalTime,
@@ -214,22 +279,54 @@ export class OCROrchestrator {
       };
 
     } catch (error) {
+      const totalTime = performance.now() - startTime;
+      
+      // Track OCR error with performance context
+      this.performanceMonitor.recordMetric('ocr_operation_error', {
+        operationId,
+        error: error instanceof Error ? error.message : String(error),
+        totalTime,
+        detectedLanguages,
+        imageSize: imageFile.size,
+        options,
+        timestamp: Date.now()
+      });
+      
       const orchError = ErrorFactory.createError(
         ErrorCategory.OCR,
         'OCR orchestration failed',
         { 
+          operationId,
           detectedLanguages, 
           options, 
           imageSize: imageFile.size,
+          performanceContext: {
+            totalTime,
+            extractionTime,
+            processingTime,
+            performanceMetrics
+          },
           error: error instanceof Error ? error.message : String(error)
         },
         'Text extraction failed. Please try again with a different image.'
       );
 
-      ErrorManager.addError(orchError);
+      // Add performance context to error if ErrorManager supports it
+      const performanceContext = {
+        operationId,
+        totalTime,
+        extractionTime,
+        processingTime,
+        recentMetrics: this.performanceMonitor.getRecentMetrics?.() || []
+      };
+      
+      if (typeof ErrorManager.addError === 'function' && ErrorManager.addError.length > 1) {
+        (ErrorManager as any).addError(orchError, performanceContext);
+      } else {
+        ErrorManager.addError(orchError);
+      }
 
       // Return safe fallback
-      const totalTime = performance.now() - startTime;
       return {
         text: '',
         detectedLanguages: detectedLanguages.length > 0 ? detectedLanguages : ['eng'],
@@ -305,6 +402,49 @@ export class OCROrchestrator {
       recentExtractions: this.performanceHistory.length,
       averageExtractionTime: this.calculateAverageMetric('extractionTime'),
       averageProcessingTime: this.calculateAverageMetric('processingTime')
+    };
+  }
+  
+  /**
+   * SSMR MODULAR: Get centralized performance analytics
+   * Provides access to performance data from the centralized monitoring system
+   */
+  public static getCentralizedPerformanceStats(): {
+    legacy: ReturnType<typeof OCROrchestrator.getPerformanceStats>;
+    centralized: {
+      recentOCROperations: any[];
+      averageOperationTime: number;
+      successRate: number;
+      errorRate: number;
+      cacheHitRate: number;
+      backgroundLoaderUsage: number;
+    };
+  } {
+    const recentMetrics = this.performanceMonitor.getRecentMetrics?.() || [];
+    const ocrMetrics = recentMetrics.filter(m => m.name.startsWith('ocr_'));
+    
+    // Calculate centralized analytics
+    const completedOperations = ocrMetrics.filter(m => m.name === 'ocr_operation_completed');
+    const errorOperations = ocrMetrics.filter(m => m.name === 'ocr_operation_error');
+    const totalOperations = completedOperations.length + errorOperations.length;
+    
+    const avgOperationTime = completedOperations.length > 0 
+      ? completedOperations.reduce((sum, m) => sum + (m.value?.totalTime || 0), 0) / completedOperations.length
+      : 0;
+      
+    const cacheHits = completedOperations.filter(m => m.value?.cacheHit).length;
+    const backgroundLoaderUsed = completedOperations.filter(m => m.value?.backgroundLoaderUsed).length;
+    
+    return {
+      legacy: this.getPerformanceStats(),
+      centralized: {
+        recentOCROperations: ocrMetrics.slice(-20), // Last 20 operations
+        averageOperationTime: avgOperationTime,
+        successRate: totalOperations > 0 ? completedOperations.length / totalOperations : 1,
+        errorRate: totalOperations > 0 ? errorOperations.length / totalOperations : 0,
+        cacheHitRate: completedOperations.length > 0 ? cacheHits / completedOperations.length : 0,
+        backgroundLoaderUsage: completedOperations.length > 0 ? backgroundLoaderUsed / completedOperations.length : 0
+      }
     };
   }
 
