@@ -120,25 +120,30 @@ export const PerformanceDebugPanel: React.FC<PerformanceDebugPanelProps> = ({
               
               {/* Key Metrics */}
               <div style={{ marginBottom: '8px' }}>
-                <div>Total Metrics: {report.summary.totalMetrics}</div>
-                <div>Avg Collection Time: {report.summary.averageCollectionTime?.toFixed(2)}ms</div>
-                <div>Error Rate: {report.summary.errorRate?.toFixed(1)}%</div>
+                <div>Total Metrics: {report.summary?.totalMetrics || 0}</div>
+                <div>Avg Collection Time: {report.summary?.averageCollectionTime?.toFixed(2) || '0.00'}ms</div>
+                <div>Error Rate: {report.summary?.errorRate?.toFixed(1) || '0.0'}%</div>
               </div>
 
               {/* Category-specific metrics */}
-              {report.metricsByCategory[selectedCategory] && (
+              {report.metricsByCategory && report.metricsByCategory[selectedCategory] && Object.keys(report.metricsByCategory[selectedCategory]).length > 0 ? (
                 <div>
                   <strong>{selectedCategory.toUpperCase()} Metrics:</strong>
                   {Object.entries(report.metricsByCategory[selectedCategory]).map(([name, data]) => (
                     <div key={name} style={{ marginLeft: '8px', fontSize: '10px' }}>
                       <div>{name}:</div>
                       <div style={{ marginLeft: '8px' }}>
-                        Avg: {data.average.toFixed(2)}ms | 
-                        Max: {data.maximum.toFixed(2)}ms | 
-                        Count: {data.count}
+                        Avg: {data.average?.toFixed(2) || '0.00'}ms | 
+                        Max: {data.maximum?.toFixed(2) || '0.00'}ms | 
+                        Count: {data.count || 0}
                       </div>
                     </div>
                   ))}
+                </div>
+              ) : (
+                <div style={{ fontSize: '10px', color: '#999', fontStyle: 'italic' }}>
+                  No {selectedCategory.toUpperCase()} metrics available yet.
+                  <br />Use the app to generate performance data.
                 </div>
               )}
 
@@ -158,12 +163,20 @@ export const PerformanceDebugPanel: React.FC<PerformanceDebugPanelProps> = ({
         </>
       )}
 
-      {!isExpanded && report && (
+      {!isExpanded && (
         <div style={{ fontSize: '10px' }}>
-          <div>Metrics: {report.summary.totalMetrics}</div>
-          <div>Avg: {report.summary.averageCollectionTime?.toFixed(1)}ms</div>
-          {report.alerts && report.alerts.length > 0 && (
-            <div style={{ color: '#ff6b6b' }}>⚠ {report.alerts.length} alerts</div>
+          {report ? (
+            <>
+              <div>Metrics: {report.summary?.totalMetrics || 0}</div>
+              <div>Avg: {report.summary?.averageCollectionTime?.toFixed(1) || '0.0'}ms</div>
+              {report.alerts && report.alerts.length > 0 && (
+                <div style={{ color: '#ff6b6b' }}>⚠ {report.alerts.length} alerts</div>
+              )}
+            </>
+          ) : (
+            <div style={{ color: '#999', fontStyle: 'italic' }}>
+              Loading performance data...
+            </div>
           )}
         </div>
       )}

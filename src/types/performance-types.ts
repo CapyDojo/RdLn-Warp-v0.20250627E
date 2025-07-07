@@ -84,8 +84,8 @@ export interface MetricStatistics {
   category: MetricCategory;
   count: number;
   average: number;
-  min: number;
-  max: number;
+  minimum: number;
+  maximum: number;
   p95: number; // 95th percentile
   trend: PerformanceTrend;
 }
@@ -107,7 +107,16 @@ export interface PerformanceReport {
   timeRange: number; // Milliseconds
   categories: MetricCategory[];
   metrics: Map<string, MetricStatistics>;
-  summary: PerformanceReportSummary;
+  metricsByCategory: Record<MetricCategory, Record<string, MetricStatistics>>;
+  summary: PerformanceReportSummary & {
+    averageCollectionTime?: number;
+  };
+  alerts?: Array<{
+    metricName: string;
+    message: string;
+    severity: AlertSeverity;
+    timestamp: number;
+  }>;
   generatedAt: number;
 }
 

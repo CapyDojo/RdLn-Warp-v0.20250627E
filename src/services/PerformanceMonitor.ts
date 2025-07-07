@@ -196,18 +196,27 @@ export class PerformanceMonitor {
     categories?: MetricCategory[]
   ): PerformanceReport {
     const cutoffTime = Date.now() - timeRangeMs;
+    const reportCategories = categories || ['system', 'ocr', 'ui', 'business'];
     const report: PerformanceReport = {
       timeRange: timeRangeMs,
-      categories: categories || ['system', 'ocr', 'ui', 'business'],
+      categories: reportCategories,
       metrics: new Map(),
+      metricsByCategory: {} as Record<MetricCategory, Record<string, MetricStatistics>>,
       summary: {
         totalMetrics: 0,
         averageResponseTime: 0,
         errorRate: 0,
-        alertsTriggered: 0
+        alertsTriggered: 0,
+        averageCollectionTime: 0
       },
+      alerts: [],
       generatedAt: Date.now()
     };
+    
+    // Initialize metricsByCategory structure
+    reportCategories.forEach(cat => {
+      report.metricsByCategory[cat] = {};
+    });
 
     let totalMetrics = 0;
     let totalResponseTime = 0;
@@ -233,16 +242,24 @@ export class PerformanceMonitor {
       const max = Math.max(...values);
       const p95 = this.calculatePercentile(values, 95);
 
-      report.metrics.set(key, {
+      const metricStats = {
         name,
         category: category as MetricCategory,
         count: recentMetrics.length,
         average: avg,
-        min,
-        max,
+        minimum: min,
+        maximum: max,
         p95,
         trend: this.calculateTrend(recentMetrics)
-      });
+      };
+      
+      report.metrics.set(key, metricStats);
+      
+      // Also add to metricsByCategory for easier access
+      if (!report.metricsByCategory[category as MetricCategory]) {
+        report.metricsByCategory[category as MetricCategory] = {};
+      }
+      report.metricsByCategory[category as MetricCategory][name] = metricStats;
 
       totalMetrics += recentMetrics.length;
       
@@ -261,6 +278,10 @@ export class PerformanceMonitor {
     report.summary.totalMetrics = totalMetrics;
     report.summary.averageResponseTime = totalMetrics > 0 ? totalResponseTime / report.metrics.size : 0;
     report.summary.errorRate = totalMetrics > 0 ? (errorCount / totalMetrics) * 100 : 0;
+    report.summary.averageCollectionTime = totalMetrics > 0 ? totalResponseTime / totalMetrics : 0;
+    
+    // Collect recent alerts (placeholder for now)
+    report.alerts = [];
 
     return report;
   }
