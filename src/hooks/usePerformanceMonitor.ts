@@ -164,15 +164,22 @@ export function usePerformanceMonitor(
   ) => {
     if (!enabled) return;
     
-    performanceMonitor.recordMetric(
-      `${componentName}_${name}`,
-      value,
-      category,
-      {
-        componentName,
-        ...metadata
+    try {
+      performanceMonitor?.recordMetric(
+        `${componentName}_${name}`,
+        value,
+        category,
+        {
+          componentName,
+          ...metadata
+        }
+      );
+    } catch (error) {
+      // Silent failure - monitoring should never break functionality
+      if (appConfig.dev.DEBUGGING.SHOW_PERFORMANCE_DEBUG) {
+        console.warn('Performance monitoring failed:', error);
       }
-    );
+    }
   }, [enabled, componentName, category]);
 
   const timeFunction = useCallback(<T>(
