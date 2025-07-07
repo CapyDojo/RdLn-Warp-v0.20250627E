@@ -1,4 +1,5 @@
 import { beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
+import '@testing-library/jest-dom';
 
 // Mock Canvas API for JSDOM environment
 const createMockCanvas = () => {
