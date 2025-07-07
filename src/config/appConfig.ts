@@ -187,6 +187,11 @@ export const getConfigForEnvironment = () => ({
 });
 
 /**
+ * Main application configuration export
+ */
+export const appConfig = getConfigForEnvironment();
+
+/**
  * Type definitions for configuration
  */
 export type AppConfig = ReturnType<typeof getConfigForEnvironment>;

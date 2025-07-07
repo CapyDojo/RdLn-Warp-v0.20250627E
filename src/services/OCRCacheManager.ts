@@ -298,6 +298,13 @@ export class OCRCacheManager {
   }
 
   /**
+   * Gets cached worker by key (used for cache hit detection)
+   */
+  public static getCachedWorker(workerKey: string): CachedWorker | null {
+    return this.workers.get(workerKey) || null;
+  }
+
+  /**
    * Gets cache statistics for monitoring
    */
   public static getCacheStats(): CacheStats {

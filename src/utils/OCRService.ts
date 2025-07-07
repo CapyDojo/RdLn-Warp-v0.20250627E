@@ -13,6 +13,8 @@ import { Converter } from 'opencc-js';
 import { SUPPORTED_LANGUAGES } from '../config/ocrConfig';
 // STEP 2: Import Background Language Loader for smart worker usage (SSMR Implementation)
 import { BackgroundLanguageLoader } from '../services/BackgroundLanguageLoader';
+// PHASE 3.3: Import OCR Orchestrator for enhanced workflow coordination (SSMR Implementation)
+import { OCROrchestrator, OrchestrationOptions } from '../services/OCROrchestrator';
 // PHASE 2: Import standardized error handling
 import { 
   safeAsync, 
@@ -681,6 +683,40 @@ export class OCRService {
     imageFile: File | Blob, 
     options: OCROptions = {}
   ): Promise<string> {
+    // PHASE 3.3: Enhanced workflow using OCR Orchestrator (opt-in)
+    if (options.useOrchestrator) {
+      console.log('🎼 Using enhanced OCR Orchestrator workflow...');
+      
+      try {
+        // Convert OCROptions to OrchestrationOptions
+        const orchestrationOptions: OrchestrationOptions = {
+          languages: options.languages,
+          autoDetect: options.autoDetect,
+          primaryLanguage: options.primaryLanguage,
+          // Enable enhanced features in orchestrator
+          useBackgroundLoader: true,
+          performanceTracking: true,
+          textProcessing: {
+            preserveParagraphs: true,
+            applyLegalTermFixes: true,
+            enhancedPunctuation: true
+          }
+        };
+        
+        const result = await OCROrchestrator.extractText(imageFile, orchestrationOptions);
+        
+        console.log('✨ Enhanced OCR completed with orchestrator');
+        console.log(`📊 Performance: extraction=${result.extractionTime.toFixed(1)}ms, processing=${result.processingTime.toFixed(1)}ms, total=${result.totalTime.toFixed(1)}ms`);
+        console.log(`🔧 Applied processors: ${result.appliedProcessors.join(', ')}`);
+        
+        return result.text;
+      } catch (error) {
+        console.warn('⚠️ Orchestrator failed, falling back to legacy OCR:', error);
+        // Fall through to legacy implementation
+      }
+    }
+    
+    // Legacy OCR implementation (default behavior - fully backward compatible)
     try {
       let languages: OCRLanguage[];
 
@@ -1455,6 +1491,57 @@ export class OCRService {
     return true;
   }
 
+  /**
+   * PHASE 3.3: Enhanced OCR extraction using the orchestrator by default
+   * This is a convenience method that enables the orchestrator for better performance
+   */
+  public static async extractTextWithOrchestrator(
+    imageFile: File | Blob, 
+    options: Omit<OCROptions, 'useOrchestrator'> = {}
+  ): Promise<string> {
+    return this.extractTextFromImage(imageFile, { ...options, useOrchestrator: true });
+  }
+
+  /**
+   * PHASE 3.3: Check if orchestrator is available and working
+   */
+  public static async isOrchestratorAvailable(): Promise<boolean> {
+    try {
+      const health = await OCROrchestrator.getHealthStatus();
+      return health.status === 'healthy' || health.status === 'degraded';
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * PHASE 3.3: Get orchestrator performance statistics
+   */
+  public static getOrchestratorStats() {
+    try {
+      return OCROrchestrator.getPerformanceStats();
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * PHASE 3.3: Get combined cache statistics (legacy + orchestrator)
+   */
+  public static getCombinedStats() {
+    const legacyStats = this.getCacheStats();
+    const orchestratorStats = this.getOrchestratorStats();
+    
+    return {
+      legacy: legacyStats,
+      orchestrator: orchestratorStats,
+      combined: {
+        totalWorkers: legacyStats.cachedWorkers + (orchestratorStats?.cacheStats?.cachedWorkers || 0),
+        totalCacheHits: legacyStats.totalCacheHits + (orchestratorStats?.cacheStats?.totalCacheHits || 0)
+      }
+    };
+  }
+
   public static async terminate(): Promise<void> {
     // Clear cleanup timer
     if (this.cleanupTimer) {
@@ -1477,6 +1564,14 @@ export class OCRService {
     
     // Clear language detection cache
     this.languageCache.clear();
+    
+    // PHASE 3.3: Also cleanup orchestrator resources
+    try {
+      OCROrchestrator.cleanup();
+      console.log('🧹 Orchestrator resources cleaned up');
+    } catch (error) {
+      console.warn('⚠️ Failed to cleanup orchestrator:', error);
+    }
     
     console.log('🧹 All OCR workers terminated and caches cleared');
   }

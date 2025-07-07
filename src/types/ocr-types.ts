@@ -28,6 +28,8 @@ export interface OCROptions {
   autoDetect?: boolean;
   /** Primary language to prioritize in processing */
   primaryLanguage?: OCRLanguage;
+  /** PHASE 3.3: Use enhanced orchestrator workflow for better coordination (optional) */
+  useOrchestrator?: boolean;
 }
 
 /** Cached worker with lifecycle management */

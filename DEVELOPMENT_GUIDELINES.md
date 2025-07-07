@@ -1,9 +1,11 @@
 # Universal LLM Agent Development Guidelines
 
 ## Prime Directive
+
 **First, do no harm. Second, fix the specific issue. There is no third.**
 
 ## Core Principles
+
 1. **Preserve working functionality** - Never break what already works
 2. **Incremental over revolutionary** - Small, tested changes beat large rewrites
 3. **Communication first** - When in doubt, ask before acting
@@ -12,7 +14,9 @@
 ## 1. Platform-Specific Setup
 
 ### Define Your Environment
+
 At the start of each project, establish:
+
 - **Language**: JavaScript/TypeScript (React + Vite)
 - **Tools Available**: npm, file operations, browser testing
 - **Constraints**: Client-side processing, WebContainer environment
@@ -21,7 +25,9 @@ At the start of each project, establish:
 ## 2. Universal Pre-Change Protocol
 
 ### A. Impact Assessment Checklist
+
 Before ANY modification:
+
 - [ ] Identify all files affected
 - [ ] List all dependent components
 - [ ] Map data flow and dependencies
@@ -29,6 +35,7 @@ Before ANY modification:
 - [ ] Verify API compatibility
 
 ### B. Permission Request Template
+
 ```
 I need to modify [file/component] to [specific goal].
 
@@ -43,7 +50,9 @@ Should I proceed?
 ```
 
 ## 3. The "One Thing" Rule
+
 **For EVERY interaction:**
+
 1. Do ONE thing
 2. Test that ONE thing
 3. Report results
@@ -52,6 +61,7 @@ Should I proceed?
 ## 4. Language-Agnostic Safety
 
 ### A. Change Hierarchy
+
 1. **Configuration only** - Settings, parameters, constants
 2. **Minimal edits** - Under 10 lines in one location
 3. **Function changes** - Single function/method
@@ -59,7 +69,9 @@ Should I proceed?
 5. **Architecture changes** - Requires detailed plan
 
 ### B. Universal Syntax Checks
+
 Before ANY code submission:
+
 - [ ] Delimiters match (brackets, braces, parentheses)
 - [ ] Strings properly closed
 - [ ] Indentation consistent
@@ -72,24 +84,29 @@ Before ANY code submission:
 ### ❌ DON'T vs ✅ DO
 
 #### The "Helpful" Refactor
+
 ❌ **DON'T**: "I'll improve this while I'm here"  
 ✅ **DO**: Fix only the reported issue
 
 #### The Assumption
+
 ❌ **DON'T**: "This looks unused"  
 ✅ **DO**: Assume everything is critical
 
 #### The Style "Fix"
+
 ❌ **DON'T**: "I'll modernize this code"  
 ✅ **DO**: Match existing patterns
 
 #### The Scope Creep
+
 ❌ **DON'T**: "I'll fix related issues too"  
 ✅ **DO**: Stay focused on one issue
 
 ## 6. Testing Protocol
 
 ### Universal Test Sequence
+
 1. **Syntax valid** - Code parses/compiles
 2. **Unit works** - Changed component functions
 3. **Integration works** - Connected parts still work
@@ -97,6 +114,7 @@ Before ANY code submission:
 5. **User flow works** - End-to-end functionality
 
 ### Project-Specific Testing
+
 ```bash
 # Start dev server to test changes
 npm run dev
@@ -111,6 +129,7 @@ npm run lint
 ## 7. Error Recovery
 
 ### Universal Steps
+
 1. **STOP** - No additional changes
 2. **CAPTURE** - Exact error message
 3. **LOCATE** - Precise error location
@@ -121,6 +140,7 @@ npm run lint
 ## 8. Communication Standards
 
 ### Status Updates
+
 - "Analyzing [component] for [issue]..."
 - "Located problem: [description]"
 - "Proposing: [specific change]"
@@ -128,6 +148,7 @@ npm run lint
 - "Result: [success/failure details]"
 
 ### Risk Communication
+
 - **Low**: <10 lines, one file, isolated change
 - **Medium**: Multiple functions or complex logic
 - **High**: Cross-file changes, APIs, data structures
@@ -135,6 +156,7 @@ npm run lint
 ## 9. Red Flags (STOP Immediately)
 
 **Universal warning signs:**
+
 - Need to modify >10 lines
 - Need to touch >1 file
 - Changing interfaces/APIs
@@ -147,6 +169,7 @@ npm run lint
 ## 10. Project-Specific Rules
 
 ### Rdln Document Comparison Tool
+
 ```yaml
 project_rules:
   - never_modify: ["src/algorithms/MyersAlgorithm.ts"] # Core algorithm - high risk
@@ -157,66 +180,24 @@ project_rules:
 ```
 
 ### Critical Components
+
 - **MyersAlgorithm.ts**: Core comparison logic - extreme caution required
 - **OCRService.ts**: OCR functionality - test with actual images
 - **ComparisonInterface.tsx**: Main UI - verify all interactions work
 - **RedlineOutput.tsx**: Output panel with ref-based architecture - see scroll sync notes
 - **Testing modules**: Development only - remove for production
 
-### Architectural Improvements (2025-01-04)
-#### Scroll Synchronization - Elegant Ref-Based Fix
-**Problem Solved**: Output panel was "homeless" in DOM, requiring complex negative selectors  
-**Solution**: Implemented dual approach for maximum reliability:
-
-1. **Tactical Fix**: Direct ref passing
-   - `redlineOutputRef` passed from ComparisonInterface to RedlineOutput
-   - Eliminates DOM queries in scroll detection
-   - Provides instant, reliable access to scroll container
-
-2. **Strategic Fix**: Proper container identity
-   - Added `data-output-panel` wrapper (matches `data-input-panel` pattern)
-   - Updated selectors: `[data-output-panel] .glass-panel-inner-content`
-   - Consistent architecture across all major panels
-
-**Future Benefits**:
-- All panel access now follows same pattern
-- Direct selectors faster than negative selectors
-- Easier debugging with clear panel identity
-- Prevents similar "panel hunting" issues
-
-**Debug Verification**:
-```
-🔄 SSMR Elegant Fix: Scroll elements detected via ref: {
-  outputRefDirect: true  // ← Confirms ref-based access working
-}
-```
-
-**Key Files Modified**:
-- `src/components/ComparisonInterface.tsx`: Added ref creation and container wrapper
-- `src/components/RedlineOutput.tsx`: Added scrollRef prop and dual ref assignment
-
-**Architectural Pattern Established**:
-```typescript
-// Input panels (existing pattern)
-<div data-input-panel>
-  <TextInputPanel />
-</div>
-
-// Output panel (new consistent pattern)
-<div data-output-panel>
-  <RedlineOutput scrollRef={redlineOutputRef} />
-</div>
-```
-
 ## 11. Emergency Protocol
 
 ### Universal Break-Fix
+
 1. **ADMIT**: "I've introduced an error"
 2. **DOCUMENT**: All changes made
 3. **PROVIDE**: Rollback instructions
 4. **WAIT**: For user guidance
 
 ### Recovery Options
+
 - Revert to last working state
 - Apply minimal fix to restore function
 - Start fresh with different approach
@@ -224,6 +205,7 @@ project_rules:
 ## 12. OCR-Specific Guidelines
 
 ### OCR Testing Requirements
+
 - Test with actual image files
 - Verify language detection works
 - Check progress indicators
@@ -231,6 +213,7 @@ project_rules:
 - Test with various image qualities
 
 ### Performance Considerations
+
 - OCR operations are CPU intensive
 - Progress feedback is critical
 - Error states must be handled gracefully
@@ -251,6 +234,7 @@ project_rules:
 ## Quick Reference for AI Assistants
 
 When working on this project:
+
 1. Read this file first
 2. Identify the specific issue
 3. Assess impact using the checklist
@@ -258,5 +242,3 @@ When working on this project:
 5. Make minimal, focused changes
 6. Test thoroughly
 7. Report results
-
-**Current Project Status**: Production-ready document comparison tool with OCR capabilities. Handle with care.
