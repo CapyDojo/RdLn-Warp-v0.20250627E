@@ -148,6 +148,38 @@ export class ErrorFactory {
     };
   }
 
+  static createError(
+    category: ErrorCategory,
+    message: string,
+    context?: Record<string, any>,
+    userMessage?: string,
+    severity?: ErrorSeverity
+  ): AppError {
+    const defaultSeverity = severity || (
+      category === ErrorCategory.SYSTEM ? ErrorSeverity.HIGH :
+      category === ErrorCategory.CRITICAL ? ErrorSeverity.CRITICAL :
+      category === ErrorCategory.OCR ? ErrorSeverity.MEDIUM :
+      ErrorSeverity.LOW
+    );
+
+    const defaultUserMessage = userMessage || (
+      category === ErrorCategory.OCR ? 'Text processing failed. Using fallback processing.' :
+      category === ErrorCategory.SYSTEM ? 'A system error occurred. Please try again.' :
+      'An error occurred during processing.'
+    );
+
+    return {
+      id: this.generateId(),
+      category,
+      severity: defaultSeverity,
+      message,
+      userMessage: defaultUserMessage,
+      technical: message,
+      context,
+      timestamp: Date.now()
+    };
+  }
+
   static fromJavaScriptError(
     error: Error,
     category: ErrorCategory = ErrorCategory.UNEXPECTED,
