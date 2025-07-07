@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState, useEffect } from 'react';
+import React, { useRef, useCallback, useState, useEffect, useMemo } from 'react';
 import { FileText, Image, AlertCircle, Loader, ChevronDown, Languages } from 'lucide-react';
 import { useOCR } from '../hooks/useOCR';
 import { OCRLanguage } from '../types/ocr-types';
@@ -27,12 +27,20 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   className,
   ...props
 }) => {
-  // Performance monitoring setup
-  const performanceTracker = useComponentPerformance(props, 'TextInputPanel', {
-    category: 'input',
-    autoTrackRender: true,
-    autoTrackInteractions: true
-  });
+  // Performance monitoring setup - TEMPORARILY DISABLED FOR DEBUGGING
+  const performanceTracker = {
+    trackMetric: () => {},
+    trackInteraction: () => {},
+    trackOperation: async (name: string, operation: () => any) => operation(),
+    trackRender: () => {},
+    startTiming: () => () => {},
+    isEnabled: false
+  };
+  // const performanceTracker = useComponentPerformance(props, 'TextInputPanel', {
+  //   category: 'input',
+  //   autoTrackRender: true,
+  //   autoTrackInteractions: true
+  // });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const segmentedControlRef = useRef<HTMLDivElement>(null);
   const [showLanguageSettings, setShowLanguageSettings] = useState(false);
@@ -67,31 +75,17 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   
   // Track input performance metrics
   useEffect(() => {
-    performanceTracker.trackMetric('text_length', value.length);
+    try {
+      if (performanceTracker?.trackMetric) {
+        performanceTracker.trackMetric('text_length', value.length);
+      }
+    } catch (error) {
+      console.warn('Performance metrics tracking failed:', error);
+    }
   }, [value.length, performanceTracker]);
   
-  // Track typing performance
-  const lastInputTimeRef = useRef(Date.now());
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const now = Date.now();
-    const inputDelay = now - lastInputTimeRef.current;
-    lastInputTimeRef.current = now;
-    
-    // Track input lag if it's significant
-    if (inputDelay > 50) {
-      performanceTracker.trackMetric('input_lag', inputDelay);
-    }
-    
-    // Track if this is a paste action
-    const newValue = e.target.value;
-    if (onChange.length > 1) {
-      (onChange as (value: string, isPasteAction?: boolean) => void)(newValue, isPasteInProgress);
-    } else {
-      onChange(newValue);
-    }
-  }, [onChange, isPasteInProgress, performanceTracker]);
 
-  const handlePaste = usePerformanceAwareHandler(async (e: React.ClipboardEvent) => {
+  const handlePaste = useCallback(async (e: React.ClipboardEvent) => {
     const items = Array.from(e.clipboardData.items);
     const imageItem = items.find(item => item.type.startsWith('image/'));
     const textItem = items.find(item => item.type.startsWith('text/'));
@@ -169,9 +163,9 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
       }
     }
     // Regular text paste will be handled by the onChange handler with isPasteInProgress flag
-  }, 'paste_operation', performanceTracker);
+  }, [performanceTracker, isPasteInProgress, extractTextFromImage, value, onChange]);
 
-  const handleDrop = usePerformanceAwareHandler(async (e: React.DragEvent) => {
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
     e.preventDefault();
     
     const files = Array.from(e.dataTransfer.files);
@@ -199,7 +193,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         performanceTracker.trackMetric('drop_ocr_error', { error: error.message });
       }
     }
-  }, 'drop_operation', performanceTracker);
+  }, [performanceTracker, extractTextFromImage, value, onChange]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

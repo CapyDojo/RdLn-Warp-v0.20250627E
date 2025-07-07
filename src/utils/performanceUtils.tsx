@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { PerformanceMonitor } from '../services/PerformanceMonitor';
-import { usePerformanceMonitor } from '../hooks/usePerformanceMonitor';
+import { usePerformanceMonitor, useInteractionTracking } from '../hooks/usePerformanceMonitor';
 import { BaseComponentProps } from '../types/components';
 import { appConfig } from '../config/appConfig';
 
@@ -43,7 +43,7 @@ export function extractPerformanceConfig(
   defaultCategory?: string
 ): ComponentPerformanceConfig {
   const performance = props.performance;
-  const isDevelopment = appConfig.environment.isDevelopment;
+  const isDevelopment = appConfig.env.IS_DEVELOPMENT;
   
   return {
     componentName,
@@ -74,6 +74,8 @@ export function useComponentPerformance(
     sampleRate: mergedConfig.sampleRate
   });
 
+  const interactionTracker = useInteractionTracking(mergedConfig.componentName);
+
   const renderCountRef = useRef(0);
   const lastRenderTimeRef = useRef(performance.now());
 
@@ -84,8 +86,10 @@ export function useComponentPerformance(
       const renderTime = now - lastRenderTimeRef.current;
       renderCountRef.current += 1;
       
-      monitor.trackMetric('render_time', renderTime);
-      monitor.trackMetric('render_count', renderCountRef.current);
+      monitor.recordMetric('render_time', renderTime, {
+        componentName: mergedConfig.componentName,
+        renderCount: renderCountRef.current
+      });
       
       lastRenderTimeRef.current = now;
     }
@@ -97,44 +101,85 @@ export function useComponentPerformance(
     const now = performance.now();
     const renderTime = now - lastRenderTimeRef.current;
     
-    monitor.trackMetric(`render_${renderType}`, renderTime);
+    monitor.recordMetric(`render_${renderType}`, renderTime, {
+      componentName: mergedConfig.componentName,
+      renderType
+    });
     lastRenderTimeRef.current = now;
-  }, [monitor, mergedConfig.enabled]);
+  }, [monitor, mergedConfig.enabled, mergedConfig.componentName]);
 
   const trackInteraction = useCallback((interactionType: string, data?: Record<string, any>) => {
     if (!mergedConfig.enabled) return;
     
-    monitor.trackInteraction(interactionType, {
-      componentName: mergedConfig.componentName,
-      ...data
-    });
-  }, [monitor, mergedConfig.enabled, mergedConfig.componentName]);
+    const finishTracking = interactionTracker.trackInteraction(
+      interactionType as any,
+      'component',
+      {
+        componentName: mergedConfig.componentName,
+        ...data
+      }
+    );
+    
+    // Complete the interaction tracking immediately
+    finishTracking(data);
+  }, [interactionTracker, mergedConfig.enabled, mergedConfig.componentName]);
 
   const trackOperation = useCallback((operationName: string, operation: () => any | Promise<any>): Promise<any> => {
     if (!mergedConfig.enabled) {
       return Promise.resolve(operation());
     }
     
-    return monitor.trackOperation(operationName, operation);
-  }, [monitor, mergedConfig.enabled]);
+    return monitor.timeFunction(
+      operationName,
+      operation,
+      {
+        componentName: mergedConfig.componentName
+      }
+    );
+  }, [monitor, mergedConfig.enabled, mergedConfig.componentName]);
 
   const trackMetric = useCallback((metricName: string, value: number | Record<string, any>) => {
     if (!mergedConfig.enabled) return;
     
-    monitor.trackMetric(metricName, value);
-  }, [monitor, mergedConfig.enabled]);
+    // Handle different value types
+    if (typeof value === 'number') {
+      // Direct numeric value
+      monitor.recordMetric(
+        metricName,
+        value,
+        {
+          componentName: mergedConfig.componentName
+        }
+      );
+    } else if (typeof value === 'object' && value !== null) {
+      // Object value - use current timestamp and pass object as metadata
+      monitor.recordMetric(
+        metricName,
+        performance.now(),
+        {
+          componentName: mergedConfig.componentName,
+          ...value
+        }
+      );
+    } else {
+      // Fallback for other types
+      monitor.recordMetric(
+        metricName,
+        1,
+        {
+          componentName: mergedConfig.componentName,
+          value
+        }
+      );
+    }
+  }, [monitor, mergedConfig.enabled, mergedConfig.componentName]);
 
   const startTiming = useCallback((operationName: string) => {
     if (!mergedConfig.enabled) {
       return () => {}; // No-op function
     }
     
-    const startTime = performance.now();
-    
-    return () => {
-      const duration = performance.now() - startTime;
-      monitor.trackMetric(`${operationName}_duration`, duration);
-    };
+    return monitor.startTiming(operationName);
   }, [monitor, mergedConfig.enabled]);
 
   return {

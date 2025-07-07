@@ -220,14 +220,18 @@ export const useComparison = () => {
     // SSMR STEP-BY-STEP: Start performance tracking for the entire comparison operation
     const operationId = `comparison_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
-    // Track operation start with context
-    performanceMonitor.trackMetric('comparison_started', {
-      operationId,
-      isAutoCompare,
-      preserveFocus,
-      hasOverrides: !!(overrideOriginal || overrideRevised),
-      timestamp: Date.now()
-    });
+    // Track operation start with context (safe fallback)
+    try {
+      performanceMonitor?.trackMetric?.('comparison_started', {
+        operationId,
+        isAutoCompare,
+        preserveFocus,
+        hasOverrides: !!(overrideOriginal || overrideRevised),
+        timestamp: Date.now()
+      });
+    } catch (error) {
+      console.warn('Performance tracking failed:', error);
+    }
 
     // System resource guardrails - only check if protection is enabled
     if (systemProtectionEnabled) {
@@ -235,20 +239,28 @@ export const useComparison = () => {
       if (!systemCheck.canProceed) {
         console.warn('🚨 System resource guardrail triggered:', systemCheck.reason);
         
-        // Track system protection triggered
-        performanceMonitor.trackMetric('system_protection_triggered', {
-          operationId,
-          reason: systemCheck.reason,
-          originalLength: (overrideOriginal ?? state.originalText).length,
-          revisedLength: (overrideRevised ?? state.revisedText).length
-        });
+        // Track system protection triggered (safe fallback)
+        try {
+          performanceMonitor?.trackMetric?.('system_protection_triggered', {
+            operationId,
+            reason: systemCheck.reason,
+            originalLength: (overrideOriginal ?? state.originalText).length,
+            revisedLength: (overrideRevised ?? state.revisedText).length
+          });
+        } catch (error) {
+          console.warn('Performance tracking failed:', error);
+        }
         
         setState(prev => ({ ...prev, error: `System protection: ${systemCheck.reason}` }));
         return;
       }
     } else {
       console.log('🔥 System protection disabled - allowing unrestricted processing for stress testing');
-      performanceMonitor.trackMetric('system_protection_disabled', { operationId });
+      try {
+        performanceMonitor?.trackMetric?.('system_protection_disabled', { operationId });
+      } catch (error) {
+        console.warn('Performance tracking failed:', error);
+      }
     }
     
     // Prevent concurrent operations
@@ -379,32 +391,52 @@ export const useComparison = () => {
         // });
       
       
-      // SSMR MODULAR: Wrap algorithm execution with performance tracking
-      const result = await performanceMonitor.trackOperation('myers_algorithm_execution', async () => {
-        // Track input characteristics for performance analysis
-        performanceMonitor.trackMetric('algorithm_input_metrics', {
-          operationId,
-          originalLength: actualOriginal.length,
-          revisedLength: actualRevised.length,
-          totalLength: actualOriginal.length + actualRevised.length,
-          estimatedComplexity: Math.min(actualOriginal.length, actualRevised.length)
-        });
-        
-        // Execute the actual algorithm
-        const algorithmResult = await MyersAlgorithm.compare(actualOriginal, actualRevised, progressCallback);
-        
-        // Track algorithm result characteristics
-        if (algorithmResult) {
-          performanceMonitor.trackMetric('algorithm_result_metrics', {
-            operationId,
-            changesCount: algorithmResult.changes?.length || 0,
-            hasStats: !!algorithmResult.stats,
-            resultSize: JSON.stringify(algorithmResult).length
-          });
+      // SSMR MODULAR: Wrap algorithm execution with performance tracking (safe fallback)
+      const result = await (async () => {
+        try {
+          if (performanceMonitor?.trackOperation) {
+            return await performanceMonitor.trackOperation('myers_algorithm_execution', async () => {
+              // Track input characteristics for performance analysis
+              try {
+                performanceMonitor?.trackMetric?.('algorithm_input_metrics', {
+                  operationId,
+                  originalLength: actualOriginal.length,
+                  revisedLength: actualRevised.length,
+                  totalLength: actualOriginal.length + actualRevised.length,
+                  estimatedComplexity: Math.min(actualOriginal.length, actualRevised.length)
+                });
+              } catch (error) {
+                console.warn('Performance tracking failed:', error);
+              }
+              
+              // Execute the actual algorithm
+              const algorithmResult = await MyersAlgorithm.compare(actualOriginal, actualRevised, progressCallback);
+              
+              // Track algorithm result characteristics
+              if (algorithmResult) {
+                try {
+                  performanceMonitor?.trackMetric?.('algorithm_result_metrics', {
+                    operationId,
+                    changesCount: algorithmResult.changes?.length || 0,
+                    hasStats: !!algorithmResult.stats,
+                    resultSize: JSON.stringify(algorithmResult).length
+                  });
+                } catch (error) {
+                  console.warn('Performance tracking failed:', error);
+                }
+              }
+              
+              return algorithmResult;
+            });
+          } else {
+            // Fallback: execute algorithm without performance tracking
+            return await MyersAlgorithm.compare(actualOriginal, actualRevised, progressCallback);
+          }
+        } catch (error) {
+          console.warn('Performance tracking wrapper failed, falling back to direct execution:', error);
+          return await MyersAlgorithm.compare(actualOriginal, actualRevised, progressCallback);
         }
-        
-        return algorithmResult;
-      });
+      })();
         // console.log('✅ MyersAlgorithm.compare completed, result:', result);
         // console.log('🔍 Result structure:', {
         //   hasResult: !!result,
@@ -488,14 +520,18 @@ export const useComparison = () => {
         restoreFocus();
       }
       
-      // SSMR REVERSIBLE: Track successful completion with comprehensive metrics
-      performanceMonitor.trackMetric('comparison_completed_success', {
-        operationId,
-        isAutoCompare,
-        resultChangesCount: result?.changes?.length || 0,
-        memoryUsage: (performance as any)?.memory?.usedJSHeapSize || 0,
-        timestamp: Date.now()
-      });
+      // SSMR REVERSIBLE: Track successful completion with comprehensive metrics (safe fallback)
+      try {
+        performanceMonitor?.trackMetric?.('comparison_completed_success', {
+          operationId,
+          isAutoCompare,
+          resultChangesCount: result?.changes?.length || 0,
+          memoryUsage: (performance as any)?.memory?.usedJSHeapSize || 0,
+          timestamp: Date.now()
+        });
+      } catch (error) {
+        console.warn('Performance tracking failed:', error);
+      }
       
       // SSMR: Clear global signal on successful completion
       (globalThis as any).currentAbortSignal = null;
@@ -566,26 +602,51 @@ export const useComparison = () => {
         };
       }
       
-      // SSMR: Track error with performance context for correlation
-      performanceMonitor.trackMetric('comparison_error', {
-        operationId,
-        errorCategory: appError.category,
-        errorMessage: appError.message,
-        isAutoCompare,
-        originalLength: actualOriginal.length,
-        revisedLength: actualRevised.length,
-        memoryUsage: (performance as any)?.memory?.usedJSHeapSize || 0,
-        timestamp: Date.now()
-      });
+      // SSMR: Track error with performance context for correlation (safe fallback)
+      try {
+        performanceMonitor?.trackMetric?.('comparison_error', {
+          operationId,
+          errorCategory: appError.category,
+          errorMessage: appError.message,
+          isAutoCompare,
+          originalLength: actualOriginal.length,
+          revisedLength: actualRevised.length,
+          memoryUsage: (performance as any)?.memory?.usedJSHeapSize || 0,
+          timestamp: Date.now()
+        });
+      } catch (error) {
+        console.warn('Performance tracking failed:', error);
+      }
       
-      // Log to centralized error manager with performance context
+      // Log to centralized error manager with performance context (safe fallback)
       const performanceContext = {
-        recentMetrics: performanceMonitor.getRecentMetrics?.() || [],
+        recentMetrics: (() => {
+          try {
+            return performanceMonitor?.getRecentMetrics?.() || [];
+          } catch (error) {
+            console.warn('Performance metrics retrieval failed:', error);
+            return [];
+          }
+        })(),
         memoryUsage: (performance as any)?.memory?.usedJSHeapSize || 0,
         operationId,
         componentMetrics: {
-          inputLag: performanceMonitor.getLastMetricValue?.('input_lag'),
-          renderTime: performanceMonitor.getLastMetricValue?.('render_time')
+          inputLag: (() => {
+            try {
+              return performanceMonitor?.getLastMetricValue?.('input_lag');
+            } catch (error) {
+              console.warn('Performance metric retrieval failed:', error);
+              return undefined;
+            }
+          })(),
+          renderTime: (() => {
+            try {
+              return performanceMonitor?.getLastMetricValue?.('render_time');
+            } catch (error) {
+              console.warn('Performance metric retrieval failed:', error);
+              return undefined;
+            }
+          })()
         }
       };
       
@@ -679,13 +740,18 @@ export const useComparison = () => {
   }, [compareDocuments, quickCompareEnabled]);
 
   const setOriginalText = useCallback((text: string, isPasteAction = false) => {
-    // SSMR: Track text input performance for responsiveness monitoring
-    performanceMonitor.trackMetric('text_input_original', {
-      textLength: text.length,
-      isPasteAction,
-      quickCompareEnabled,
-      timestamp: Date.now()
-    });
+    // SSMR: Track text input performance for responsiveness monitoring (safe fallback)
+    try {
+      performanceMonitor?.trackMetric?.('text_input_original', {
+        textLength: text.length,
+        isPasteAction,
+        quickCompareEnabled,
+        timestamp: Date.now()
+      });
+    } catch (error) {
+      // Silently ignore performance tracking errors to not break core functionality
+      console.warn('Performance tracking failed:', error);
+    }
     
     console.log('📝 setOriginalText called:', { textLength: text.length, isPasteAction, quickCompareEnabled });
     console.log('📝 setOriginalText - text preview:', text.substring(0, 100));
@@ -716,13 +782,18 @@ export const useComparison = () => {
   }, [quickCompareEnabled, triggerAutoCompare]);
 
   const setRevisedText = useCallback((text: string, isPasteAction = false) => {
-    // SSMR: Track text input performance for responsiveness monitoring
-    performanceMonitor.trackMetric('text_input_revised', {
-      textLength: text.length,
-      isPasteAction,
-      quickCompareEnabled,
-      timestamp: Date.now()
-    });
+    // SSMR: Track text input performance for responsiveness monitoring (safe fallback)
+    try {
+      performanceMonitor?.trackMetric?.('text_input_revised', {
+        textLength: text.length,
+        isPasteAction,
+        quickCompareEnabled,
+        timestamp: Date.now()
+      });
+    } catch (error) {
+      // Silently ignore performance tracking errors to not break core functionality
+      console.warn('Performance tracking failed:', error);
+    }
     
     console.log('📝 setRevisedText called:', { textLength: text.length, isPasteAction, quickCompareEnabled });
     console.log('📝 setRevisedText - text preview:', text.substring(0, 100));

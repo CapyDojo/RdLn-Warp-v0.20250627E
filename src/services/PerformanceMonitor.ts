@@ -340,8 +340,8 @@ export class PerformanceMonitor {
 
   private createConfig(userConfig?: Partial<PerformanceConfig>): PerformanceConfig {
     const defaultConfig: PerformanceConfig = {
-      level: appConfig.development.isDevelopment ? 'comprehensive' : 'standard',
-      samplingRate: appConfig.development.isDevelopment ? 1.0 : 0.1,
+      level: appConfig.env.IS_DEVELOPMENT ? 'comprehensive' : 'standard',
+      samplingRate: appConfig.env.IS_DEVELOPMENT ? 1.0 : 0.1,
       bufferSize: 1000,
       flushInterval: 60000, // 1 minute
       thresholds: {
@@ -349,7 +349,7 @@ export class PerformanceMonitor {
         errorRate: 5, // 5%
         memoryUsage: 100 * 1024 * 1024 // 100MB
       },
-      anonymizeData: !appConfig.development.isDevelopment,
+      anonymizeData: !appConfig.env.IS_DEVELOPMENT,
       optOutAvailable: true
     };
 
@@ -429,7 +429,7 @@ export class PerformanceMonitor {
   ): void {
     try {
       // In development, log to console
-      if (appConfig.development.isDevelopment) {
+      if (appConfig.env.IS_DEVELOPMENT) {
         console.warn(`Performance Alert [${threshold.severity}]:`, message, metric);
       }
 

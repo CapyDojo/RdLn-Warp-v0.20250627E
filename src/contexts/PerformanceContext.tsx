@@ -41,8 +41,8 @@ type PerformanceAction =
 const initialState: PerformanceMonitoringState = {
   isEnabled: true,
   config: {
-    level: appConfig.development.isDevelopment ? 'comprehensive' : 'standard',
-    samplingRate: appConfig.development.isDevelopment ? 1.0 : 0.1,
+    level: appConfig.env.IS_DEVELOPMENT ? 'comprehensive' : 'standard',
+    samplingRate: appConfig.env.IS_DEVELOPMENT ? 1.0 : 0.1,
     bufferSize: 1000,
     flushInterval: 60000,
     thresholds: {
@@ -50,7 +50,7 @@ const initialState: PerformanceMonitoringState = {
       errorRate: 5,
       memoryUsage: 100 * 1024 * 1024
     },
-    anonymizeData: !appConfig.development.isDevelopment,
+    anonymizeData: !appConfig.env.IS_DEVELOPMENT,
     optOutAvailable: true
   },
   alerts: [],
@@ -136,7 +136,7 @@ interface PerformanceProviderProps {
 export function PerformanceProvider({
   children,
   initialConfig = {},
-  enableDevTools = appConfig.development.isDevelopment
+  enableDevTools = appConfig.env.IS_DEVELOPMENT
 }: PerformanceProviderProps) {
   const [state, dispatch] = useReducer(performanceReducer, {
     ...initialState,
@@ -290,7 +290,7 @@ export function PerformanceProvider({
 
   // Development tools integration
   useEffect(() => {
-    if (!enableDevTools || !appConfig.development.isDevelopment) return;
+    if (!enableDevTools || !appConfig.env.IS_DEVELOPMENT) return;
 
     // Expose performance tools to global scope for debugging
     (window as any).__PERFORMANCE_MONITOR__ = {

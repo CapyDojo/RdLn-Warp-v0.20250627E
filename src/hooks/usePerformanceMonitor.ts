@@ -356,7 +356,7 @@ export function useInteractionTracking(componentName: string = 'Unknown') {
  * Hook for performance debugging in development mode
  */
 export function usePerformanceDebugger(componentName: string = 'Unknown') {
-  const isEnabled = appConfig.development.isDevelopment;
+  const isEnabled = appConfig.env.IS_DEVELOPMENT;
 
   useEffect(() => {
     if (!isEnabled) return;
