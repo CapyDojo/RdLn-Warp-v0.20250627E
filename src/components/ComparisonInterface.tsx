@@ -17,7 +17,7 @@ import { BackgroundLoadingStatus } from './BackgroundLoadingStatus';
 import { useResizeHandlers } from '../hooks/useResizeHandlers';
 import { useScrollSync } from '../hooks/useScrollSync';
 // Performance monitoring
-import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils';
+import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils.tsx';
 
 import { BaseComponentProps } from '../types/components';
 

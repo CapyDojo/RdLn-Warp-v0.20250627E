@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, Globe } from 'lucide-react';
 import { BaseComponentProps } from '../types/components';
-import { useComponentPerformance } from '../utils/performanceUtils';
+import { useComponentPerformance } from '../utils/performanceUtils.tsx';
 
 interface OCRFeatureCardProps extends BaseComponentProps {
   /** Whether to show the OCR feature card */

@@ -5,7 +5,7 @@ import { OCRLanguage } from '../types/ocr-types';
 import { LanguageSettingsDropdown } from './LanguageSettingsDropdown';
 import { useLayout } from '../contexts/LayoutContext';
 import { BaseComponentProps } from '../types/components';
-import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils';
+import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils.tsx';
 
 interface TextInputPanelProps extends BaseComponentProps {
   title: string;

@@ -3,7 +3,7 @@ import { Copy } from 'lucide-react';
 import { DiffChange } from '../types';
 import { BaseComponentProps } from '../types/components';
 import { UI_CONFIG } from '../config/appConfig';
-import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils';
+import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils.tsx';
 
 interface RedlineOutputProps extends BaseComponentProps {
   changes: DiffChange[];

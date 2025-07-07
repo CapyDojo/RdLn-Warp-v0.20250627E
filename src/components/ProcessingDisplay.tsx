@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BaseComponentProps } from '../types/components';
-import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils';
+import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils.tsx';
 
 interface ProcessingDisplayProps extends BaseComponentProps {
   /** Chunking progress state */
