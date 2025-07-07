@@ -21,12 +21,6 @@ const checkSystemResources = (originalText: string, revisedText: string) => {
   const memoryInfo = (performance as any)?.memory;
   const availableMemory = memoryInfo ? memoryInfo.jsHeapSizeLimit - memoryInfo.usedJSHeapSize : null;
   
-  // console.log('🔍 System resource check:', {
-  //   totalLength,
-  //   estimatedChanges,
-  //   availableMemory: availableMemory ? `${(availableMemory / 1024 / 1024).toFixed(1)}MB` : 'unknown',
-  //   usedMemory: memoryInfo ? `${(memoryInfo.usedJSHeapSize / 1024 / 1024).toFixed(1)}MB` : 'unknown'
-  // });
   
   // Use centralized system configuration for consistent resource protection
   const { LIMITS } = SYSTEM_CONFIG;
@@ -161,11 +155,9 @@ export const useComparison = () => {
   const cancelComparison = useCallback(() => {
     // Check if there's any processing to cancel
     if (!state.isProcessing && !isCancelling) {
-      // console.log('⚠️ No active operation to cancel');
       return;
     }
     
-    // console.log('🚫 Cancelling comparison operation...');
     setIsCancelling(true);
     
     // Cancel any AbortController
@@ -212,7 +204,6 @@ export const useComparison = () => {
     // Reset cancelling state after a brief delay to show feedback
     setTimeout(() => {
       setIsCancelling(false);
-      // console.log('✅ Cancellation completed');
     }, UI_CONFIG.ANIMATION.CANCELLATION_FEEDBACK_DELAY);
   }, [state.isProcessing, isCancelling]);
 
@@ -255,7 +246,7 @@ export const useComparison = () => {
         return;
       }
     } else {
-      console.log('🔥 System protection disabled - allowing unrestricted processing for stress testing');
+console.warn('🔥 System protection disabled - allowing unrestricted processing for stress testing');
       try {
         performanceMonitor?.trackMetric?.('system_protection_disabled', { operationId });
       } catch (error) {
@@ -265,13 +256,12 @@ export const useComparison = () => {
     
     // Prevent concurrent operations
     if (isAutoCompare && manualOperationRef.current) {
-      console.log('⚠️ Auto-compare blocked - manual operation in progress');
+console.warn('⚠️ Auto-compare blocked - manual operation in progress');
       return;
     }
     
     // Additional safety check for processing state
     if (state.isProcessing && !abortControllerRef.current) {
-      // console.log('⚠️ Operation blocked - processing state inconsistent');
       return;
     }
     
@@ -285,37 +275,15 @@ export const useComparison = () => {
     // Set manual operation flag if overrides are provided
     if (overrideOriginal || overrideRevised) {
       manualOperationRef.current = true;
-      // console.log('🔒 Manual operation started - blocking auto-compare');
     }
     // PHASE 1 DEBUG: Track duplicate calls
     const callId = Math.random().toString(36).substr(2, 9);
-    // console.log(`🔍 CALL START [${callId}] compareDocuments called:`, {
-    //   isAutoCompare,
-    //   preserveFocus,
-    //   originalLength: state.originalText.length,
-    //   revisedLength: state.revisedText.length,
-    //   timestamp: new Date().toISOString()
-    // });
     
     // Use override texts if provided, otherwise use state
     const actualOriginal = overrideOriginal ?? state.originalText;
     const actualRevised = overrideRevised ?? state.revisedText;
     
     // DEBUG: Critical state validation at start of comparison
-    // console.log('🚨 CRITICAL STATE DEBUG at compareDocuments start:', {
-    //   stateOriginalLength: state.originalText.length,
-    //   stateRevisedLength: state.revisedText.length,
-    //   actualOriginalLength: actualOriginal.length,
-    //   actualRevisedLength: actualRevised.length,
-    //   overrideOriginal: !!overrideOriginal,
-    //   overrideRevised: !!overrideRevised,
-    //   stateOriginalFirst100: state.originalText.substring(0, 100),
-    //   stateRevisedFirst100: state.revisedText.substring(0, 100),
-    //   actualOriginalFirst100: actualOriginal.substring(0, 100),
-    //   actualRevisedFirst100: actualRevised.substring(0, 100),
-    //   stateExists: !!state,
-    //   stateKeys: Object.keys(state)
-    // });
     
     // Capture current focus before comparison
     if (preserveFocus) {
@@ -349,14 +317,14 @@ export const useComparison = () => {
       // MODULAR: Define callback to avoid closure issues
       let progressTrackingEnabled = false;
       const progressCallback = (progress: number, stage: string) => {
-        console.log(`🔄 CHUNKING PROGRESS: ${progress}% - ${stage}`); // Debug log
+console.debug(`🔄 CHUNKING PROGRESS: ${progress}% - ${stage}`);
         // First call enables tracking (algorithm decided it needs progress)
         if (!progressTrackingEnabled) {
           progressTrackingEnabled = true;
-          console.log('🎯 Progress tracking enabled by algorithm');
+console.info('🎯 Progress tracking enabled by algorithm');
         }
         setChunkingProgress(prev => {
-          console.log('🎯 Progress callback setState called:', { progress, stage, prevEnabled: prev.enabled });
+console.debug('🎯 Progress callback setState:', { progress, stage, prevEnabled: prev.enabled });
           const newState = {
             ...prev,
             progress,
@@ -364,31 +332,14 @@ export const useComparison = () => {
             isChunking: progress > 0 && progress < 100,
             enabled: true // Enable when algorithm actually uses progress
           };
-        // console.log('🚀 Updating chunking progress state:', newState);
           return newState;
         });
       };
       
-        // console.log('🧪 Starting comparison with progressCallback:', !!progressCallback); // Debug log
-        // console.log('🔍 About to call MyersAlgorithm.compare with args:', {
-        //   originalLength: state.originalText.length,
-        //   revisedLength: state.revisedText.length,
-        //   hasProgressCallback: !!progressCallback
-        // });
       
       // PRIORITY 3A: Handle async MyersAlgorithm.compare for streaming support
-        // console.log('🔬 About to call async MyersAlgorithm.compare...'); // Debug log
       
       // DEBUG: Log the exact texts being compared
-        // console.log('🔍 USECOMPARISON DEBUG - Texts being passed to algorithm:', {
-        //   originalLength: actualOriginal.length,
-        //   revisedLength: actualRevised.length,
-        //   originalFirst50: actualOriginal.substring(0, 50),
-        //   revisedFirst50: actualRevised.substring(0, 50),
-        //   originalLast50: actualOriginal.substring(Math.max(0, actualOriginal.length - 50)),
-        //   revisedLast50: actualRevised.substring(Math.max(0, actualRevised.length - 50)),
-        //   areTextsIdentical: actualOriginal === actualRevised
-        // });
       
       
       // SSMR MODULAR: Wrap algorithm execution with performance tracking (safe fallback)
@@ -437,26 +388,12 @@ export const useComparison = () => {
           return await MyersAlgorithm.compare(actualOriginal, actualRevised, progressCallback);
         }
       })();
-        // console.log('✅ MyersAlgorithm.compare completed, result:', result);
-        // console.log('🔍 Result structure:', {
-        //   hasResult: !!result,
-        //   hasChanges: !!(result?.changes),
-        //   changesLength: result?.changes?.length,
-        //   hasStats: !!(result?.stats),
-        //   resultKeys: result ? Object.keys(result) : 'no result',
-        //   fullResult: result
-        // });
       
       // CRITICAL: Test if result is valid for UI
       if (result && result.changes && result.changes.length > 0) {
-        // console.log('✅ RESULT IS VALID FOR UI - has changes:', result.changes.length);
-        // console.log('✅ First few changes:', result.changes.slice(0, 3));
+        // Valid result with changes
       } else {
-        // console.log('❌ RESULT IS NOT VALID FOR UI:', {
-        //   hasResult: !!result,
-        //   hasChanges: !!(result?.changes),
-        //   changesLength: result?.changes?.length
-        // });
+        console.warn('Empty or invalid comparison result');
       }
       
       // 🎯 CRITICAL PERFORMANCE LOGGING FOR STATE UPDATE THAT CAUSES LAG
