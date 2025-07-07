@@ -109,43 +109,19 @@ export function setupPerformanceDebugUtils(): void {
     }
   };
 
-  // Keyboard shortcuts
-  setupKeyboardShortcuts();
+  // Note: Keyboard shortcuts removed due to browser conflicts
+  // All functionality is now available via clickable buttons in Developer Mode Card
 }
 
 /**
- * Setup keyboard shortcuts for performance debugging
+ * Keyboard shortcuts removed due to browser conflicts
+ * All functionality is now available via clickable buttons in the Developer Mode Card:
+ * - Console Report: Shows detailed performance analysis
+ * - Console Metrics: Displays current performance data  
+ * - Clear Data: Resets performance collection
+ * - Export JSON: Downloads performance report
+ * - Status Check: Shows monitor status
  */
-function setupKeyboardShortcuts(): void {
-  document.addEventListener('keydown', (event) => {
-    // Ctrl+Shift+P: Toggle performance debug panel
-    if (event.ctrlKey && event.shiftKey && event.key === 'P') {
-      event.preventDefault();
-      const currentState = localStorage.getItem('performance-debug-visible') === 'true';
-      localStorage.setItem('performance-debug-visible', (!currentState).toString());
-      console.log(`🔧 Performance debug panel ${!currentState ? 'enabled' : 'disabled'}`);
-      window.location.reload(); // Refresh to apply changes
-    }
-
-    // Ctrl+Shift+R: Show performance report in console
-    if (event.ctrlKey && event.shiftKey && event.key === 'R') {
-      event.preventDefault();
-      window.showPerfReport();
-    }
-
-    // Ctrl+Shift+M: Show current metrics in console
-    if (event.ctrlKey && event.shiftKey && event.key === 'M') {
-      event.preventDefault();
-      window.showPerfMetrics();
-    }
-
-    // Ctrl+Shift+C: Clear performance data
-    if (event.ctrlKey && event.shiftKey && event.key === 'C') {
-      event.preventDefault();
-      window.clearPerfData();
-    }
-  });
-}
 
 /**
  * Format performance data for easy reading

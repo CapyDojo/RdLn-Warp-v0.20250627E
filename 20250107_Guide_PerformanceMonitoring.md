@@ -15,16 +15,20 @@ When you run the app in development mode, you'll see a "Performance Monitoring" 
 │ 🔧 Developer Mode                       │
 ├─────────────────────────────────────────┤
 │ 📊 Performance Monitoring               │
-│ [Monitoring ON ] [Debug Panel OFF] [Show Report] │
-│ 📊 Ctrl+Shift+R Report  📈 Ctrl+Shift+M Metrics │
-│ 🔧 Ctrl+Shift+P Panel   🗑️ Ctrl+Shift+C Clear   │
+│ [Monitoring ON] [Debug Panel OFF] [Console Report] [Console Metrics] │
+│ [Clear Data] [Export JSON] [Status Check]          │
+│ 📊 Console Report - Detailed analysis  📈 Console Metrics - Current data │
 └─────────────────────────────────────────┘
 ```
 
 **Controls:**
 - **Monitoring ON/OFF**: Toggle data collection
 - **Debug Panel ON/OFF**: Show/hide floating performance panel
-- **Show Report**: Instantly display performance data in console
+- **Console Report**: Instantly display performance data in console
+- **Console Metrics**: Show current performance metrics
+- **Clear Data**: Reset all collected performance data
+- **Export JSON**: Download performance report as JSON file
+- **Status Check**: Show current monitor status
 
 ### 2. **Floating Debug Panel** (Real-time View)
 
@@ -91,14 +95,15 @@ disablePerfDebug()
 └──────────────────────────┴─────────┴─────────┴───────┘
 ```
 
-### 4. **Keyboard Shortcuts** (Power User)
+### 4. **Clickable Buttons** (Easy Access)
 
-Once monitoring is active, these shortcuts work anywhere in the app:
+All performance monitoring functions are available as buttons in the Developer Mode Card:
 
-- **`Ctrl+Shift+R`** - Show performance report in console
-- **`Ctrl+Shift+M`** - Show current metrics in console  
-- **`Ctrl+Shift+P`** - Toggle debug panel on/off
-- **`Ctrl+Shift+C`** - Clear all performance data
+- **Console Report** - Show performance report in console
+- **Console Metrics** - Show current metrics in console  
+- **Clear Data** - Clear all performance data
+- **Export JSON** - Download performance report as file
+- **Status Check** - Show monitor status
 
 ## What You'll See in Real Usage
 

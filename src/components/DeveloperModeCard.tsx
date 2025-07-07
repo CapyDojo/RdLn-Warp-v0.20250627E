@@ -169,7 +169,7 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
             <Activity className="w-4 h-4" />
             Performance Monitoring
           </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
             <button
               onClick={handleTogglePerfMonitoring}
               className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
@@ -201,6 +201,7 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
                 try {
                   if (window.showPerfReport) {
                     window.showPerfReport(60000); // Last minute
+                    console.log('📊 Performance report displayed in console above');
                   } else {
                     console.warn('Performance utilities not available. Enable monitoring first.');
                   }
@@ -209,20 +210,124 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
                 }
               }}
               className="px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 bg-purple-200 text-purple-700 hover:bg-purple-300"
-              title="Show performance report in console (Ctrl+Shift+R)"
+              title="Show performance report in console"
             >
               <Activity className="w-3 h-3" />
-              Show Report
+              Console Report
+            </button>
+            
+            <button
+              onClick={() => {
+                try {
+                  if (window.showPerfMetrics) {
+                    window.showPerfMetrics(); // All categories
+                    console.log('📈 Performance metrics displayed in console above');
+                  } else {
+                    console.warn('Performance utilities not available. Enable monitoring first.');
+                  }
+                } catch (error) {
+                  console.warn('Failed to show performance metrics:', error);
+                }
+              }}
+              className="px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 bg-indigo-200 text-indigo-700 hover:bg-indigo-300"
+              title="Show current performance metrics in console"
+            >
+              <BarChart3 className="w-3 h-3" />
+              Console Metrics
             </button>
           </div>
           
-          {/* Performance Shortcuts Info */}
+          {/* Additional Performance Actions */}
+          <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <button
+              onClick={() => {
+                try {
+                  if (window.clearPerfData) {
+                    window.clearPerfData();
+                    console.log('🗑️ Performance data cleared');
+                  } else {
+                    console.warn('Performance utilities not available.');
+                  }
+                } catch (error) {
+                  console.warn('Failed to clear performance data:', error);
+                }
+              }}
+              className="px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 bg-red-200 text-red-700 hover:bg-red-300"
+              title="Clear all collected performance data"
+            >
+              <Activity className="w-3 h-3" />
+              Clear Data
+            </button>
+            
+            <button
+              onClick={() => {
+                try {
+                  const monitor = window.performanceMonitor;
+                  if (monitor) {
+                    const report = monitor.getPerformanceReport(300000); // Last 5 minutes
+                    const data = JSON.stringify(report, null, 2);
+                    const blob = new Blob([data], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `performance-report-${new Date().toISOString().slice(0, 19)}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    console.log('📁 Performance report downloaded as JSON');
+                  } else {
+                    console.warn('Performance monitor not available.');
+                  }
+                } catch (error) {
+                  console.warn('Failed to export performance data:', error);
+                }
+              }}
+              className="px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 bg-teal-200 text-teal-700 hover:bg-teal-300"
+              title="Download performance data as JSON file"
+            >
+              <Activity className="w-3 h-3" />
+              Export JSON
+            </button>
+            
+            <button
+              onClick={() => {
+                try {
+                  const monitor = window.performanceMonitor;
+                  if (monitor) {
+                    // Get current performance status
+                    const report = monitor.getPerformanceReport(60000); // Last minute
+                    const status = {
+                      enabled: !!monitor,
+                      totalMetrics: report.summary?.totalMetrics || 0,
+                      categories: Object.keys(report.metricsByCategory || {}),
+                      lastUpdate: new Date().toLocaleTimeString()
+                    };
+                    console.group('🔍 Performance Monitor Status');
+                    console.table(status);
+                    console.groupEnd();
+                  } else {
+                    console.warn('Performance monitor not available.');
+                  }
+                } catch (error) {
+                  console.warn('Failed to get performance status:', error);
+                }
+              }}
+              className="px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 bg-gray-200 text-gray-700 hover:bg-gray-300"
+              title="Show performance monitor status"
+            >
+              <Monitor className="w-3 h-3" />
+              Status Check
+            </button>
+          </div>
+          
+          {/* Performance Actions Info */}
           <div className="mt-2 text-xs text-theme-neutral-600">
             <div className="flex flex-wrap gap-x-4 gap-y-1">
-              <span>📊 <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl+Shift+R</kbd> Report</span>
-              <span>📈 <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl+Shift+M</kbd> Metrics</span>
-              <span>🔧 <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl+Shift+P</kbd> Panel</span>
-              <span>🗑️ <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl+Shift+C</kbd> Clear</span>
+              <span>📊 <strong>Console Report</strong> - Detailed performance analysis</span>
+              <span>📈 <strong>Console Metrics</strong> - Current performance data</span>
+              <span>🗑️ <strong>Clear Data</strong> - Reset performance collection</span>
+              <span>📁 <strong>Export JSON</strong> - Download performance report</span>
             </div>
           </div>
         </div>
