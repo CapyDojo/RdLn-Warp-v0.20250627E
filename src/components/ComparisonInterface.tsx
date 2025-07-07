@@ -16,6 +16,8 @@ import { BackgroundLoadingStatus } from './BackgroundLoadingStatus';
 // Resize and scroll handlers
 import { useResizeHandlers } from '../hooks/useResizeHandlers';
 import { useScrollSync } from '../hooks/useScrollSync';
+// Performance monitoring
+import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils';
 
 import { BaseComponentProps } from '../types/components';
 
@@ -29,8 +31,14 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
   showPerformanceDemoCard = true,
   style,
   className,
+  ...props
 }) => {
-  
+  // Performance monitoring setup
+  const performanceTracker = useComponentPerformance(props, 'ComparisonInterface', {
+    category: 'comparison',
+    autoTrackRender: true,
+    autoTrackInteractions: true
+  });
   
   const {
     originalText,
@@ -64,6 +72,51 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
   
   // DEBUG: Immediate logging to verify component initialization
   console.log('🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked:', isScrollLocked);
+  
+  // Performance tracking for processing states
+  useEffect(() => {
+    if (isProcessing) {
+      performanceTracker.trackMetric('processing_started', {
+        timestamp: Date.now(),
+        inputSizes: {
+          original: originalText.length,
+          revised: revisedText.length
+        }
+      });
+    }
+  }, [isProcessing, originalText.length, revisedText.length, performanceTracker]);
+  
+  // Track comparison completion and results
+  useEffect(() => {
+    if (result && !isProcessing) {
+      performanceTracker.trackMetric('comparison_completed', {
+        timestamp: Date.now(),
+        resultSize: {
+          changes: result.changes?.length || 0,
+          totalCharacters: result.changes?.reduce((sum, change) => sum + (change.content?.length || 0), 0) || 0
+        },
+        chunkingEnabled: chunkingProgress.enabled
+      });
+    }
+  }, [result, isProcessing, chunkingProgress.enabled, performanceTracker]);
+  
+  // Track memory usage periodically during processing
+  useEffect(() => {
+    if (!isProcessing || !performanceTracker.isEnabled) return;
+    
+    const memoryInterval = setInterval(() => {
+      const memoryInfo = (performance as any)?.memory;
+      if (memoryInfo) {
+        performanceTracker.trackMetric('memory_usage', {
+          used: memoryInfo.usedJSHeapSize,
+          total: memoryInfo.totalJSHeapSize,
+          limit: memoryInfo.jsHeapSizeLimit
+        });
+      }
+    }, 1000); // Track every second during processing
+    
+    return () => clearInterval(memoryInterval);
+  }, [isProcessing, performanceTracker]);
   
   // SSMR STEP 6: Extracted scroll sync logic into custom hook
   const {
@@ -149,42 +202,62 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
   }, [compareDocuments, isProcessing, isCancelling, cancelComparison]);
 
-  const handleCopy = () => {
+  // Performance-aware handlers
+  const handleCopy = usePerformanceAwareHandler(() => {
     setCopySuccess(true);
     setTimeout(() => setCopySuccess(false), 2000);
-  };
+  }, 'copy_output', performanceTracker);
 
-  const handleLoadTest = (originalText: string, revisedText: string) => {
-    // SSMR: Clear inputs first to prevent persistence issues
-    setOriginalText('');
-    setRevisedText('');
-    
-    // Cancel any ongoing operations
-    if (isProcessing) {
-      cancelComparison();
-    }
-    
-    // Use setTimeout to ensure state is cleared before loading new content
-    setTimeout(() => {
-      setOriginalText(originalText);
-      setRevisedText(revisedText);
+  const handleLoadTest = usePerformanceAwareHandler(async (originalText: string, revisedText: string) => {
+    // Track load test operation
+    await performanceTracker.trackOperation('load_test', async () => {
+      // SSMR: Clear inputs first to prevent persistence issues
+      setOriginalText('');
+      setRevisedText('');
       
-      // Auto-compare if enabled - use manual operation flag to ensure cancellation works
-      if (quickCompareEnabled) {
-        setTimeout(() => {
-          compareDocuments(false, true, originalText, revisedText);
-        }, 200);
+      // Cancel any ongoing operations
+      if (isProcessing) {
+        cancelComparison();
       }
-    }, 100);
-  };
+      
+      // Use setTimeout to ensure state is cleared before loading new content
+      await new Promise(resolve => {
+        setTimeout(() => {
+          setOriginalText(originalText);
+          setRevisedText(revisedText);
+          
+          // Auto-compare if enabled - use manual operation flag to ensure cancellation works
+          if (quickCompareEnabled) {
+            setTimeout(() => {
+              compareDocuments(false, true, originalText, revisedText);
+            }, 200);
+          }
+          resolve(undefined);
+        }, 100);
+      });
+      
+      // Track metrics
+      performanceTracker.trackMetric('load_test_size', {
+        originalLength: originalText.length,
+        revisedLength: revisedText.length,
+        totalLength: originalText.length + revisedText.length
+      });
+    });
+  }, 'load_test', performanceTracker);
   
   // SSMR STEP 5: Mouse handlers now provided by useResizeHandlers hook
 
-  const handleSwapContent = () => {
+  const handleSwapContent = usePerformanceAwareHandler(() => {
     const tempOriginal = originalText;
     setOriginalText(revisedText);
     setRevisedText(tempOriginal);
-  };
+    
+    // Track swap metrics
+    performanceTracker.trackMetric('content_swap', {
+      originalLength: originalText.length,
+      revisedLength: revisedText.length
+    });
+  }, 'swap_content', performanceTracker);
 
   return (
     <div className="comparison-interface-container">

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BaseComponentProps } from '../types/components';
+import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils';
 
 interface ProcessingDisplayProps extends BaseComponentProps {
   /** Chunking progress state */
@@ -32,8 +33,46 @@ export const ProcessingDisplay: React.FC<ProcessingDisplayProps> = ({
   isCancelling,
   onCancel,
   style,
-  className
+  className,
+  ...props
 }) => {
+  // Performance monitoring setup
+  const performanceTracker = useComponentPerformance(props, 'ProcessingDisplay', {
+    category: 'processing',
+    autoTrackRender: true,
+    autoTrackInteractions: true
+  });
+  
+  // Track processing stage changes
+  useEffect(() => {
+    if (chunkingProgress.isChunking) {
+      performanceTracker.trackMetric('processing_stage_change', {
+        stage: chunkingProgress.stage,
+        progress: chunkingProgress.progress,
+        timestamp: Date.now()
+      });
+    }
+  }, [chunkingProgress.stage, chunkingProgress.progress, chunkingProgress.isChunking, performanceTracker]);
+  
+  // Track cancellation response time
+  useEffect(() => {
+    if (isCancelling) {
+      const cancelStartTime = Date.now();
+      performanceTracker.trackMetric('cancellation_started', { timestamp: cancelStartTime });
+      
+      // Track when cancellation completes (component unmounts or isCancelling becomes false)
+      return () => {
+        performanceTracker.trackMetric('cancellation_duration', {
+          duration: Date.now() - cancelStartTime
+        });
+      };
+    }
+  }, [isCancelling, performanceTracker]);
+  
+  // Performance-aware cancel handler
+  const handleCancel = usePerformanceAwareHandler(() => {
+    onCancel();
+  }, 'cancel_operation', performanceTracker);
   return (
     <div className={`glass-panel shadow-lg transition-all duration-300 ${className || ''}`} style={style}>
       <div className="glass-panel-header-footer px-4 py-3 border-b border-theme-neutral-200 flex items-center justify-between">

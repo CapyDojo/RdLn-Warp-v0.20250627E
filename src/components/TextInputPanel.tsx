@@ -5,6 +5,7 @@ import { OCRLanguage } from '../types/ocr-types';
 import { LanguageSettingsDropdown } from './LanguageSettingsDropdown';
 import { useLayout } from '../contexts/LayoutContext';
 import { BaseComponentProps } from '../types/components';
+import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils';
 
 interface TextInputPanelProps extends BaseComponentProps {
   title: string;
@@ -23,8 +24,15 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   disabled = false,
   height = 400,
   style,
-  className
+  className,
+  ...props
 }) => {
+  // Performance monitoring setup
+  const performanceTracker = useComponentPerformance(props, 'TextInputPanel', {
+    category: 'input',
+    autoTrackRender: true,
+    autoTrackInteractions: true
+  });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const segmentedControlRef = useRef<HTMLDivElement>(null);
   const [showLanguageSettings, setShowLanguageSettings] = useState(false);
@@ -56,11 +64,44 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
       clearDetectedLanguages();
     }
   }, [value, detectedLanguages.length, clearDetectedLanguages]);
+  
+  // Track input performance metrics
+  useEffect(() => {
+    performanceTracker.trackMetric('text_length', value.length);
+  }, [value.length, performanceTracker]);
+  
+  // Track typing performance
+  const lastInputTimeRef = useRef(Date.now());
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const now = Date.now();
+    const inputDelay = now - lastInputTimeRef.current;
+    lastInputTimeRef.current = now;
+    
+    // Track input lag if it's significant
+    if (inputDelay > 50) {
+      performanceTracker.trackMetric('input_lag', inputDelay);
+    }
+    
+    // Track if this is a paste action
+    const newValue = e.target.value;
+    if (onChange.length > 1) {
+      (onChange as (value: string, isPasteAction?: boolean) => void)(newValue, isPasteInProgress);
+    } else {
+      onChange(newValue);
+    }
+  }, [onChange, isPasteInProgress, performanceTracker]);
 
-  const handlePaste = useCallback(async (e: React.ClipboardEvent) => {
+  const handlePaste = usePerformanceAwareHandler(async (e: React.ClipboardEvent) => {
     const items = Array.from(e.clipboardData.items);
     const imageItem = items.find(item => item.type.startsWith('image/'));
     const textItem = items.find(item => item.type.startsWith('text/'));
+    
+    // Track paste operation type
+    performanceTracker.trackMetric('paste_operation', {
+      hasImage: !!imageItem,
+      hasText: !!textItem,
+      itemCount: items.length
+    });
     
     // Mark that a paste is in progress for regular text
     if (textItem && !imageItem) {
@@ -76,7 +117,15 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         const imageFile = imageItem.getAsFile();
         if (!imageFile) return;
 
-        const extractedText = await extractTextFromImage(imageFile);
+        // Track OCR operation
+        const extractedText = await performanceTracker.trackOperation('ocr_extraction', async () => {
+          return await extractTextFromImage(imageFile);
+        });
+        
+        performanceTracker.trackMetric('ocr_result', {
+          extractedLength: extractedText.length,
+          imageSize: imageFile.size
+        });
         
         // Insert extracted text at cursor position or append to existing text
         const textarea = textareaRef.current;
@@ -116,26 +165,41 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         }
       } catch (error) {
         console.error('OCR failed:', error);
+        performanceTracker.trackMetric('ocr_error', { error: error.message });
       }
     }
     // Regular text paste will be handled by the onChange handler with isPasteInProgress flag
-  }, [value, onChange, extractTextFromImage]);
+  }, 'paste_operation', performanceTracker);
 
-  const handleDrop = useCallback(async (e: React.DragEvent) => {
+  const handleDrop = usePerformanceAwareHandler(async (e: React.DragEvent) => {
     e.preventDefault();
     
     const files = Array.from(e.dataTransfer.files);
     const imageFile = files.find(file => file.type.startsWith('image/'));
     
+    performanceTracker.trackMetric('drop_operation', {
+      fileCount: files.length,
+      hasImage: !!imageFile
+    });
+    
     if (imageFile) {
       try {
-        const extractedText = await extractTextFromImage(imageFile);
+        const extractedText = await performanceTracker.trackOperation('ocr_drop', async () => {
+          return await extractTextFromImage(imageFile);
+        });
+        
         onChange(value + (value ? '\n\n' : '') + extractedText);
+        
+        performanceTracker.trackMetric('drop_ocr_result', {
+          extractedLength: extractedText.length,
+          fileSize: imageFile.size
+        });
       } catch (error) {
         console.error('OCR failed:', error);
+        performanceTracker.trackMetric('drop_ocr_error', { error: error.message });
       }
     }
-  }, [value, onChange, extractTextFromImage]);
+  }, 'drop_operation', performanceTracker);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

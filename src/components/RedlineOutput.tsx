@@ -3,6 +3,7 @@ import { Copy } from 'lucide-react';
 import { DiffChange } from '../types';
 import { BaseComponentProps } from '../types/components';
 import { UI_CONFIG } from '../config/appConfig';
+import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils';
 
 interface RedlineOutputProps extends BaseComponentProps {
   changes: DiffChange[];
@@ -24,25 +25,47 @@ const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
   processingStatus = 'Processing...',
   scrollRef,
   style,
-  className
+  className,
+  ...props
 }) => {
+  // Performance monitoring setup
+  const performanceTracker = useComponentPerformance(props, 'RedlineOutput', {
+    category: 'output',
+    autoTrackRender: true
+  });
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
-  // Memoize the generated chunks and their HTML strings
+  // Memoize the generated chunks and their HTML strings with performance tracking
   const chunks = React.useMemo(() => {
+    const startTime = performance.now();
+    
+    // Track input metrics
+    performanceTracker.trackMetric('changes_count', changes.length);
+    
     console.log(`Memoizing ${changes.length} changes into chunks of ${CHUNK_SIZE}`);
     const chunkedChanges = [];
     for (let i = 0; i < changes.length; i += CHUNK_SIZE) {
       chunkedChanges.push(changes.slice(i, i + CHUNK_SIZE));
     }
-    return chunkedChanges.map((chunk, index) => ({
+    
+    const result = chunkedChanges.map((chunk, index) => ({
       id: `chunk-${index}`,
       changes: chunk,
       html: generateHTMLString(chunk),
     }));
-  }, [changes]);
+    
+    // Track chunking performance
+    const chunkingTime = performance.now() - startTime;
+    performanceTracker.trackMetric('chunking_performance', {
+      duration: chunkingTime,
+      chunkCount: result.length,
+      avgChunkSize: changes.length / result.length
+    });
+    
+    return result;
+  }, [changes, performanceTracker]);
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = usePerformanceAwareHandler(async () => {
     const text = changes.map(change => {
       switch (change.type) {
         case 'changed': return change.revisedContent || '';
@@ -53,10 +76,12 @@ const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
     try {
       await navigator.clipboard.writeText(text);
       onCopy();
+      performanceTracker.trackMetric('copy_success', { textLength: text.length });
     } catch (err) {
       console.error('Failed to copy text:', err);
+      performanceTracker.trackMetric('copy_failure', { error: err.message });
     }
-  };
+  }, 'copy_to_clipboard', performanceTracker);
 
   return (
     <div className="glass-panel glass-content-panel overflow-hidden shadow-lg transition-all duration-300">

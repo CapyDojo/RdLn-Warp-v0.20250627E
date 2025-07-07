@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, Globe } from 'lucide-react';
 import { BaseComponentProps } from '../types/components';
+import { useComponentPerformance } from '../utils/performanceUtils';
 
 interface OCRFeatureCardProps extends BaseComponentProps {
   /** Whether to show the OCR feature card */
@@ -16,9 +17,22 @@ interface OCRFeatureCardProps extends BaseComponentProps {
 export const OCRFeatureCard: React.FC<OCRFeatureCardProps> = ({ 
   visible = true,
   style,
-  className
+  className,
+  ...props
 }) => {
-  if (!visible) return null;
+  // Performance monitoring setup
+  const performanceTracker = useComponentPerformance(props, 'OCRFeatureCard', {
+    category: 'ui',
+    autoTrackRender: true
+  });
+  
+  if (!visible) {
+    performanceTracker.trackMetric('visibility_state', { visible: false });
+    return null;
+  }
+  
+  // Track visibility and render
+  performanceTracker.trackMetric('visibility_state', { visible: true });
 
   return (
     <div className={`glass-panel border border-theme-primary-200 rounded-lg p-4 mb-6 shadow-lg transition-all duration-300 ${className || ''}`} style={style}>

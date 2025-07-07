@@ -2,7 +2,7 @@ import React from 'react';
 import { ErrorId, PerformanceTimestamp } from './enhancedTypes';
 
 /**
- * Enhanced base component props with type safety
+ * Enhanced base component props with type safety and performance monitoring
  */
 export interface BaseComponentProps {
   style?: React.CSSProperties;
@@ -11,6 +11,17 @@ export interface BaseComponentProps {
   'data-testid'?: string;
   /** Component identification for error tracking */
   componentId?: string;
+  /** Optional performance monitoring configuration */
+  performance?: {
+    /** Enable performance monitoring for this component */
+    enabled?: boolean;
+    /** Performance category for grouping metrics */
+    category?: string;
+    /** Specific metrics to track */
+    metrics?: string[];
+    /** Sample rate for performance data collection (0-1) */
+    sampleRate?: number;
+  };
 }
 
 /**
