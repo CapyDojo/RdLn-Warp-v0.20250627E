@@ -40,39 +40,39 @@
   box-shadow: 0 8px 32px 0 rgba(30, 64, 175, var(--glass-panel));
   backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
-  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #1e293b */
+  color: #1e293b !important; /* Deep charcoal - enhanced with backdrop */
 }
 
-/* Professional theme text hierarchy - SSMR: Converted to semantic variables */
+/* Professional theme text hierarchy */
 [data-theme="professional"] .text-body,
 [data-theme="professional"] .libertinus-math-text {
-  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #1e293b */
+  color: #1e293b !important; /* Deep charcoal - 9.2:1 contrast */
 }
 
 [data-theme="professional"] h1,
 [data-theme="professional"] h2,
 [data-theme="professional"] h3,
 [data-theme="professional"] .text-header {
-  color: rgb(var(--theme-text-header-rgb)) !important; /* Semantic: textHeader = #0f172a */
+  color: #0f172a !important; /* Navy blue - 11.5:1 contrast */
   font-weight: 600;
 }
 
 [data-theme="professional"] .text-secondary,
 [data-theme="professional"] .text-theme-neutral-600,
 [data-theme="professional"] .text-theme-neutral-500 {
-  color: rgb(var(--theme-text-secondary-rgb)) !important; /* Semantic: textSecondary = #475569 */
+  color: #475569 !important; /* Medium gray - 6.8:1 contrast */
 }
 
 [data-theme="professional"] .text-interactive,
 [data-theme="professional"] .text-theme-accent-500,
 [data-theme="professional"] button:not(.glass-panel),
 [data-theme="professional"] a {
-  color: rgb(var(--theme-text-interactive-rgb)) !important; /* Semantic: textInteractive = #ea580c */
+  color: #ea580c !important; /* Orange accent - 4.9:1 contrast */
 }
 
 [data-theme="professional"] .text-success,
 [data-theme="professional"] .text-active {
-  color: rgb(var(--theme-text-success-rgb)) !important; /* Semantic: textSuccess = #1d4ed8 */
+  color: #1d4ed8 !important; /* Dark blue - 5.2:1 contrast */
 }
 
 [data-theme="professional"] .glass-panel:not(.hover-from-handle):not(.hover-from-handle-primary):hover {
