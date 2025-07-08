@@ -389,16 +389,17 @@
 }
 
 
+/* Professional theme resize handles - SSMR: Converted to semantic variables */
 [data-theme="professional"] .output-resize-handle {
-  background-color: rgba(var(--color-primary-200-rgb), 0.6) !important;
-  border-color: rgba(30, 64, 175, 0.25) !important;
-  box-shadow: 0 4px 16px 0 rgba(30, 64, 175, 0.15) !important;
+  background-color: rgba(var(--theme-resize-handle-bg-rgb), 0.6) !important; /* Semantic: resizeHandleBg = #bfdbfe */
+  border-color: rgba(var(--theme-resize-handle-border-rgb), 0.25) !important; /* Semantic: resizeHandleBorder = #1e40af */
+  box-shadow: 0 4px 16px 0 rgba(var(--theme-resize-handle-shadow-rgb), 0.15) !important; /* Semantic: resizeHandleShadow = #1e40af */
 }
 
 [data-theme="professional"] .output-resize-handle:hover {
-  background-color: rgba(var(--color-primary-300-rgb), 0.7) !important;
-  border-color: rgba(30, 64, 175, 0.35) !important;
-  box-shadow: 0 8px 24px 0 rgba(30, 64, 175, 0.25) !important;
+  background-color: rgba(var(--theme-resize-handle-hover-bg-rgb), 0.7) !important; /* Semantic: resizeHandleHoverBg = #93c5fd */
+  border-color: rgba(var(--theme-resize-handle-hover-border-rgb), 0.35) !important; /* Semantic: resizeHandleHoverBorder = #1e40af */
+  box-shadow: 0 8px 24px 0 rgba(var(--theme-resize-handle-hover-shadow-rgb), 0.25) !important; /* Semantic: resizeHandleHoverShadow = #1e40af */
 }
 
 /* Enhanced button hover effects - inspired by logo test page */

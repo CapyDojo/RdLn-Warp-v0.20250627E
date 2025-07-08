@@ -90,5 +90,13 @@ export interface ThemeConfig {
     buttonSecondary: string;    // Secondary button background
     buttonText: string;         // Button text color
     buttonHover: string;        // Button hover states
+    
+    // Resize handle colors - consistent resize element styling
+    resizeHandleBg: string;           // Resize handle background
+    resizeHandleBorder: string;       // Resize handle border
+    resizeHandleShadow: string;       // Resize handle shadow
+    resizeHandleHoverBg: string;      // Resize handle hover background
+    resizeHandleHoverBorder: string;  // Resize handle hover border
+    resizeHandleHoverShadow: string;  // Resize handle hover shadow
   };
 }

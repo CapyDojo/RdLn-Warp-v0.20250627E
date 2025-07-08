@@ -91,5 +91,13 @@ export const professionalTheme: ThemeConfig = {
     buttonSecondary: '#e2e8f0', // secondary-200
     buttonText: '#ffffff',      // White text
     buttonHover: '#2563eb',     // primary-600
+    
+    // Resize handle colors - from output-resize-handle section
+    resizeHandleBg: '#bfdbfe',   // primary-200 (matches existing var(--color-primary-200-rgb))
+    resizeHandleBorder: '#1e40af', // Hard-coded border color line 394
+    resizeHandleShadow: '#1e40af', // Hard-coded shadow color line 395
+    resizeHandleHoverBg: '#93c5fd', // primary-300 (matches existing var(--color-primary-300-rgb))
+    resizeHandleHoverBorder: '#1e40af', // Hard-coded hover border line 400
+    resizeHandleHoverShadow: '#1e40af', // Hard-coded hover shadow line 401
   },
 };

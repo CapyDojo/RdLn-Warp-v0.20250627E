@@ -190,6 +190,7 @@ export const generateGlassmorphismVariables = (themeConfig: ThemeConfig): Array<
 };
 
 // SSMR: Simple cache for theme variable generation to improve performance
+// Cache cleared after adding resize handle semantic variables
 const themeVariableCache = new Map<string, Array<[string, string]>>();
 
 /**
@@ -279,6 +280,32 @@ export const generateSemanticColorVariables = (themeConfig: ThemeConfig): Array<
   if (semantic.buttonHover) {
     const rgb = hexToRgb(semantic.buttonHover);
     semanticVariables.push(['--theme-button-hover-rgb', rgb]);
+  }
+  
+  // Resize handle color variables
+  if (semantic.resizeHandleBg) {
+    const rgb = hexToRgb(semantic.resizeHandleBg);
+    semanticVariables.push(['--theme-resize-handle-bg-rgb', rgb]);
+  }
+  if (semantic.resizeHandleBorder) {
+    const rgb = hexToRgb(semantic.resizeHandleBorder);
+    semanticVariables.push(['--theme-resize-handle-border-rgb', rgb]);
+  }
+  if (semantic.resizeHandleShadow) {
+    const rgb = hexToRgb(semantic.resizeHandleShadow);
+    semanticVariables.push(['--theme-resize-handle-shadow-rgb', rgb]);
+  }
+  if (semantic.resizeHandleHoverBg) {
+    const rgb = hexToRgb(semantic.resizeHandleHoverBg);
+    semanticVariables.push(['--theme-resize-handle-hover-bg-rgb', rgb]);
+  }
+  if (semantic.resizeHandleHoverBorder) {
+    const rgb = hexToRgb(semantic.resizeHandleHoverBorder);
+    semanticVariables.push(['--theme-resize-handle-hover-border-rgb', rgb]);
+  }
+  if (semantic.resizeHandleHoverShadow) {
+    const rgb = hexToRgb(semantic.resizeHandleHoverShadow);
+    semanticVariables.push(['--theme-resize-handle-hover-shadow-rgb', rgb]);
   }
   
   return semanticVariables;
