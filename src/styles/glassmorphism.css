@@ -1,18 +1,18 @@
 /* Glassmorphism Effects - Unified Opacity System */
 
 /* 
- * UNIFIED OPACITY LEVELS:
- * --glass-subtle: 0.05  (input fields, overlay elements)
- * --glass-panel:  0.12  (main panels, containers)
- * --glass-focus:  0.20  (hover/focus states)
- * --glass-strong: 0.35  (prominent panels, modals)
+ * UNIFIED OPACITY LEVELS - ENHANCED FOR BETTER VISIBILITY:
+ * --glass-subtle: 0.12  (input fields, overlay elements) - INCREASED from 0.05
+ * --glass-panel:  0.18  (main panels, containers) - INCREASED from 0.12
+ * --glass-focus:  0.30  (hover/focus states) - INCREASED from 0.20
+ * --glass-strong: 0.45  (prominent panels, modals) - INCREASED from 0.35
  */
 
 :root {
-  --glass-subtle: 0.05;
-  --glass-panel: 0.12;
-  --glass-focus: 0.20;
-  --glass-strong: 0.35;
+  --glass-subtle: 0.12;
+  --glass-panel: 0.18;
+  --glass-focus: 0.30;
+  --glass-strong: 0.45;
 }
 
 /* Base glassmorphism panel - Unified opacity system */
