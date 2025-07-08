@@ -789,7 +789,16 @@ console.debug('🎯 Progress callback setState:', { progress, stage, prevEnabled
     const newValue = !quickCompareEnabled;
     setQuickCompareEnabled(newValue);
     localStorage.setItem('rdln-auto-compare-enabled', newValue.toString());
-  }, [quickCompareEnabled]);
+    
+    // 🚀 INSTANT DOPAMINE HIT: If enabling live compare and both panels have content, run comparison immediately
+    if (newValue && state.originalText.trim() && state.revisedText.trim()) {
+      console.log('⚡ Live compare enabled with content - triggering instant comparison for snappy UX!');
+      // Use setTimeout to ensure state updates are complete first
+      setTimeout(() => {
+        compareDocuments(true, false); // Auto-compare, don't preserve focus since it's a toggle action
+      }, 50); // Short delay for better visual feedback
+    }
+  }, [quickCompareEnabled, state.originalText, state.revisedText, compareDocuments]);
   
   // Toggle System Protection and persist preference
   const toggleSystemProtection = useCallback(() => {
