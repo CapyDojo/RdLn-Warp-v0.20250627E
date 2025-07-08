@@ -22,6 +22,7 @@ RdLn is a sophisticated document comparison tool designed for legal professional
 
 ## 🚀 Key Features
 
+- **Unified Redlining**: Official production red/green color scheme across themes
 - **Professional Document Comparison**: Myers algorithm-based diff engine optimized for legal documents
 - **OCR Integration**: Multi-language optical character recognition with 50+ language support
 - **Glassmorphism UI**: Modern, professional interface with consistent visual effects
