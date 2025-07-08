@@ -1,0 +1,36 @@
+/* 
+ * EXPERIMENTAL ACTIVATION MODULE
+ * 
+ * Purpose: Easy one-line activation of unified redlining experiment
+ * Status: EXPERIMENTAL - Safe to delete without impact
+ * Date: 2025-07-08
+ * 
+ * INSTRUCTIONS:
+ * 1. Import this file to activate the experiment
+ * 2. Delete this file or remove import to deactivate
+ */
+
+/* Import the MVP unified redlining module */
+@import './unified-redline-colors-mvp.css';
+
+/* 
+ * ACTIVATION STEPS:
+ * 
+ * To test the unified redlining colors:
+ * 
+ * Option 1 - Quick Test (Recommended):
+ * Add this line to src/index.css:
+ * @import './styles/experimental/activate-experiment.css';
+ * 
+ * Option 2 - Component-specific test:
+ * Add this line to RedlineOutput.tsx imports:
+ * import '../styles/experimental/activate-experiment.css';
+ * 
+ * DEACTIVATION:
+ * Simply remove the import line or delete this file
+ * 
+ * SAFETY:
+ * - Zero impact on existing functionality
+ * - Only affects redline span colors in output panel
+ * - Completely reversible
+ */
