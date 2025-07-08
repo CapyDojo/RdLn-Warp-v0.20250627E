@@ -201,17 +201,17 @@
   border-color: rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-strong)); /* Semantic: glassPanelHoverShadow = #8b5cf6 */
 }
 
-/* Kyoto Dusk theme glassmorphism - Unified opacity system */
+/* Kyoto Dusk theme glassmorphism - SSMR: Converted to semantic variables */
 [data-theme="kyoto"] .glass-panel {
-  background: rgba(28, 25, 23, var(--glass-panel)) !important;
-  border: 1px solid rgba(120, 113, 108, var(--glass-focus));
-  box-shadow: 0 8px 32px 0 rgba(220, 8, 8, var(--glass-strong)) !important;
+  background: rgba(var(--theme-glass-panel-bg-rgb), var(--glass-panel)) !important; /* Semantic: glassPanelBg = #1c1917 */
+  border: 1px solid rgba(var(--theme-glass-panel-border-rgb), var(--glass-focus)); /* Semantic: glassPanelBorder = #78716c */
+  box-shadow: 0 8px 32px 0 rgba(var(--theme-glass-panel-shadow-rgb), var(--glass-strong)) !important; /* Semantic: glassPanelShadow = #dc0808 */
   backdrop-filter: blur(var(--effect-backdropBlur, 24px)) saturate(1.6);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 24px)) saturate(1.6);
-  /* Removed color override - let text hierarchy handle colors */
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #f8b4b4 */
 }
 
-/* Kyoto Dusk theme text hierarchy */
+/* Kyoto Dusk theme text hierarchy - SSMR: Converted to semantic variables */
 [data-theme="kyoto"] .text-body,
 [data-theme="kyoto"] .libertinus-math-text,
 [data-theme="kyoto"] textarea,
@@ -219,66 +219,66 @@
 [data-theme="kyoto"] .glass-input-field,
 [data-theme="kyoto"] .text-theme-neutral-800,
 [data-theme="kyoto"] .text-theme-neutral-700 {
-  color: #f8b4b4 !important; /* CORRECT peach color for user-generated text */
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #f8b4b4 */
 }
 
 [data-theme="kyoto"] h1,
 [data-theme="kyoto"] h2,
 [data-theme="kyoto"] h3,
 [data-theme="kyoto"] .text-header {
-  color: #86efac !important; /* Theme button background green for panel titles */
+  color: rgb(var(--theme-text-header-rgb)) !important; /* Semantic: textHeader = #86efac */
   font-weight: 600;
 }
 
 [data-theme="kyoto"] .text-secondary,
 [data-theme="kyoto"] .text-theme-neutral-600,
 [data-theme="kyoto"] .text-theme-neutral-500 {
-  color: #fef7e6 !important; /* Tatami wheat off-white for secondary text */
+  color: rgb(var(--theme-text-secondary-rgb)) !important; /* Semantic: textSecondary = #fef7e6 */
 }
 
 [data-theme="kyoto"] .text-interactive,
 [data-theme="kyoto"] .text-theme-accent-500,
 [data-theme="kyoto"] button:not(.glass-panel),
 [data-theme="kyoto"] a {
-  color: #f8b4b4 !important; /* Light maple red */
+  color: rgb(var(--theme-text-interactive-rgb)) !important; /* Semantic: textInteractive = #f8b4b4 */
 }
 
 [data-theme="kyoto"] .text-success,
 [data-theme="kyoto"] .text-active {
-  color: #bbf7d0 !important; /* Light forest green */
+  color: rgb(var(--theme-text-success-rgb)) !important; /* Semantic: textSuccess = #bbf7d0 */
 }
 
 [data-theme="kyoto"] .glass-panel:hover {
-  background: rgba(28, 25, 23, var(--glass-focus));
-  box-shadow: 0 30px 80px 0 rgba(220, 8, 8, 0.7), 0 12px 40px 0 rgba(220, 8, 8, 0.5);
-  border-color: rgba(220, 8, 8, 0.6);
+  background: rgba(var(--theme-glass-panel-hover-rgb), var(--glass-focus)); /* Semantic: glassPanelHover = #1c1917 */
+  box-shadow: 0 30px 80px 0 rgba(var(--theme-glass-panel-hover-shadow-rgb), 0.7), 0 12px 40px 0 rgba(var(--theme-glass-panel-hover-shadow-rgb), 0.5); /* Semantic: glassPanelHoverShadow = #dc0808 */
+  border-color: rgba(var(--theme-glass-panel-hover-shadow-rgb), 0.6); /* Semantic: glassPanelHoverShadow = #dc0808 */
   transform: translateY(-3px);
 }
 
 /* Kyoto theme glassmorphism opacity overrides for better text legibility */
 [data-theme="kyoto"] .glass-input-field {
-  background: rgba(28, 25, 23, 0.03) !important; /* Lower opacity = lighter background for better text contrast */
-  border: 1px solid rgba(120, 113, 108, 0.15) !important;
+  background: rgba(var(--theme-input-bg-rgb), 0.03) !important; /* Semantic: inputBg = #1c1917 */
+  border: 1px solid rgba(var(--theme-input-border-rgb), 0.15) !important; /* Semantic: inputBorder = #78716c */
   backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
-  box-shadow: 0 2px 8px 0 rgba(220, 8, 8, 0.05) !important;
+  box-shadow: 0 2px 8px 0 rgba(var(--theme-input-focus-rgb), 0.05) !important; /* Semantic: inputFocus = #dc0808 */
   transition: all 0.3s ease !important;
 }
 
 [data-theme="kyoto"] .glass-input-field:focus {
-  background: rgba(28, 25, 23, 0.05) !important; /* Still low opacity for light background */
-  border-color: rgba(120, 113, 108, 0.25) !important;
-  box-shadow: 0 0 0 3px rgba(220, 8, 8, 0.08), 0 4px 16px 0 rgba(220, 8, 8, 0.1) !important;
+  background: rgba(var(--theme-input-bg-rgb), 0.05) !important; /* Semantic: inputBg = #1c1917 */
+  border-color: rgba(var(--theme-input-focus-rgb), 0.25) !important; /* Semantic: inputFocus = #dc0808 */
+  box-shadow: 0 0 0 3px rgba(var(--theme-input-focus-rgb), 0.08), 0 4px 16px 0 rgba(var(--theme-input-focus-rgb), 0.1) !important; /* Semantic: inputFocus = #dc0808 */
   outline: none !important;
 }
 
 /* Enhanced readability for content panels in Kyoto theme */
 [data-theme="kyoto"] .glass-content-panel .glass-panel-inner-content {
-  background: rgba(28, 25, 23, 0.04) !important; /* Very light background for content */
+  background: rgba(var(--theme-glass-panel-bg-rgb), 0.04) !important; /* Semantic: glassPanelBg = #1c1917 */
 }
 
 [data-theme="kyoto"] .glass-panel-inner-content {
-  background: rgba(28, 25, 23, 0.02) !important; /* Minimal opacity for lightest background */
+  background: rgba(var(--theme-glass-panel-bg-rgb), 0.02) !important; /* Semantic: glassPanelBg = #1c1917 */
 }
 
 /* Bamboo theme input fields with glassmorphism - SSMR: Converted to semantic variables */
@@ -635,14 +635,14 @@
 
 /* Kyoto theme specific title colors for panel headings */
 [data-theme="kyoto"] .text-theme-primary-900 {
-  color: #ee8f1c !important; /* Updated orange color */
+  color: #ee8f1c !important; /* Legacy orange color - keeping for specific UI elements */
 }
 
 /* Kyoto theme footer text harmonization */
 [data-theme="kyoto"] .glass-panel-header-footer,
 [data-theme="kyoto"] .glass-panel-header-footer .text-theme-neutral-600,
 [data-theme="kyoto"] .glass-panel-header-footer .text-theme-neutral-500 {
-  color: #fef7e6 !important; /* Tatami wheat off-white for all footer text */
+  color: rgb(var(--theme-text-secondary-rgb)) !important; /* Semantic: textSecondary = #fef7e6 */
 }
 
 /* NUCLEAR OVERRIDE - Maximum specificity for Kyoto theme text */
@@ -657,7 +657,7 @@ html[data-theme="kyoto"] textarea.glass-input-field,
 html[data-theme="kyoto"] input.glass-input-field,
 html[data-theme="kyoto"] .glass-panel textarea.text-theme-neutral-800,
 html[data-theme="kyoto"] .glass-panel input.text-theme-neutral-800 {
-  color: #f8b4b4 !important; /* FORCE CORRECT peach color with maximum specificity */
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #f8b4b4 */
 }
 
 /* Enhanced glassmorphism utility */
@@ -719,8 +719,8 @@ html[data-theme="kyoto"] .glass-panel input.text-theme-neutral-800 {
 }
 
 [data-theme="kyoto"] .glass-panel.glass-content-panel:hover {
-  border-color: rgba(220, 8, 8, 0.6);
-  box-shadow: 0 24px 64px 0 rgba(220, 8, 8, 0.6), 0 10px 36px 0 rgba(220, 8, 8, 0.4);
+  border-color: rgba(var(--theme-glass-panel-hover-shadow-rgb), 0.6); /* Semantic: glassPanelHoverShadow = #dc0808 */
+  box-shadow: 0 24px 64px 0 rgba(var(--theme-glass-panel-hover-shadow-rgb), 0.6), 0 10px 36px 0 rgba(var(--theme-glass-panel-hover-shadow-rgb), 0.4); /* Semantic: glassPanelHoverShadow = #dc0808 */
   transform: translateY(-2px);
 }
 

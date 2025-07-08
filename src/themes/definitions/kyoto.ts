@@ -64,5 +64,41 @@ export const kyotoTheme: ThemeConfig = {
       900: '#1f1e1b',  // Even darker for high contrast text
     },
   },
+  // Semantic color mappings for Japanese-inspired dark theme
+  semanticColors: {
+    // Text hierarchy - Japanese garden inspired colors
+    textBody: '#f8b4b4',           // Light maple peach for body text
+    textHeader: '#86efac',         // Forest green for headers
+    textSecondary: '#fef7e6',      // Tatami wheat for secondary text
+    textInteractive: '#f8b4b4',    // Light maple red for interactive elements
+    textSuccess: '#bbf7d0',        // Light forest green for success states
+    
+    // Glass panels - dark stone and earth tones
+    glassPanelBg: '#1c1917',        // Dark tatami stone background
+    glassPanelBorder: '#78716c',    // Stone neutral border
+    glassPanelShadow: '#dc0808',    // Deep maple red shadow
+    glassPanelHover: '#1c1917',     // Same as bg - hover managed by opacity
+    glassPanelHoverShadow: '#dc0808', // Deep maple red hover shadow
+    
+    // Input fields - harmonized with theme
+    inputBg: '#1c1917',            // Dark stone background
+    inputBorder: '#78716c',        // Stone neutral border
+    inputFocus: '#dc0808',         // Deep maple red focus
+    inputPlaceholder: '#a8a29e',   // Neutral stone placeholder
+    
+    // Button colors - Japanese accent inspired
+    buttonPrimary: '#dc0808',      // Deep maple red primary
+    buttonSecondary: '#78716c',    // Stone neutral secondary
+    buttonText: '#fef7e6',         // Tatami wheat text
+    buttonHover: '#b91c1c',        // Darker maple hover
+    
+    // Resize handles - consistent with theme
+    resizeHandleBg: '#1c1917',           // Dark stone background
+    resizeHandleBorder: '#78716c',       // Stone neutral border
+    resizeHandleShadow: '#dc0808',       // Deep maple red shadow
+    resizeHandleHoverBg: '#292524',      // Slightly lighter stone hover
+    resizeHandleHoverBorder: '#dc0808',  // Deep maple red hover border
+    resizeHandleHoverShadow: '#b91c1c',  // Darker maple hover shadow
+  },
   effects: GLASSMORPHISM_EFFECTS.premium,
 };
