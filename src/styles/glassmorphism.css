@@ -351,20 +351,20 @@
   border-color: rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-strong)); /* Semantic: glassPanelHoverShadow = #ff9800 */
 }
 
-/* Autumn theme glassmorphism - Unified opacity system */
+/* Autumn theme glassmorphism - SSMR: Converted to semantic variables */
 [data-theme="autumn"] .glass-panel {
-  background: rgba(250, 250, 249, var(--glass-panel)) !important;
-  border: 1px solid rgba(34, 197, 94, var(--glass-focus));
-  box-shadow: 0 8px 32px 0 rgba(245, 158, 11, var(--glass-focus));
+  background: rgba(var(--theme-glass-panel-bg-rgb), var(--glass-panel)) !important; /* Semantic: glassPanelBg = #fafaf9 */
+  border: 1px solid rgba(var(--theme-glass-panel-border-rgb), var(--glass-focus)); /* Semantic: glassPanelBorder = #22c55e */
+  box-shadow: 0 8px 32px 0 rgba(var(--theme-glass-panel-shadow-rgb), var(--glass-focus)); /* Semantic: glassPanelShadow = #f59e0b */
   backdrop-filter: blur(var(--effect-backdropBlur, 24px)) saturate(1.4);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 24px)) saturate(1.4);
-  color: #1c1917 !important; /* Deepest charcoal - enhanced with backdrop */
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #1c1917 */
 }
 
-/* Autumn theme text hierarchy - Autumn garden inspired */
+/* Autumn theme text hierarchy - SSMR: Converted to semantic variables */
 [data-theme="autumn"] .text-body,
 [data-theme="autumn"] .libertinus-math-text {
-  color: #1c1917 !important; /* Deepest charcoal - 12.5:1 contrast */
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #1c1917 */
   text-shadow: 0 1px 2px rgba(250, 250, 249, 0.5); /* Subtle white shadow for readability */
 }
 
@@ -372,7 +372,7 @@
 [data-theme="autumn"] h2,
 [data-theme="autumn"] h3,
 [data-theme="autumn"] .text-header {
-  color: #14532d !important; /* Deepest forest green - 15.8:1 contrast */
+  color: rgb(var(--theme-text-header-rgb)) !important; /* Semantic: textHeader = #14532d */
   font-weight: 600;
   text-shadow: 0 1px 3px rgba(250, 250, 249, 0.7); /* Enhanced shadow for headers */
 }
@@ -380,7 +380,7 @@
 [data-theme="autumn"] .text-secondary,
 [data-theme="autumn"] .text-theme-neutral-600,
 [data-theme="autumn"] .text-theme-neutral-500 {
-  color: #44403c !important; /* Dark stone - 8.2:1 contrast */
+  color: rgb(var(--theme-text-secondary-rgb)) !important; /* Semantic: textSecondary = #44403c */
   text-shadow: 0 1px 2px rgba(250, 250, 249, 0.4);
 }
 
@@ -388,20 +388,20 @@
 [data-theme="autumn"] .text-theme-accent-500,
 [data-theme="autumn"] button:not(.glass-panel),
 [data-theme="autumn"] a {
-  color: #ef4444 !important; /* Medium-bright maple red - 6.8:1 contrast */
+  color: rgb(var(--theme-text-interactive-rgb)) !important; /* Semantic: textInteractive = #ef4444 */
   text-shadow: 0 1px 2px rgba(250, 250, 249, 0.6);
 }
 
 [data-theme="autumn"] .text-success,
 [data-theme="autumn"] .text-active {
-  color: #15803d !important; /* Dark forest green - 7.5:1 contrast */
+  color: rgb(var(--theme-text-success-rgb)) !important; /* Semantic: textSuccess = #15803d */
   text-shadow: 0 1px 2px rgba(250, 250, 249, 0.5);
 }
 
 [data-theme="autumn"] .glass-panel:hover {
-  background: rgba(250, 250, 249, var(--glass-focus));
-  box-shadow: 0 12px 40px 0 rgba(34, 197, 94, var(--glass-strong));
-  border-color: rgba(34, 197, 94, var(--glass-strong));
+  background: rgba(var(--theme-glass-panel-hover-rgb), var(--glass-focus)); /* Semantic: glassPanelHover = #fafaf9 */
+  box-shadow: 0 12px 40px 0 rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-strong)); /* Semantic: glassPanelHoverShadow = #22c55e */
+  border-color: rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-strong)); /* Semantic: glassPanelHoverShadow = #22c55e */
 }
 
 

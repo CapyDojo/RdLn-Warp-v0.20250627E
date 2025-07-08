@@ -64,5 +64,41 @@ export const autumnTheme: ThemeConfig = {
       900: '#1c1917',
     },
   },
+  // Semantic color mappings for autumn garden theme
+  semanticColors: {
+    // Text hierarchy - autumn garden inspired colors
+    textBody: '#1c1917',           // Deepest charcoal for body text
+    textHeader: '#14532d',         // Deepest forest green for headers
+    textSecondary: '#44403c',      // Dark stone for secondary text
+    textInteractive: '#ef4444',    // Medium-bright maple red for interactive elements
+    textSuccess: '#15803d',        // Dark forest green for success states
+    
+    // Glass panels - light autumn colors with natural accents
+    glassPanelBg: '#fafaf9',        // Light stone background
+    glassPanelBorder: '#22c55e',    // Forest green border accents
+    glassPanelShadow: '#f59e0b',    // Warm amber shadow
+    glassPanelHover: '#fafaf9',     // Same as bg - hover managed by opacity
+    glassPanelHoverShadow: '#22c55e', // Forest green hover shadow
+    
+    // Input fields - consistent with autumn theme
+    inputBg: '#fafaf9',            // Light stone background
+    inputBorder: '#22c55e',        // Forest green border
+    inputFocus: '#ef4444',         // Maple red focus outline
+    inputPlaceholder: '#78716c',   // Stone neutral placeholder
+    
+    // Button colors - autumn accent inspired
+    buttonPrimary: '#22c55e',      // Forest green primary
+    buttonSecondary: '#78716c',    // Stone neutral secondary
+    buttonText: '#ffffff',         // White button text
+    buttonHover: '#16a34a',        // Darker forest green hover
+    
+    // Resize handles - consistent with autumn aesthetic
+    resizeHandleBg: '#fafaf9',           // Light stone background
+    resizeHandleBorder: '#22c55e',       // Forest green border
+    resizeHandleShadow: '#f59e0b',       // Warm amber shadow
+    resizeHandleHoverBg: '#f5f5f4',      // Slightly darker stone hover
+    resizeHandleHoverBorder: '#16a34a',  // Darker forest green hover border
+    resizeHandleHoverShadow: '#22c55e',  // Forest green hover shadow
+  },
   effects: GLASSMORPHISM_EFFECTS.premium,
 };
