@@ -64,6 +64,42 @@ export const classicDarkTheme: ThemeConfig = {
       900: '#171717',
     },
   },
+  // Semantic color mappings for classic dark theme
+  semanticColors: {
+    // Text hierarchy - dark theme with excellent contrast
+    textBody: '#fafafa',           // Pure white for body text
+    textHeader: '#ffffff',         // Pure white for headers
+    textSecondary: '#a3a3a3',      // Pure medium gray for secondary
+    textInteractive: '#fb923c',    // Orange accent for interactive
+    textSuccess: '#38bdf8',        // Light blue for success/active
+    
+    // Glass panels - dark theme with orange accents
+    glassPanelBg: '#262626',        // Dark gray background
+    glassPanelBorder: '#f97316',    // Orange accent borders
+    glassPanelShadow: '#f97316',    // Orange accent shadows
+    glassPanelHover: '#262626',     // Same dark background for hover
+    glassPanelHoverShadow: '#f97316', // Orange hover shadow
+    
+    // Input fields - consistent with dark theme
+    inputBg: '#404040',            // Dark gray background
+    inputBorder: '#f97316',        // Orange border
+    inputFocus: '#f97316',         // Orange focus
+    inputPlaceholder: '#a3a3a3',   // Medium gray placeholder
+    
+    // Button colors - keeping orange accents
+    buttonPrimary: '#f97316',      // Orange primary
+    buttonSecondary: '#737373',    // Gray secondary
+    buttonText: '#ffffff',         // White button text
+    buttonHover: '#fb923c',        // Lighter orange hover
+    
+    // Resize handles - keeping coherence with dark theme
+    resizeHandleBg: '#262626',     // Dark gray for handle
+    resizeHandleBorder: '#f97316', // Orange border for handle
+    resizeHandleShadow: '#f97316', // Orange shadow for handle
+    resizeHandleHoverBg: '#404040', // Lighter gray hover for handle
+    resizeHandleHoverBorder: '#f97316', // Orange hover border
+    resizeHandleHoverShadow: '#f97316', // Orange hover shadow
+  },
   // No glassmorphism effects - flat design as requested
   effects: {
     glassmorphism: false,

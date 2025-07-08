@@ -826,26 +826,27 @@ header .flex {
   pointer-events: auto !important;
 }
 
-/* Classic Light theme glassmorphism - Light theme with orange accent borders and shadows */
+/* Classic Light theme glassmorphism - SSMR: Converted to semantic variables */
 [data-theme="classic-light"] .glass-panel {
-  background: rgba(248, 250, 252, var(--glass-panel)) !important;
-  border: 1px solid rgba(249, 115, 22, var(--glass-subtle));
-  box-shadow: 0 4px 16px 0 rgba(249, 115, 22, var(--glass-subtle)), 0 1px 4px 0 rgba(14, 165, 233, var(--glass-subtle));
+  background: rgba(var(--theme-glass-panel-bg-rgb), var(--glass-panel)) !important; /* Semantic: glassPanelBg = #f8fafc */
+  border: 1px solid rgba(var(--theme-glass-panel-border-rgb), var(--glass-subtle)); /* Semantic: glassPanelBorder = #f97316 */
+  box-shadow: 0 4px 16px 0 rgba(var(--theme-glass-panel-shadow-rgb), var(--glass-subtle)), 0 1px 4px 0 rgba(14, 165, 233, var(--glass-subtle)); /* Semantic: glassPanelShadow = #f97316, keeping blue accent */
   backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
-  color: #1e293b !important; /* Dark text on light background */
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #1e293b */
 }
 
-/* Classic Light theme text hierarchy */
+/* Classic Light theme text hierarchy - SSMR: Converted to semantic variables */
 [data-theme="classic-light"] .text-body,
 [data-theme="classic-light"] .libertinus-math-text {
-  color: #1e293b !important; /* Dark text - excellent contrast on light */
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #1e293b */
 }
 
 [data-theme="classic-light"] h1,
 [data-theme="classic-light"] h2,
-[data-theme="classic-light"] h3 {
-  color: #0f172a !important; /* Very dark for headings */
+[data-theme="classic-light"] h3,
+[data-theme="classic-light"] .text-header {
+  color: rgb(var(--theme-text-header-rgb)) !important; /* Semantic: textHeader = #0f172a */
 }
 
 /* MOBILE UNIFIED LAYOUT: Create seamless input panel unit */
@@ -875,106 +876,106 @@ header .flex {
 [data-theme="classic-light"] .text-secondary,
 [data-theme="classic-light"] .text-theme-neutral-600,
 [data-theme="classic-light"] .text-theme-neutral-500 {
-  color: #475569 !important; /* Medium gray for secondary text */
+  color: rgb(var(--theme-text-secondary-rgb)) !important; /* Semantic: textSecondary = #475569 */
 }
 
 [data-theme="classic-light"] .text-interactive,
 [data-theme="classic-light"] .text-theme-accent-500,
 [data-theme="classic-light"] button:not(.glass-panel),
 [data-theme="classic-light"] a {
-  color: #ea580c !important; /* Darker orange accent for better contrast */
+  color: rgb(var(--theme-text-interactive-rgb)) !important; /* Semantic: textInteractive = #ea580c */
 }
 
 [data-theme="classic-light"] .text-success,
 [data-theme="classic-light"] .text-active {
-  color: #0284c7 !important; /* Darker blue for success/active states */
+  color: rgb(var(--theme-text-success-rgb)) !important; /* Semantic: textSuccess = #0284c7 */
 }
 
 [data-theme="classic-light"] .glass-panel:hover {
-  background: rgba(248, 250, 252, var(--glass-focus));
-  box-shadow: 0 16px 48px 0 rgba(249, 115, 22, var(--glass-strong)), 0 4px 16px 0 rgba(14, 165, 233, var(--glass-panel));
-  border-color: rgba(249, 115, 22, var(--glass-strong));
+  background: rgba(var(--theme-glass-panel-hover-rgb), var(--glass-focus)); /* Semantic: glassPanelHover = #f8fafc */
+  box-shadow: 0 16px 48px 0 rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-strong)), 0 4px 16px 0 rgba(14, 165, 233, var(--glass-panel)); /* Semantic: glassPanelHoverShadow = #f97316, keeping blue accent */
+  border-color: rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-strong)); /* Semantic: glassPanelHoverShadow = #f97316 */
 }
 
-/* Classic Light theme input fields with glassmorphism and orange accents */
+/* Classic Light theme input fields - SSMR: Converted to semantic variables */
 [data-theme="classic-light"] .glass-input-field {
-  background: rgba(255, 255, 255, var(--glass-subtle)) !important;
-  border: 1px solid rgba(249, 115, 22, var(--glass-subtle)) !important;
+  background: rgba(var(--theme-input-bg-rgb), var(--glass-subtle)) !important; /* Semantic: inputBg = #ffffff */
+  border: 1px solid rgba(var(--theme-input-border-rgb), var(--glass-subtle)) !important; /* Semantic: inputBorder = #f97316 */
   backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
-  color: #1e293b !important;
-  box-shadow: 0 2px 8px 0 rgba(249, 115, 22, var(--glass-subtle)) !important;
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #1e293b */
+  box-shadow: 0 2px 8px 0 rgba(var(--theme-input-border-rgb), var(--glass-subtle)) !important; /* Semantic: inputBorder = #f97316 */
   transition: all 0.3s ease !important;
 }
 
 [data-theme="classic-light"] .glass-input-field:focus {
-  background: rgba(255, 255, 255, var(--glass-panel)) !important;
-  border-color: rgba(249, 115, 22, var(--glass-focus)) !important;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, var(--glass-subtle)), 0 4px 16px 0 rgba(249, 115, 22, var(--glass-panel)) !important;
+  background: rgba(var(--theme-input-bg-rgb), var(--glass-panel)) !important; /* Semantic: inputBg = #ffffff */
+  border-color: rgba(var(--theme-input-focus-rgb), var(--glass-focus)) !important; /* Semantic: inputFocus = #f97316 */
+  box-shadow: 0 0 0 3px rgba(var(--theme-input-focus-rgb), var(--glass-subtle)), 0 4px 16px 0 rgba(var(--theme-input-focus-rgb), var(--glass-panel)) !important; /* Semantic: inputFocus = #f97316 */
   outline: none !important;
 }
 
 [data-theme="classic-light"] .glass-input-field::placeholder {
-  color: rgba(71, 85, 105, 0.7) !important;
+  color: rgba(var(--theme-input-placeholder-rgb), 0.7) !important; /* Semantic: inputPlaceholder = #475569 */
 }
 
-/* Classic Light theme panel borders with orange accents */
+/* Classic Light theme panel borders - SSMR: Converted to semantic variables */
 [data-theme="classic-light"] .glass-panel-header-footer {
   background: transparent !important;
-  border-color: rgba(249, 115, 22, var(--glass-focus));
+  border-color: rgba(var(--theme-glass-panel-border-rgb), var(--glass-focus)); /* Semantic: glassPanelBorder = #f97316 */
 }
 
 [data-theme="classic-light"] .glass-panel-inner-content {
-  background: rgba(255, 255, 255, var(--glass-subtle)) !important;
+  background: rgba(var(--theme-input-bg-rgb), var(--glass-subtle)) !important; /* Semantic: inputBg = #ffffff */
 }
 
 /* Enhanced orange accent borders for content panels */
 [data-theme="classic-light"] .glass-panel.glass-content-panel {
-  border: 2px solid rgba(249, 115, 22, var(--glass-subtle)) !important;
-  box-shadow: 0 4px 16px 0 rgba(249, 115, 22, var(--glass-subtle)), 0 1px 4px 0 rgba(14, 165, 233, var(--glass-subtle)) !important;
+  border: 2px solid rgba(var(--theme-glass-panel-border-rgb), var(--glass-subtle)) !important; /* Semantic: glassPanelBorder = #f97316 */
+  box-shadow: 0 4px 16px 0 rgba(var(--theme-glass-panel-shadow-rgb), var(--glass-subtle)), 0 1px 4px 0 rgba(14, 165, 233, var(--glass-subtle)) !important; /* Semantic: glassPanelShadow = #f97316, keeping blue accent */
 }
 
 [data-theme="classic-light"] .glass-panel.glass-content-panel:hover {
-  border-color: rgba(249, 115, 22, var(--glass-strong)) !important;
-  box-shadow: 0 12px 40px 0 rgba(249, 115, 22, var(--glass-strong)), 0 4px 16px 0 rgba(14, 165, 233, var(--glass-panel)) !important;
+  border-color: rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-strong)) !important; /* Semantic: glassPanelHoverShadow = #f97316 */
+  box-shadow: 0 12px 40px 0 rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-strong)), 0 4px 16px 0 rgba(14, 165, 233, var(--glass-panel)) !important; /* Semantic: glassPanelHoverShadow = #f97316, keeping blue accent */
 }
 
-/* Classic Dark theme glassmorphism - Dark theme with pure greys and orange accent borders */
+/* Classic Dark theme glassmorphism - SSMR: Converted to semantic variables */
 [data-theme="classic-dark"] .glass-panel {
-  background: rgba(38, 38, 38, var(--glass-panel)) !important;
-  border: 1px solid rgba(249, 115, 22, var(--glass-subtle));
-  box-shadow: 0 4px 16px 0 rgba(249, 115, 22, var(--glass-subtle)), 0 1px 4px 0 rgba(14, 165, 233, var(--glass-subtle));
+  background: rgba(var(--theme-glass-panel-bg-rgb), var(--glass-panel)) !important; /* Semantic: glassPanelBg = #262626 */
+  border: 1px solid rgba(var(--theme-glass-panel-border-rgb), var(--glass-subtle)); /* Semantic: glassPanelBorder = #f97316 */
+  box-shadow: 0 4px 16px 0 rgba(var(--theme-glass-panel-shadow-rgb), var(--glass-subtle)), 0 1px 4px 0 rgba(14, 165, 233, var(--glass-subtle)); /* Semantic: glassPanelShadow = #f97316, keeping blue accent */
   backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
-  color: #fafafa !important; /* Light text on dark background */
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #fafafa */
 }
 
-/* Classic Dark theme text hierarchy */
+/* Classic Dark theme text hierarchy - SSMR: Converted to semantic variables */
 [data-theme="classic-dark"] .text-body,
 [data-theme="classic-dark"] .libertinus-math-text,
 [data-theme="classic-dark"] .output-content {
-  color: #fafafa !important; /* Pure white for text - excellent contrast on dark */
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #fafafa */
 }
 
 [data-theme="classic-dark"] h1,
 [data-theme="classic-dark"] h2,
 [data-theme="classic-dark"] h3,
 [data-theme="classic-dark"] .text-header {
-  color: #ffffff !important; /* Pure white for headers */
+  color: rgb(var(--theme-text-header-rgb)) !important; /* Semantic: textHeader = #ffffff */
   font-weight: 600;
 }
 
 [data-theme="classic-dark"] .text-secondary,
 [data-theme="classic-dark"] .text-theme-neutral-600,
 [data-theme="classic-dark"] .text-theme-neutral-500 {
-  color: #a3a3a3 !important; /* Pure medium gray for secondary text */
+  color: rgb(var(--theme-text-secondary-rgb)) !important; /* Semantic: textSecondary = #a3a3a3 */
 }
 
 [data-theme="classic-dark"] .text-interactive,
 [data-theme="classic-dark"] .text-theme-accent-500,
 [data-theme="classic-dark"] button:not(.glass-panel),
 [data-theme="classic-dark"] a {
-  color: #fb923c !important; /* Orange accent for interactive elements */
+  color: rgb(var(--theme-text-interactive-rgb)) !important; /* Semantic: textInteractive = #fb923c */
 }
 
 /* Ensure all output panel text is properly colored for dark mode */
@@ -983,61 +984,61 @@ header .flex {
 [data-theme="classic-dark"] .text-theme-neutral-700,
 [data-theme="classic-dark"] .font-serif,
 [data-theme="classic-dark"] span {
-  color: #fafafa !important; /* Pure white for all output text */
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #fafafa */
 }
 
 [data-theme="classic-dark"] .text-success,
 [data-theme="classic-dark"] .text-active {
-  color: #38bdf8 !important; /* Light blue for success/active states */
+  color: rgb(var(--theme-text-success-rgb)) !important; /* Semantic: textSuccess = #38bdf8 */
 }
 
 [data-theme="classic-dark"] .glass-panel:hover {
-  background: rgba(38, 38, 38, var(--glass-focus));
-  box-shadow: 0 8px 24px 0 rgba(249, 115, 22, var(--glass-panel)), 0 2px 8px 0 rgba(14, 165, 233, var(--glass-subtle));
-  border-color: rgba(249, 115, 22, var(--glass-focus));
+  background: rgba(var(--theme-glass-panel-hover-rgb), var(--glass-focus)); /* Semantic: glassPanelHover = #262626 */
+  box-shadow: 0 8px 24px 0 rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-panel)), 0 2px 8px 0 rgba(14, 165, 233, var(--glass-subtle)); /* Semantic: glassPanelHoverShadow = #f97316, keeping blue accent */
+  border-color: rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-focus)); /* Semantic: glassPanelHoverShadow = #f97316 */
 }
 
-/* Classic Dark theme input fields with glassmorphism and orange accents */
+/* Classic Dark theme input fields - SSMR: Converted to semantic variables */
 [data-theme="classic-dark"] .glass-input-field {
-  background: rgba(64, 64, 64, var(--glass-subtle)) !important;
-  border: 1px solid rgba(249, 115, 22, var(--glass-subtle)) !important;
+  background: rgba(var(--theme-input-bg-rgb), var(--glass-subtle)) !important; /* Semantic: inputBg = #404040 */
+  border: 1px solid rgba(var(--theme-input-border-rgb), var(--glass-subtle)) !important; /* Semantic: inputBorder = #f97316 */
   backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
-  color: #fafafa !important;
-  box-shadow: 0 2px 8px 0 rgba(249, 115, 22, var(--glass-subtle)) !important;
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #fafafa */
+  box-shadow: 0 2px 8px 0 rgba(var(--theme-input-border-rgb), var(--glass-subtle)) !important; /* Semantic: inputBorder = #f97316 */
   transition: all 0.3s ease !important;
 }
 
 [data-theme="classic-dark"] .glass-input-field:focus {
-  background: rgba(64, 64, 64, var(--glass-panel)) !important;
-  border-color: rgba(249, 115, 22, var(--glass-focus)) !important;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, var(--glass-subtle)), 0 4px 16px 0 rgba(249, 115, 22, var(--glass-panel)) !important;
+  background: rgba(var(--theme-input-bg-rgb), var(--glass-panel)) !important; /* Semantic: inputBg = #404040 */
+  border-color: rgba(var(--theme-input-focus-rgb), var(--glass-focus)) !important; /* Semantic: inputFocus = #f97316 */
+  box-shadow: 0 0 0 3px rgba(var(--theme-input-focus-rgb), var(--glass-subtle)), 0 4px 16px 0 rgba(var(--theme-input-focus-rgb), var(--glass-panel)) !important; /* Semantic: inputFocus = #f97316 */
   outline: none !important;
 }
 
 [data-theme="classic-dark"] .glass-input-field::placeholder {
-  color: rgba(163, 163, 163, 0.7) !important;
+  color: rgba(var(--theme-input-placeholder-rgb), 0.7) !important; /* Semantic: inputPlaceholder = #a3a3a3 */
 }
 
-/* Classic Dark theme panel borders with orange accents */
+/* Classic Dark theme panel borders - SSMR: Converted to semantic variables */
 [data-theme="classic-dark"] .glass-panel-header-footer {
   background: transparent !important;
-  border-color: rgba(249, 115, 22, var(--glass-focus));
+  border-color: rgba(var(--theme-glass-panel-border-rgb), var(--glass-focus)); /* Semantic: glassPanelBorder = #f97316 */
 }
 
 [data-theme="classic-dark"] .glass-panel-inner-content {
-  background: rgba(64, 64, 64, var(--glass-subtle)) !important;
+  background: rgba(var(--theme-input-bg-rgb), var(--glass-subtle)) !important; /* Semantic: inputBg = #404040 */
 }
 
 /* Enhanced orange accent borders for content panels */
 [data-theme="classic-dark"] .glass-panel.glass-content-panel {
-  border: 2px solid rgba(249, 115, 22, var(--glass-subtle)) !important;
-  box-shadow: 0 4px 16px 0 rgba(249, 115, 22, var(--glass-subtle)), 0 1px 4px 0 rgba(14, 165, 233, var(--glass-subtle)) !important;
+  border: 2px solid rgba(var(--theme-glass-panel-border-rgb), var(--glass-subtle)) !important; /* Semantic: glassPanelBorder = #f97316 */
+  box-shadow: 0 4px 16px 0 rgba(var(--theme-glass-panel-shadow-rgb), var(--glass-subtle)), 0 1px 4px 0 rgba(14, 165, 233, var(--glass-subtle)) !important; /* Semantic: glassPanelShadow = #f97316, keeping blue accent */
 }
 
 [data-theme="classic-dark"] .glass-panel.glass-content-panel:hover {
-  border-color: rgba(249, 115, 22, var(--glass-focus)) !important;
-  box-shadow: 0 8px 24px 0 rgba(249, 115, 22, var(--glass-panel)), 0 2px 8px 0 rgba(14, 165, 233, var(--glass-subtle)) !important;
+  border-color: rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-focus)) !important; /* Semantic: glassPanelHoverShadow = #f97316 */
+  box-shadow: 0 8px 24px 0 rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-panel)), 0 2px 8px 0 rgba(14, 165, 233, var(--glass-subtle)) !important; /* Semantic: glassPanelHoverShadow = #f97316, keeping blue accent */
 }
 
 /* Comprehensive bamboo theme text harmonization - use extremely dark ochre everywhere */

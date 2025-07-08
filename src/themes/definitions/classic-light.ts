@@ -64,6 +64,42 @@ export const classicLightTheme: ThemeConfig = {
       900: '#18181b',  // Darkest neutral - deep backgrounds
     },
   },
+  // Semantic color mappings for classic light theme
+  semanticColors: {
+    // Text hierarchy - modern desktop inspired colors
+    textBody: '#1e293b',           // Dark text for body
+    textHeader: '#0f172a',         // Very dark for headers
+    textSecondary: '#475569',      // Medium gray for secondary text
+    textInteractive: '#ea580c',    // Darker orange accent for interactive
+    textSuccess: '#0284c7',        // Dark blue for success/active
+    
+    // Glass panels - light theme with orange accents
+    glassPanelBg: '#f8fafc',        // Light blue background
+    glassPanelBorder: '#f97316',    // Orange accent borders
+    glassPanelShadow: '#f97316',    // Orange accent shadows
+    glassPanelHover: '#f8fafc',     // Hover with light blue
+    glassPanelHoverShadow: '#f97316', // Darker orange hover shadow
+    
+    // Input fields - consistent with light theme
+    inputBg: '#ffffff',            // White background
+    inputBorder: '#f97316',        // Orange border
+    inputFocus: '#f97316',         // Orange focus
+    inputPlaceholder: '#475569',   // Medium gray placeholder
+    
+    // Button colors - keeping orange accents
+    buttonPrimary: '#f97316',      // Orange primary
+    buttonSecondary: '#757575',    // Gray secondary
+    buttonText: '#ffffff',         // White button text
+    buttonHover: '#ea580c',        // Darker orange hover
+    
+    // Resize handles - keeping coherence with theme
+    resizeHandleBg: '#f8fafc',     // Light blue for handle
+    resizeHandleBorder: '#f97316', // Orange border for handle
+    resizeHandleShadow: '#f97316', // Orange shadow for handle
+    resizeHandleHoverBg: '#f1f5f9', // Darker blue hover for handle
+    resizeHandleHoverBorder: '#f97316', // Orange hover border
+    resizeHandleHoverShadow: '#f97316', // Orange hover shadow
+  },
   // No glassmorphism effects - flat design as requested
   effects: {
     glassmorphism: false,
