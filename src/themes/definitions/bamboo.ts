@@ -65,4 +65,40 @@ export const bambooTheme: ThemeConfig = {
     },
   },
   effects: GLASSMORPHISM_EFFECTS.premium,
+  // SSMR: Semantic color mappings - extracted from current CSS for pixel-perfect matching
+  semanticColors: {
+    // Text colors - exact matches from glassmorphism.css
+    textBody: '#471e01',        // Extremely dark ochre - line 113, 119, 126, 140
+    textHeader: '#471e01',      // Same dark ochre for headers - line 126
+    textSecondary: '#44403c',   // Brown-gray - line 133
+    textInteractive: '#471e01', // Same dark ochre for interactive elements - line 140
+    textSuccess: '#256325',     // Rich green - line 145
+    
+    // Glass panel colors - using exact hardcoded values from CSS
+    glassPanelBg: '#ffffff',           // White background - line 108
+    glassPanelBorder: '#e8c41f',       // Golden bamboo border - rgba(232, 196, 31)
+    glassPanelShadow: '#e8c41f',       // Golden bamboo shadow - rgba(232, 196, 31)
+    glassPanelHover: '#f8f5f0',        // Light background on hover - rgba(248, 245, 240)
+    glassPanelHoverShadow: '#f1ac1d',  // Hover shadow - rgba(241, 172, 29)
+    
+    // Input field colors - need to find in CSS or use defaults
+    inputBg: '#ffffff',         // White background
+    inputBorder: '#5d8a3a',     // Green border - rgba(93, 138, 58) from input field CSS
+    inputFocus: '#5d8a3a',      // Green focus - same as border
+    inputPlaceholder: '#2a322a', // Dark neutral for placeholder
+    
+    // Button colors - using theme colors
+    buttonPrimary: '#3a9b3a',   // primary-500
+    buttonSecondary: '#e8ebe8', // neutral-200
+    buttonText: '#ffffff',      // White text
+    buttonHover: '#2d7d2d',     // primary-600
+    
+    // Resize handle colors - using theme colors for consistency
+    resizeHandleBg: '#bae5ba',   // primary-200
+    resizeHandleBorder: '#256325', // primary-700 (dark green)
+    resizeHandleShadow: '#256325', // primary-700 (dark green)
+    resizeHandleHoverBg: '#8dd48d', // primary-300
+    resizeHandleHoverBorder: '#256325', // primary-700 (dark green)
+    resizeHandleHoverShadow: '#256325', // primary-700 (dark green)
+  },
 };

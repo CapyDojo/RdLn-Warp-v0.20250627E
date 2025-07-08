@@ -245,6 +245,10 @@ export const generateSemanticColorVariables = (themeConfig: ThemeConfig): Array<
     const rgb = hexToRgb(semantic.glassPanelHover);
     semanticVariables.push(['--theme-glass-panel-hover-rgb', rgb]);
   }
+  if (semantic.glassPanelHoverShadow) {
+    const rgb = hexToRgb(semantic.glassPanelHoverShadow);
+    semanticVariables.push(['--theme-glass-panel-hover-shadow-rgb', rgb]);
+  }
   
   // Input field color variables
   if (semantic.inputBg) {

@@ -78,6 +78,7 @@ export interface ThemeConfig {
     glassPanelBorder: string;   // Panel borders
     glassPanelShadow: string;   // Panel shadow colors
     glassPanelHover: string;    // Hover state background
+    glassPanelHoverShadow?: string; // Optional: Hover state shadow (different from border)
     
     // Input field colors - form consistency
     inputBg: string;            // Input field backgrounds

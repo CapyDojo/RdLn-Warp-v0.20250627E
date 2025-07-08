@@ -103,52 +103,52 @@
   color: rgba(var(--theme-input-placeholder-rgb), 0.7) !important; /* Semantic: inputPlaceholder = #52525b */
 }
 
-/* Bamboo theme glassmorphism - Unified opacity system */
+/* Bamboo theme glassmorphism - SSMR: Converted to semantic variables */
 [data-theme="bamboo"] .glass-panel {
-  background: rgba(255, 255, 255, var(--glass-panel)) !important;
-  border: 1px solid rgba(232, 196, 31, var(--glass-focus));
-  box-shadow: 0 8px 32px 0 rgba(232, 196, 31, var(--glass-focus));
+  background: rgba(var(--theme-glass-panel-bg-rgb), var(--glass-panel)) !important; /* Semantic: glassPanelBg = #ffffff */
+  border: 1px solid rgba(var(--theme-glass-panel-border-rgb), var(--glass-focus)); /* Semantic: glassPanelBorder = #e8c41f */
+  box-shadow: 0 8px 32px 0 rgba(var(--theme-glass-panel-shadow-rgb), var(--glass-focus)); /* Semantic: glassPanelShadow = #e8c41f */
   backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.4);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.4);
-  color: #471e01 !important; /* Extremely dark ochre - enhanced with backdrop */
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #471e01 */
 }
 
-/* Bamboo theme text hierarchy */
+/* Bamboo theme text hierarchy - SSMR: Converted to semantic variables */
 [data-theme="bamboo"] .text-body,
 [data-theme="bamboo"] .libertinus-math-text {
-  color: #471e01 !important; /* Extremely dark ochre - enhanced readability */
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #471e01 */
 }
 
 [data-theme="bamboo"] h1,
 [data-theme="bamboo"] h2,
 [data-theme="bamboo"] h3,
 [data-theme="bamboo"] .text-header {
-  color: #471e01 !important; /* Extremely dark ochre - enhanced readability */
+  color: rgb(var(--theme-text-header-rgb)) !important; /* Semantic: textHeader = #471e01 */
   font-weight: 600;
 }
 
 [data-theme="bamboo"] .text-secondary,
 [data-theme="bamboo"] .text-theme-neutral-600,
 [data-theme="bamboo"] .text-theme-neutral-500 {
-  color: #44403c !important; /* Brown-gray - 5.8:1 contrast */
+  color: rgb(var(--theme-text-secondary-rgb)) !important; /* Semantic: textSecondary = #44403c */
 }
 
 [data-theme="bamboo"] .text-interactive,
 [data-theme="bamboo"] .text-theme-accent-500,
 [data-theme="bamboo"] button:not(.glass-panel),
 [data-theme="bamboo"] a {
-  color: #471e01 !important; /* Extremely dark ochre - enhanced readability */
+  color: rgb(var(--theme-text-interactive-rgb)) !important; /* Semantic: textInteractive = #471e01 */
 }
 
 [data-theme="bamboo"] .text-success,
 [data-theme="bamboo"] .text-active {
-  color: #256325 !important; /* Rich green - 6.0:1 contrast */
+  color: rgb(var(--theme-text-success-rgb)) !important; /* Semantic: textSuccess = #256325 */
 }
 
 [data-theme="bamboo"] .glass-panel:not(.hover-from-handle):not(.hover-from-handle-primary):hover {
-  background: rgba(248, 245, 240, calc(var(--glass-focus) * 0.3));
-  box-shadow: 0 8px 32px 0 rgba(241, 172, 29, var(--glass-panel));
-  border-color: rgba(232, 196, 31, var(--glass-focus));
+  background: rgba(var(--theme-glass-panel-hover-rgb), calc(var(--glass-focus) * 0.3)); /* Semantic: glassPanelHover = #f8f5f0 */
+  box-shadow: 0 8px 32px 0 rgba(var(--theme-glass-panel-hover-shadow-rgb), var(--glass-panel)); /* Semantic: glassPanelHoverShadow = #f1ac1d */
+  border-color: rgba(var(--theme-glass-panel-border-rgb), var(--glass-focus)); /* Semantic: glassPanelBorder = #e8c41f */
 }
 
 
@@ -281,13 +281,29 @@
   background: rgba(28, 25, 23, 0.02) !important; /* Minimal opacity for lightest background */
 }
 
-/* Disable transforms for data input and output panels */
-[data-input-panel] .glass-panel:hover,
-[data-output-panel] .glass-panel:hover {
-  transform: none !important;
+/* Bamboo theme input fields with glassmorphism - SSMR: Converted to semantic variables */
+[data-theme="bamboo"] .glass-input-field {
+  background: rgba(var(--theme-input-bg-rgb), var(--glass-subtle)) !important; /* Semantic: inputBg = #ffffff */
+  border: 1px solid rgba(var(--theme-input-border-rgb), var(--glass-focus)) !important; /* Semantic: inputBorder = #5d8a3a */
+  backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
+  -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: reuse textBody for consistency */
+  box-shadow: none !important;
+  transition: all 0.3s ease !important;
 }
 
-/* New York theme glassmorphism - Unified opacity system */
+[data-theme="bamboo"] .glass-input-field:focus {
+  background: rgba(var(--theme-input-bg-rgb), var(--glass-panel)) !important; /* Semantic: inputBg = #ffffff */
+  border-color: rgba(var(--theme-input-focus-rgb), var(--glass-focus)) !important; /* Semantic: inputFocus = #5d8a3a */
+  box-shadow: 0 0 0 3px rgba(var(--theme-input-focus-rgb), var(--glass-subtle)) !important; /* Semantic: inputFocus = #5d8a3a */
+  outline: none !important;
+}
+
+[data-theme="bamboo"] .glass-input-field::placeholder {
+  color: rgba(var(--theme-input-placeholder-rgb), 0.7) !important; /* Semantic: inputPlaceholder = #2a322a */
+}
+
+/* Disable transforms for data input and output panels */
 [data-theme="new-york"] .glass-panel {
   background: rgba(33, 33, 33, var(--glass-panel)) !important;
   border: 1px solid rgba(255, 152, 0, var(--glass-focus));
