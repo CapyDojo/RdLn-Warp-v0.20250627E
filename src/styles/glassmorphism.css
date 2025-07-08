@@ -33,11 +33,11 @@
   transition: all 600ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Professional theme glassmorphism - Unified opacity system */
+/* Professional theme glassmorphism - SSMR: Converted to semantic variables */
 [data-theme="professional"] .glass-panel {
-  background: rgba(255, 255, 255, var(--glass-panel)) !important;
-  border: 1px solid rgba(var(--color-primary-200-rgb), var(--glass-focus));
-  box-shadow: 0 8px 32px 0 rgba(30, 64, 175, var(--glass-panel));
+  background: rgba(var(--theme-glass-panel-bg-rgb), var(--glass-panel)) !important; /* Semantic: glassPanelBg = #ffffff */
+  border: 1px solid rgba(var(--theme-glass-panel-border-rgb), var(--glass-focus)); /* Semantic: glassPanelBorder = #bfdbfe */
+  box-shadow: 0 8px 32px 0 rgba(var(--theme-glass-panel-shadow-rgb), var(--glass-panel)); /* Semantic: glassPanelShadow = #1e40af */
   backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 16px)) saturate(1.3);
   color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: textBody = #1e293b */
@@ -76,31 +76,31 @@
 }
 
 [data-theme="professional"] .glass-panel:not(.hover-from-handle):not(.hover-from-handle-primary):hover {
-  background: rgba(248, 250, 252, calc(var(--glass-focus) * 0.3));
-  box-shadow: 0 8px 32px 0 rgba(30, 64, 175, var(--glass-panel));
-  border-color: rgba(var(--color-primary-200-rgb), var(--glass-focus));
+  background: rgba(var(--theme-glass-panel-bg-rgb), calc(var(--glass-focus) * 0.3)); /* Semantic: glassPanelBg = #ffffff */
+  box-shadow: 0 8px 32px 0 rgba(var(--theme-glass-panel-shadow-rgb), var(--glass-panel)); /* Semantic: glassPanelShadow = #1e40af */
+  border-color: rgba(var(--theme-glass-panel-border-rgb), var(--glass-focus)); /* Semantic: glassPanelBorder = #bfdbfe */
 }
 
-/* Professional theme input fields with glassmorphism - Unified opacity system */
+/* Professional theme input fields with glassmorphism - SSMR: Converted to semantic variables */
 [data-theme="professional"] .glass-input-field {
-  background: rgba(255, 255, 255, var(--glass-subtle)) !important;
-  border: 1px solid rgba(var(--color-primary-300-rgb), var(--glass-panel)) !important;
+  background: rgba(var(--theme-input-bg-rgb), var(--glass-subtle)) !important; /* Semantic: inputBg = #ffffff */
+  border: 1px solid rgba(var(--theme-input-border-rgb), var(--glass-panel)) !important; /* Semantic: inputBorder = #93c5fd */
   backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
   -webkit-backdrop-filter: blur(var(--effect-backdropBlur, 12px)) !important;
-  color: rgb(var(--color-neutral-800-rgb)) !important;
+  color: rgb(var(--theme-text-body-rgb)) !important; /* Semantic: reuse textBody for consistency */
   box-shadow: none !important;
   transition: all 0.3s ease !important;
 }
 
 [data-theme="professional"] .glass-input-field:focus {
-  background: rgba(255, 255, 255, var(--glass-panel)) !important;
-  border-color: rgba(var(--color-primary-500-rgb), var(--glass-focus)) !important;
-  box-shadow: 0 0 0 3px rgba(var(--color-primary-500-rgb), var(--glass-subtle)) !important;
+  background: rgba(var(--theme-input-bg-rgb), var(--glass-panel)) !important; /* Semantic: inputBg = #ffffff */
+  border-color: rgba(var(--theme-input-focus-rgb), var(--glass-focus)) !important; /* Semantic: inputFocus = #3b82f6 */
+  box-shadow: 0 0 0 3px rgba(var(--theme-input-focus-rgb), var(--glass-subtle)) !important; /* Semantic: inputFocus = #3b82f6 */
   outline: none !important;
 }
 
 [data-theme="professional"] .glass-input-field::placeholder {
-  color: rgba(var(--color-neutral-600-rgb), 0.7) !important;
+  color: rgba(var(--theme-input-placeholder-rgb), 0.7) !important; /* Semantic: inputPlaceholder = #52525b */
 }
 
 /* Bamboo theme glassmorphism - Unified opacity system */
