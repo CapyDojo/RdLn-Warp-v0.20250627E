@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Zap, Image, Layout, Monitor, Smartphone, Maximize, Activity, BarChart3, Palette } from 'lucide-react';
+import { Settings, Zap, Image, Layout, Monitor, Smartphone, Maximize, Activity, BarChart3 } from 'lucide-react';
 import { useLayout, LayoutMode } from '../contexts/LayoutContext';
 import { BaseComponentProps } from '../types/components';
 import { PerformanceDebugPanel, usePerformanceDebugPanel } from './PerformanceDebugPanel';
@@ -31,13 +31,6 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
     }
   });
   
-  const [experimentalRedlining, setExperimentalRedlining] = useState(() => {
-    try {
-      return localStorage.getItem('experimental-redlining-enabled') === 'true';
-    } catch {
-      return false;
-    }
-  });
 
   // Setup performance debugging utilities on mount
   useEffect(() => {
@@ -46,14 +39,6 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
     }
   }, []);
 
-  // Initialize experimental redlining class on body element
-  useEffect(() => {
-    if (experimentalRedlining) {
-      document.body.classList.add('experimental-redline');
-    } else {
-      document.body.classList.remove('experimental-redline');
-    }
-  }, [experimentalRedlining]);
 
   const handleTogglePerfMonitoring = () => {
     const newValue = !perfMonitoringEnabled;
@@ -70,24 +55,6 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
     }
   };
   
-  const handleToggleExperimentalRedlining = () => {
-    const newValue = !experimentalRedlining;
-    setExperimentalRedlining(newValue);
-    try {
-      localStorage.setItem('experimental-redlining-enabled', newValue.toString());
-      
-      // Toggle the experimental-redline class on body
-      if (newValue) {
-        document.body.classList.add('experimental-redline');
-        console.log('🟢🔴 Experimental unified redlining enabled');
-      } else {
-        document.body.classList.remove('experimental-redline');
-        console.log('🎨 Experimental redlining disabled - using theme colors');
-      }
-    } catch (error) {
-      console.warn('Failed to toggle experimental redlining:', error);
-    }
-  };
   return (
     <div className="glass-panel border border-theme-neutral-300 rounded-lg p-4 shadow-lg transition-all duration-300">
       <h3 className="text-lg font-semibold text-theme-primary-900 mb-2 flex items-center gap-2">
@@ -264,33 +231,6 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
         </div>
       )}
       
-      {/* Experimental Redlining Section */}
-      <div className="mb-4">
-        <h4 className="text-sm font-medium text-theme-neutral-700 mb-2 flex items-center gap-1">
-          <Palette className="w-4 h-4" />
-          Experimental Redlining
-        </h4>
-        <div className="grid grid-cols-1 gap-2">
-          <button
-            onClick={handleToggleExperimentalRedlining}
-            className={`px-3 py-2 text-sm rounded transition-all flex items-center gap-2 ${
-              experimentalRedlining
-                ? 'bg-red-500 text-white hover:bg-red-600'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-            title="Toggle unified red/green colors vs theme-specific colors"
-          >
-            <Palette className="w-4 h-4" />
-            <span>Red/Green Colors {experimentalRedlining ? 'ON' : 'OFF'}</span>
-          </button>
-        </div>
-        <div className="mt-2 text-xs text-theme-neutral-600">
-          {experimentalRedlining 
-            ? '🔴🟢 Using unified red/green colors across all themes'
-            : '🎨 Using theme-specific redlining colors'
-          }
-        </div>
-      </div>
       
       <div className="flex gap-2">
         {onToggleAdvancedOcr && (

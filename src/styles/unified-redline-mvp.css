@@ -1,15 +1,15 @@
 /* 
- * EXPERIMENTAL MODULE: Unified Redlining Colors
+ * OFFICIAL PRODUCTION: Unified Redlining Colors
  * 
- * Purpose: Test unified green/red redlining colors across all themes
- * Status: EXPERIMENTAL - Safe to delete without impact
+ * Purpose: Unified green/red redlining colors across all themes
+ * Status: PRODUCTION - Official default redlining colors
  * Date: 2025-07-08
  * 
- * This module overrides theme-specific redlining colors to provide
- * consistent visual language: GREEN for additions, RED for deletions
+ * This module provides consistent visual language across all themes:
+ * GREEN for additions, RED for deletions
  * 
- * TO ACTIVATE: Import this file in a component or main CSS
- * TO DEACTIVATE: Simply delete this file or remove import
+ * Overrides theme-specific redlining with WCAG-compliant unified colors
+ * High specificity selectors ensure proper override without conflicts
  */
 
 /* =================================================================
@@ -26,11 +26,11 @@
  * ADDITIONS: Unified Green Theme
  * ----------------------------------------------------------------- */
 
-/* Primary addition background override - only when experimental class is active */
-.experimental-redline .glass-panel-inner-content span.bg-theme-secondary-100,
-.experimental-redline .glass-panel .glass-panel-inner-content span.bg-theme-secondary-100,
-.experimental-redline [data-output-panel] .glass-panel-inner-content span.bg-theme-secondary-100,
-.experimental-redline .chunk-container span.bg-theme-secondary-100 {
+/* Primary addition background override - OFFICIAL PRODUCTION */
+.glass-panel-inner-content span.bg-theme-secondary-100,
+.glass-panel .glass-panel-inner-content span.bg-theme-secondary-100,
+[data-output-panel] .glass-panel-inner-content span.bg-theme-secondary-100,
+.chunk-container span.bg-theme-secondary-100 {
   /* Background: Light green */
   background-color: #dcfce7 !important;
   
@@ -41,27 +41,27 @@
   border-color: #bbf7d0 !important;
 }
 
-/* Addition text color override - only when experimental class is active */
-.experimental-redline .glass-panel-inner-content span.text-theme-secondary-800,
-.experimental-redline .glass-panel .glass-panel-inner-content span.text-theme-secondary-800,
-.experimental-redline [data-output-panel] .glass-panel-inner-content span.text-theme-secondary-800,
-.experimental-redline .chunk-container span.text-theme-secondary-800 {
+/* Addition text color override - OFFICIAL PRODUCTION - HIGH SPECIFICITY */
+.glass-panel-inner-content span.bg-theme-secondary-100.text-theme-secondary-800,
+.glass-panel .glass-panel-inner-content span.bg-theme-secondary-100.text-theme-secondary-800,
+[data-output-panel] .glass-panel-inner-content span.bg-theme-secondary-100.text-theme-secondary-800,
+.chunk-container span.bg-theme-secondary-100.text-theme-secondary-800 {
   color: #166534 !important;
 }
 
-/* Addition border color override - only when experimental class is active */
-.experimental-redline .glass-panel-inner-content span.border-theme-secondary-300,
-.experimental-redline .glass-panel .glass-panel-inner-content span.border-theme-secondary-300,
-.experimental-redline [data-output-panel] .glass-panel-inner-content span.border-theme-secondary-300,
-.experimental-redline .chunk-container span.border-theme-secondary-300 {
+/* Addition border color override - OFFICIAL PRODUCTION */
+.glass-panel-inner-content span.border-theme-secondary-300,
+.glass-panel .glass-panel-inner-content span.border-theme-secondary-300,
+[data-output-panel] .glass-panel-inner-content span.border-theme-secondary-300,
+.chunk-container span.border-theme-secondary-300 {
   border-color: #bbf7d0 !important;
 }
 
-/* Addition underline decoration override - only when experimental class is active */
-.experimental-redline .glass-panel-inner-content span.decoration-theme-secondary-600,
-.experimental-redline .glass-panel .glass-panel-inner-content span.decoration-theme-secondary-600,
-.experimental-redline [data-output-panel] .glass-panel-inner-content span.decoration-theme-secondary-600,
-.experimental-redline .chunk-container span.decoration-theme-secondary-600 {
+/* Addition underline decoration override - OFFICIAL PRODUCTION */
+.glass-panel-inner-content span.decoration-theme-secondary-600,
+.glass-panel .glass-panel-inner-content span.decoration-theme-secondary-600,
+[data-output-panel] .glass-panel-inner-content span.decoration-theme-secondary-600,
+.chunk-container span.decoration-theme-secondary-600 {
   text-decoration-color: #15803d !important;
 }
 
@@ -69,11 +69,11 @@
  * DELETIONS: Unified Red Theme
  * ----------------------------------------------------------------- */
 
-/* Primary deletion background override - only when experimental class is active */
-.experimental-redline .glass-panel-inner-content span.bg-theme-accent-100,
-.experimental-redline .glass-panel .glass-panel-inner-content span.bg-theme-accent-100,
-.experimental-redline [data-output-panel] .glass-panel-inner-content span.bg-theme-accent-100,
-.experimental-redline .chunk-container span.bg-theme-accent-100 {
+/* Primary deletion background override - OFFICIAL PRODUCTION */
+.glass-panel-inner-content span.bg-theme-accent-100,
+.glass-panel .glass-panel-inner-content span.bg-theme-accent-100,
+[data-output-panel] .glass-panel-inner-content span.bg-theme-accent-100,
+.chunk-container span.bg-theme-accent-100 {
   /* Background: Light red */
   background-color: #fee2e2 !important;
   
@@ -84,26 +84,26 @@
   border-color: #fecaca !important;
 }
 
-/* Deletion text color override - only when experimental class is active */
-.experimental-redline .glass-panel-inner-content span.text-theme-accent-800,
-.experimental-redline .glass-panel .glass-panel-inner-content span.text-theme-accent-800,
-.experimental-redline [data-output-panel] .glass-panel-inner-content span.text-theme-accent-800,
-.experimental-redline .chunk-container span.text-theme-accent-800 {
+/* Deletion text color override - OFFICIAL PRODUCTION - HIGH SPECIFICITY */
+.glass-panel-inner-content span.bg-theme-accent-100.text-theme-accent-800,
+.glass-panel .glass-panel-inner-content span.bg-theme-accent-100.text-theme-accent-800,
+[data-output-panel] .glass-panel-inner-content span.bg-theme-accent-100.text-theme-accent-800,
+.chunk-container span.bg-theme-accent-100.text-theme-accent-800 {
   color: #dc2626 !important;
 }
 
-/* Deletion border color override - only when experimental class is active */
-.experimental-redline .glass-panel-inner-content span.border-theme-accent-300,
-.experimental-redline .glass-panel .glass-panel-inner-content span.border-theme-accent-300,
-.experimental-redline [data-output-panel] .glass-panel-inner-content span.border-theme-accent-300,
-.experimental-redline .chunk-container span.border-theme-accent-300 {
+/* Deletion border color override - OFFICIAL PRODUCTION */
+.glass-panel-inner-content span.border-theme-accent-300,
+.glass-panel .glass-panel-inner-content span.border-theme-accent-300,
+[data-output-panel] .glass-panel-inner-content span.border-theme-accent-300,
+.chunk-container span.border-theme-accent-300 {
   border-color: #fecaca !important;
 }
 
-/* Deletion strikethrough decoration override - only when experimental class is active */
-.experimental-redline .glass-panel-inner-content span.decoration-theme-accent-600,
-.experimental-redline .glass-panel .glass-panel-inner-content span.decoration-theme-accent-600,
-.experimental-redline [data-output-panel] .glass-panel-inner-content span.decoration-theme-accent-600,
-.experimental-redline .chunk-container span.decoration-theme-accent-600 {
+/* Deletion strikethrough decoration override - OFFICIAL PRODUCTION */
+.glass-panel-inner-content span.decoration-theme-accent-600,
+.glass-panel .glass-panel-inner-content span.decoration-theme-accent-600,
+[data-output-panel] .glass-panel-inner-content span.decoration-theme-accent-600,
+.chunk-container span.decoration-theme-accent-600 {
   text-decoration-color: #b91c1c !important;
 }
