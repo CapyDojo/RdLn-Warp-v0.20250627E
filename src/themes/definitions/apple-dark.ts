@@ -64,5 +64,41 @@ export const appleDarkTheme: ThemeConfig = {
       900: '#f5f5f5',  // Almost white
     },
   },
+  // Semantic color mappings for dark theme  
+  semanticColors: {
+    // Text hierarchy
+    textBody: '#f5f5f5',           // Off-white for body text
+    textHeader: '#ffffff',         // Pure white for headers
+    textSecondary: '#d4d4d4',      // Light gray for secondary text
+    textInteractive: '#a78bfa',    // Bright purple for interactive elements
+    textSuccess: '#80deea',        // Electric blue for success states
+    
+    // Glass panels
+    glassPanelBg: '#171717',        // Very dark neutral for glass background
+    glassPanelBorder: '#ffffff',    // Pure white for glass borders
+    glassPanelShadow: '#8b5cf6',    // Bright purple for glass shadow
+    glassPanelHover: '#171717',     // Same as bg - hover managed by opacity
+    glassPanelHoverShadow: '#8b5cf6', // Bright purple for hover shadow
+    
+    // Input fields
+    inputBg: '#171717',            // Dark background for inputs
+    inputBorder: '#ffffff',        // White border for inputs
+    inputFocus: '#8b5cf6',         // Purple focus outline
+    inputPlaceholder: '#9ca3af',   // Light placeholder text
+    
+    // Button colors
+    buttonPrimary: '#8b5cf6',      // Purple primary button
+    buttonSecondary: '#475569',    // Dark secondary button
+    buttonText: '#ffffff',         // White button text
+    buttonHover: '#a78bfa',        // Lighter purple hover
+    
+    // Resize handles
+    resizeHandleBg: '#171717',           // Dark background for resize handles
+    resizeHandleBorder: '#ffffff',       // White border for resize handles
+    resizeHandleShadow: '#8b5cf6',       // Purple shadow for resize handles
+    resizeHandleHoverBg: '#262626',      // Slightly lighter hover background
+    resizeHandleHoverBorder: '#8b5cf6',  // Purple hover border
+    resizeHandleHoverShadow: '#a78bfa',  // Lighter purple hover shadow
+  },
   effects: GLASSMORPHISM_EFFECTS.premium,
 };
