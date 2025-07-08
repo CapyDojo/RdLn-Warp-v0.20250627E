@@ -60,5 +60,41 @@ export const newYorkTheme: ThemeConfig = {
       900: '#212121',
     },
   },
+  // Semantic color mappings for NYC-inspired dark theme
+  semanticColors: {
+    // Text hierarchy - urban skyline inspired colors
+    textBody: '#fafafa',           // Bright white for body text
+    textHeader: '#ffffff',         // Pure white for headers
+    textSecondary: '#e0e0e0',      // Light cool gray for secondary text
+    textInteractive: '#ffb74d',    // Warm amber for interactive elements
+    textSuccess: '#4dd0e1',        // Electric cyan for success states
+    
+    // Glass panels - dark urban colors with warm accents
+    glassPanelBg: '#212121',        // Dark gray urban background
+    glassPanelBorder: '#ff9800',    // Warm orange border accents
+    glassPanelShadow: '#fb8c00',    // Rich orange shadow
+    glassPanelHover: '#212121',     // Same as bg - hover managed by opacity
+    glassPanelHoverShadow: '#ff9800', // Warm orange hover shadow
+    
+    // Input fields - consistent with urban theme
+    inputBg: '#212121',            // Dark urban background
+    inputBorder: '#ff9800',        // Warm orange border
+    inputFocus: '#ffb74d',         // Amber focus outline
+    inputPlaceholder: '#bdbdbd',   // Neutral gray placeholder
+    
+    // Button colors - NYC accent inspired
+    buttonPrimary: '#ff9800',      // Warm orange primary
+    buttonSecondary: '#757575',    // Neutral gray secondary
+    buttonText: '#ffffff',         // White button text
+    buttonHover: '#ffb74d',        // Amber hover state
+    
+    // Resize handles - consistent with urban aesthetic
+    resizeHandleBg: '#212121',           // Dark urban background
+    resizeHandleBorder: '#ff9800',       // Warm orange border
+    resizeHandleShadow: '#fb8c00',       // Rich orange shadow
+    resizeHandleHoverBg: '#424242',      // Slightly lighter urban hover
+    resizeHandleHoverBorder: '#ffb74d',  // Amber hover border
+    resizeHandleHoverShadow: '#ff9800',  // Warm orange hover shadow
+  },
   effects: GLASSMORPHISM_EFFECTS.premium,
 };
