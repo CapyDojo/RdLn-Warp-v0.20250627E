@@ -456,6 +456,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         isOpen={!autoDetect && showLanguageSettings}
         onClose={() => setShowLanguageSettings(false)}
         controlRect={controlRect}
+        controlRef={segmentedControlRef}
         detectedLanguages={detectedLanguages}
         selectedLanguages={selectedLanguages}
         supportedLanguages={supportedLanguages}

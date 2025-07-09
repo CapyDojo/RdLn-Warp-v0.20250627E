@@ -305,10 +305,21 @@ I recommend starting with **Phase 1 (Visual Polish)** as it provides immediate i
 2. `src/index.css` - Styling improvements, animations, and sliding indicator fixes
 3. `src/styles/glassmorphism.css` - Classic themes dropdown opacity fixes
 
+### Post-Phase 2 Fix Applied
+**Issue: Dropdown Positioning During Scroll**
+- **Problem**: Language dropdown doesn't follow the button when user scrolls the app
+- **Root Cause**: Dropdown positioned using static `controlRect` captured at open time
+- **Fix**: Added dynamic positioning with scroll/resize listeners:
+  - Added `controlRef` prop to pass button element reference
+  - Added `useEffect` with scroll and resize event listeners
+  - Real-time position updates using `getBoundingClientRect()`
+  - Proper cleanup of event listeners on unmount
+- **Result**: Dropdown now follows the button during scroll and resize
+
 ### Next Steps
 - Monitor user feedback on icon clarity and dropdown visibility
-- Consider Phase 2 enhancements based on usage patterns
-- Potential keyboard navigation improvements in Phase 3
+- Consider Phase 3 accessibility enhancements if needed
+- Potential performance optimizations for scroll handling
 
 ---
 

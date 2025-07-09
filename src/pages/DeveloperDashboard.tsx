@@ -3,6 +3,8 @@ import { Settings, ArrowLeft, Monitor, Activity, Beaker, Layout } from 'lucide-r
 import { useTheme } from '../contexts/ThemeContext';
 import { BaseComponentProps } from '../types/components';
 import { LayoutControlsPanel } from '../components/dev-dashboard/LayoutControlsPanel';
+import { ExperimentalFeaturesPanel } from '../components/dev-dashboard/ExperimentalFeaturesPanel';
+import { PerformanceMonitoringPanel } from '../components/dev-dashboard/PerformanceMonitoringPanel';
 
 interface DeveloperDashboardProps extends BaseComponentProps {
   onBackToApp?: () => void;
@@ -58,9 +60,7 @@ export const DeveloperDashboard: React.FC<DeveloperDashboardProps> = ({
                 <Beaker className="w-5 h-5" />
                 🧪 Experimental Features
               </h2>
-              <div className="text-sm text-theme-neutral-600">
-                Experimental feature toggles will be moved here.
-              </div>
+              <ExperimentalFeaturesPanel />
             </div>
 
             {/* Performance Monitoring Section */}
@@ -69,9 +69,7 @@ export const DeveloperDashboard: React.FC<DeveloperDashboardProps> = ({
                 <Activity className="w-5 h-5" />
                 Performance Monitoring
               </h2>
-              <div className="text-sm text-theme-neutral-600">
-                Performance monitoring controls will be moved here.
-              </div>
+              <PerformanceMonitoringPanel />
             </div>
 
           </div>

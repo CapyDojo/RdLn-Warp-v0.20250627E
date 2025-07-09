@@ -124,18 +124,27 @@
 
 /* Integrated resize handle styling - remove rounded corners at intersections */
 /* Desktop only: Round top corners, square bottom corners for input panels */
+/* Target only desktop panels (hidden lg:block) - exclude mobile panels */
 /* Higher specificity to override theme-specific border-radius */
-/* DEBUG: This should make top corners rounded (12px) and bottom corners square (0) */
 @media (min-width: 1024px) {
-  .layout-current [data-input-panel] .glass-panel.glass-content-panel {
+  /* Target desktop layout specifically - exclude mobile-top-panel and mobile-bottom-panel */
+  .layout-current .hidden.lg\:block [data-input-panel]:not(.mobile-top-panel):not(.mobile-bottom-panel) .glass-panel.glass-content-panel {
     border-top-left-radius: 12px !important;
     border-top-right-radius: 12px !important;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
   }
   
-  /* Override Apple theme border-radius specifically */
-  [data-theme] .layout-current [data-input-panel] .glass-panel {
+  /* Override Apple theme border-radius specifically for desktop panels */
+  [data-theme] .layout-current .hidden.lg\:block [data-input-panel]:not(.mobile-top-panel):not(.mobile-bottom-panel) .glass-panel {
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+  
+  /* Additional fallback: Target desktop input panels by their parent container */
+  .layout-current .grid.grid-cols-2.gap-6 [data-input-panel] .glass-panel.glass-content-panel {
     border-top-left-radius: 12px !important;
     border-top-right-radius: 12px !important;
     border-bottom-left-radius: 0 !important;

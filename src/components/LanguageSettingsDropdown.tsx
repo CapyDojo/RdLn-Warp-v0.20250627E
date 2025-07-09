@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, Languages } from 'lucide-react';
 import { OCRLanguage } from '../types/ocr-types';
@@ -8,6 +8,7 @@ interface LanguageSettingsDropdownProps extends BaseComponentProps {
   isOpen: boolean;
   onClose: () => void;
   controlRect: DOMRect | null;
+  controlRef: React.RefObject<HTMLDivElement>; // Add ref to control element
   detectedLanguages: OCRLanguage[];
   selectedLanguages: OCRLanguage[];
   supportedLanguages: Array<{
@@ -26,6 +27,7 @@ export const LanguageSettingsDropdown: React.FC<LanguageSettingsDropdownProps> =
   isOpen,
   onClose,
   controlRect,
+  controlRef,
   detectedLanguages,
   selectedLanguages,
   supportedLanguages,
@@ -36,7 +38,36 @@ export const LanguageSettingsDropdown: React.FC<LanguageSettingsDropdownProps> =
   style,
   className
 }) => {
-  if (!isOpen || !controlRect) return null;
+  const [currentRect, setCurrentRect] = useState<DOMRect | null>(controlRect);
+  
+  // Update position on scroll or resize
+  useEffect(() => {
+    if (!isOpen || !controlRef.current) return;
+    
+    const updatePosition = () => {
+      if (controlRef.current) {
+        const rect = controlRef.current.getBoundingClientRect();
+        setCurrentRect(rect);
+      }
+    };
+    
+    // Initial position
+    updatePosition();
+    
+    // Listen for scroll and resize events
+    const handleScroll = () => updatePosition();
+    const handleResize = () => updatePosition();
+    
+    window.addEventListener('scroll', handleScroll, true); // Use capture to catch all scroll events
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isOpen, controlRef]);
+  
+  if (!isOpen || !currentRect) return null;
 
   return createPortal(
     <div 
@@ -47,9 +78,9 @@ export const LanguageSettingsDropdown: React.FC<LanguageSettingsDropdownProps> =
       <div 
         className="absolute pointer-events-auto"
         style={{
-          top: controlRect.bottom + 8,
-          left: Math.max(16, controlRect.right - 500), // Prevent going off-screen on left
-          right: Math.max(16, window.innerWidth - controlRect.right), // Responsive right boundary
+          top: currentRect.bottom + 8,
+          left: Math.max(16, currentRect.right - 500), // Prevent going off-screen on left
+          right: Math.max(16, window.innerWidth - currentRect.right), // Responsive right boundary
           width: Math.min(500, window.innerWidth - 32), // Responsive width with 16px margins
           maxWidth: '500px'
         }}
