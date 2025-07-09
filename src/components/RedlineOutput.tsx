@@ -23,6 +23,7 @@ interface RedlineOutputProps extends BaseComponentProps {
 // SSMR: Use centralized configuration for consistent chunk rendering
 const { CHUNK_SIZE, ESTIMATED_CHUNK_HEIGHT, INTERSECTION_MARGIN } = UI_CONFIG.RENDERING;
 
+// Boundary fragments are now handled directly in the Myers algorithm implementation
 const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
   changes,
   onCopy,
@@ -67,7 +68,33 @@ const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
     // Track input metrics
     performanceTracker.trackMetric('changes_count', changes.length);
     
-    console.log(`Memoizing ${changes.length} changes into chunks of ${CHUNK_SIZE}`);
+    // Boundary fragments are handled in the Myers algorithm implementation
+    
+    // Check if chunked rendering is enabled
+    if (!FEATURE_FLAGS.ENABLE_CHUNKED_RENDERING) {
+      if (DEV_CONFIG.DEBUGGING.SEMANTIC_CHUNKING_DEBUG) {
+        performanceTracker.trackMetric('rendering_without_chunking', { count: changes.length });
+      }
+      // Return single chunk with all changes
+      const result = [{
+        id: 'single-chunk',
+        changes: changes,
+        html: generateHTMLString(changes),
+      }];
+      
+      const renderingTime = performance.now() - startTime;
+      performanceTracker.trackMetric('rendering_performance', {
+        duration: renderingTime,
+        chunkCount: 1,
+        totalChanges: changes.length
+      });
+      
+      return result;
+    }
+    
+    if (DEV_CONFIG.DEBUGGING.SEMANTIC_CHUNKING_DEBUG) {
+      performanceTracker.trackMetric('memoizing_changes', { count: changes.length, chunkSize: CHUNK_SIZE });
+    }
     const chunkedChanges = [];
     let i = 0;
     while (i < changes.length) {
@@ -264,8 +291,8 @@ const generateHTMLString = (changes: DiffChange[]) => {
         html += `<span class="bg-theme-accent-100 text-theme-accent-800 border border-theme-accent-300 line-through decoration-2 decoration-theme-accent-600">${escape(change.content || '')}</span>`;
         break;
       case 'changed':
-        html += `<span class="bg-theme-accent-100 text-theme-accent-800 border border-theme-accent-300 line-through decoration-2 decoration-theme-accent-600">${escape(change.originalContent || '')}</span>`;
-        html += `<span class="bg-theme-secondary-100 text-theme-secondary-800 border border-theme-secondary-300 underline decoration-2 decoration-theme-secondary-600">${escape(change.revisedContent || '')}</span>`;
+        // Render as a single cohesive substitution instead of two separate spans
+        html += `<span class="bg-theme-accent-100 text-theme-accent-800 border border-theme-accent-300 line-through decoration-2 decoration-theme-accent-600">${escape(change.originalContent || '')}</span><span class="bg-theme-secondary-100 text-theme-secondary-800 border border-theme-secondary-300 underline decoration-2 decoration-theme-secondary-600">${escape(change.revisedContent || '')}</span>`;
         break;
       default:
         html += `<span>${escape(change.content || '')}</span>`;
@@ -305,6 +332,7 @@ const findSemanticChunkBoundary = (changes: DiffChange[], startIndex: number, ta
   return Math.min(startIndex + targetSize, changes.length);
 };
 
+
 // Helper functions for semantic grouping
 const collectConsecutiveChanges = (changes: DiffChange[], startIndex: number, type: string) => {
   const group = [];
@@ -320,14 +348,24 @@ const collectConsecutiveChanges = (changes: DiffChange[], startIndex: number, ty
 };
 
 const renderChangeGroup = (group: DiffChange[], type: string) => {
-  const combinedContent = group.map(change => change.content || '').join('');
   const escape = (str: string) => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
   
-  const className = type === 'added'
-    ? 'bg-theme-secondary-100 text-theme-secondary-800 border border-theme-secondary-300 underline decoration-2 decoration-theme-secondary-600'
-    : 'bg-theme-accent-100 text-theme-accent-800 border border-theme-accent-300 line-through decoration-2 decoration-theme-accent-600';
+  if (type === 'changed') {
+    // For changed type, combine all original content and all revised content
+    const combinedOriginal = group.map(change => change.originalContent || '').join('');
+    const combinedRevised = group.map(change => change.revisedContent || '').join('');
     
-  return `<span class="${className}">${escape(combinedContent)}</span>`;
+    return `<span class="bg-theme-accent-100 text-theme-accent-800 border border-theme-accent-300 line-through decoration-2 decoration-theme-accent-600">${escape(combinedOriginal)}</span>` +
+           `<span class="bg-theme-secondary-100 text-theme-secondary-800 border border-theme-secondary-300 underline decoration-2 decoration-theme-secondary-600">${escape(combinedRevised)}</span>`;
+  } else {
+    // For added/removed, combine content
+    const combinedContent = group.map(change => change.content || '').join('');
+    const className = type === 'added'
+      ? 'bg-theme-secondary-100 text-theme-secondary-800 border border-theme-secondary-300 underline decoration-2 decoration-theme-secondary-600'
+      : 'bg-theme-accent-100 text-theme-accent-800 border border-theme-accent-300 line-through decoration-2 decoration-theme-accent-600';
+      
+    return `<span class="${className}">${escape(combinedContent)}</span>`;
+  }
 };
 
 const renderSingleChange = (change: DiffChange) => {
@@ -343,14 +381,15 @@ const renderSingleChange = (change: DiffChange) => {
   }
 };
 
-// New semantic-aware HTML generation function
+// Semantic-aware HTML generation function
 const generateSemanticHTMLString = (changes: DiffChange[]) => {
+  // Check feature flag once at the beginning
   if (!FEATURE_FLAGS.ENABLE_SEMANTIC_CHUNKING) {
     return generateHTMLString(changes); // Fallback to original
   }
   
   if (DEV_CONFIG.DEBUGGING.SEMANTIC_CHUNKING_DEBUG) {
-    console.log('🔧 Semantic chunking enabled for', changes.length, 'changes');
+    console.log('🔧 Semantic chunking processing', changes.length, 'changes');
   }
   
   let html = '';
@@ -360,15 +399,17 @@ const generateSemanticHTMLString = (changes: DiffChange[]) => {
   while (i < changes.length) {
     const current = changes[i];
     
-    // Group consecutive changes of same type
-    if (current.type === 'added' || current.type === 'removed') {
+    // Group consecutive changes of same type (including 'changed')
+    if (current.type === 'added' || current.type === 'removed' || current.type === 'changed') {
       const group = collectConsecutiveChanges(changes, i, current.type);
+      
+      if (DEV_CONFIG.DEBUGGING.SEMANTIC_CHUNKING_DEBUG) {
+        console.log(`🔧 Found group of ${group.length} ${current.type} changes`);
+      }
+      
       if (group.length > 1) {
         html += renderChangeGroup(group, current.type);
         groupsCreated++;
-        if (DEV_CONFIG.DEBUGGING.SEMANTIC_CHUNKING_DEBUG) {
-          console.log(`📦 Grouped ${group.length} consecutive ${current.type} changes`);
-        }
       } else {
         html += renderSingleChange(current);
       }
@@ -380,7 +421,7 @@ const generateSemanticHTMLString = (changes: DiffChange[]) => {
   }
   
   if (DEV_CONFIG.DEBUGGING.SEMANTIC_CHUNKING_DEBUG) {
-    console.log('🎯 Semantic chunking results:', {
+    console.log('🔧 Semantic chunking results:', {
       originalLength: changes.length,
       groupsCreated,
       enabled: FEATURE_FLAGS.ENABLE_SEMANTIC_CHUNKING

@@ -9,6 +9,8 @@ import { OCRService } from './utils/OCRService';
 import { LogoTestPage } from './pages/LogoTestPage'; // Import the new LogoTestPage
 import { CuppingTestPage } from './pages/CuppingTestPage'; // Import the cupping test page
 import { DeveloperDashboard } from './pages/DeveloperDashboard'; // Import the developer dashboard
+import BoundaryFragmentTest from './pages/BoundaryFragmentTest'; // Import the boundary fragment test page
+import BoundaryFixTester from './components/BoundaryFixTester'; // Import the boundary fix tester component
 import './styles/resize-overrides.css'; // SSMR CSS resize fixes
 
 interface AppContentProps {
@@ -24,7 +26,7 @@ function AppContent({
   onToggleAdvancedOcr,
   onTogglePerformanceDemo
 }: AppContentProps) {
-  const { currentTheme, themeConfig } = useTheme();
+  const { themeConfig } = useTheme();
   
   // Get experimental features to check if results overlay is enabled
   const { features } = useExperimentalFeatures();
@@ -203,12 +205,16 @@ function App() {
           ) : window.location.pathname === '/cupping-test' ? (
             <CuppingTestPage />
           ) : window.location.pathname === '/dev-dashboard' ? (
-            <DeveloperDashboard 
+            <DeveloperDashboard
               showAdvancedOcrCard={showAdvancedOcrCardState}
               showPerformanceDemoCard={showPerformanceDemoCardState}
               onToggleAdvancedOcr={handleToggleAdvancedOcr}
               onTogglePerformanceDemo={handleTogglePerformanceDemo}
             />
+          ) : window.location.pathname === '/boundary-test' ? (
+            <BoundaryFragmentTest />
+          ) : window.location.pathname === '/test-fix' ? (
+            <BoundaryFixTester />
           ) : (
             <AppContent 
               showAdvancedOcrCard={showAdvancedOcrCardState}

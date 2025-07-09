@@ -33,7 +33,7 @@ export const UI_CONFIG = {
     
     // Semantic Chunking Configuration
     SEMANTIC_CHUNKING: {
-      ENABLED: false, // Default OFF
+      ENABLED: true, // ENABLED for testing
       MAX_CONSECUTIVE_SAME_TYPE: 10, // Limit grouping
       PRESERVE_WORD_BOUNDARIES: true,
       PRESERVE_NUMBER_PARENTHESES: true,
@@ -172,7 +172,7 @@ export const FEATURE_FLAGS = {
   ENABLE_LAYOUT_EXPERIMENTS: IS_DEVELOPMENT,
   
   // Semantic Chunking Features
-  ENABLE_SEMANTIC_CHUNKING: false, // Default OFF for safety
+  ENABLE_SEMANTIC_CHUNKING: false, // DISABLED due to performance issues
 } as const;
 
 /**
