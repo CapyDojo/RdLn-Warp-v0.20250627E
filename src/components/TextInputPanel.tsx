@@ -268,16 +268,19 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
           
           {/* OCR Language Segmented Control */}
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-theme-neutral-700 hidden sm:inline">OCR Language</span>
-            <div className="segmented-control" ref={segmentedControlRef}>
+<span className="text-sm font-medium text-theme-neutral-700 hidden sm:inline">OCR Language</span>
+            <div className="segmented-control" ref={segmentedControlRef} role="group" aria-label="OCR Language Detection Mode">
               <button
                 onClick={() => {
                   setAutoDetect(true);
                   setShowLanguageSettings(false); // Always close dropdown when switching to Auto
                 }}
                 className={`segment ${autoDetect ? 'active' : ''}`}
+                aria-pressed={autoDetect}
+                aria-label="Automatic language detection"
+                title="Automatically detect document language"
               >
-                Auto
+                🤖 Auto
               </button>
               <button
                 onClick={() => {
@@ -296,16 +299,21 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
                     setControlRect(rect);
                   }
                 }}
-                className={`segment flex items-center gap-1.5 ${!autoDetect ? 'active' : ''}`}
+                className={`segment flex items-center gap-1 ${!autoDetect ? 'active' : ''}`}
+                aria-pressed={!autoDetect}
+                aria-expanded={!autoDetect && showLanguageSettings}
+                aria-label="Manual language selection"
+                title="Manually select OCR languages"
               >
-                Manual
+                ⚙️ Manual
                 <ChevronDown
                   className={`w-3 h-3 transition-transform duration-200 ${
                     showLanguageSettings ? 'rotate-180' : ''
                   }`}
+                  aria-hidden="true"
                 />
               </button>
-              <div className={`sliding-indicator ${autoDetect ? 'to-left' : 'to-right'}`}></div>
+              <div className={`sliding-indicator ${autoDetect ? 'to-left' : 'to-right'}`} aria-hidden="true"></div>
             </div>
             
             {/* Show dropdown arrow when manual mode */}

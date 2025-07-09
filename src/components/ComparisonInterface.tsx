@@ -309,23 +309,32 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
     });
   }, 'swap_content', performanceTracker);
 
-  // Auto-scroll to results when they appear (Feature #2)
+  // Auto-scroll to output panel when it appears (Feature #2)
   useEffect(() => {
-    if (features.autoScrollToResults && result && !isProcessing) {
-      // Wait for DOM to update, then scroll to results
-      setTimeout(() => {
-        const outputPanel = document.querySelector('[data-output-panel]');
-        if (outputPanel) {
-          outputPanel.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center',  // Center in viewport for better continuity
-            inline: 'nearest'
-          });
-          console.log('🎯 Auto-scrolled to results (Feature #2) - centered for better UX');
-        }
-      }, 100);
+    if (features.autoScrollToResults) {
+      // Only scroll when processing starts, not when results complete
+      // (user is already positioned at output area from the first scroll)
+      if (isProcessing) {
+        // Wait for DOM to update, then scroll to output section
+        setTimeout(() => {
+          // Try to find the output section first, then fallback to data-output-panel
+          const outputSection = document.querySelector('.output-section');
+          const outputPanel = document.querySelector('[data-output-panel]');
+          const targetElement = outputSection || outputPanel;
+          
+          if (targetElement) {
+            targetElement.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center',  // Center in viewport for better continuity
+              inline: 'nearest'
+            });
+            
+            console.log('🎯 Auto-scrolled to output section (processing started) - Feature #2');
+          }
+        }, 100);
+      }
     }
-  }, [features.autoScrollToResults, result, isProcessing]);
+  }, [features.autoScrollToResults, isProcessing]); // Removed 'result' from dependencies
   
   // Results spotlight animation (Feature #1)
   useEffect(() => {
@@ -346,6 +355,53 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
       }, 50); // Slightly faster than auto-scroll for immediate visual feedback
     }
   }, [features.resultsSpotlight, result, isProcessing]);
+  
+  // Results First Animation (Feature #9)
+  useEffect(() => {
+    if (features.resultsFirstAnimation && result && !isProcessing) {
+      // Wait for DOM to update, then trigger position swap animation
+      setTimeout(() => {
+        const container = document.querySelector('.comparison-interface-container');
+        if (container) {
+          // Add results-active class to trigger CSS animations
+          container.classList.add('results-active');
+          console.log('🔄 Results First Animation activated (Feature #9) - Input/Output position swap');
+        }
+      }, 50);
+    } else if (!result) {
+      // Remove animation class when results are cleared
+      const container = document.querySelector('.comparison-interface-container');
+      if (container) {
+        container.classList.remove('results-active');
+      }
+    }
+  }, [features.resultsFirstAnimation, result, isProcessing]);
+  
+  // Refined Results First Animation (Feature #10)
+  useEffect(() => {
+    if (features.refinedResultsFirst && result && !isProcessing) {
+      // Wait for DOM to update, then trigger complex animation sequence
+      setTimeout(() => {
+        const outputPanel = document.querySelector('[data-output-panel]');
+        if (outputPanel) {
+          // Add transition animation class
+          outputPanel.classList.add('results-overlay-transition');
+          console.log('🎭 Refined Results First Animation activated (Feature #10) - 2s overlay then animate to top');
+          
+          // Remove animation class after 3 seconds (animation duration)
+          setTimeout(() => {
+            outputPanel.classList.remove('results-overlay-transition');
+          }, 3000);
+        }
+      }, 50);
+    } else if (!result) {
+      // Remove animation class when results are cleared
+      const outputPanel = document.querySelector('[data-output-panel]');
+      if (outputPanel) {
+        outputPanel.classList.remove('results-overlay-transition');
+      }
+    }
+  }, [features.refinedResultsFirst, result, isProcessing]);
   
   return (
     <div className={`comparison-interface-container ${experimentalCSSClasses}`}>
@@ -386,7 +442,7 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
       />
       
       {/* Input Section with Centered Swap Button - Enhanced with glassmorphism */}
-      <div className="relative mb-8" style={{ display: getPanelVisibility('input') }}>
+      <div className="input-section relative mb-8" style={{ display: getPanelVisibility('input') }}>
         {/* Desktop Input Layout Component */}
         <DesktopInputLayout
           originalText={originalText}
@@ -474,9 +530,9 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
         />
       </div>
       
-      {(result || (isProcessing && chunkingProgress.enabled && chunkingProgress.isChunking)) && (
-        <div style={{ display: getPanelVisibility('output') }}>
-          {isProcessing && chunkingProgress.enabled && chunkingProgress.isChunking && (
+      {(result || isProcessing) && (
+        <div className="output-section" style={{ display: getPanelVisibility('output') }}>
+          {isProcessing && (
             <ProcessingDisplay 
               chunkingProgress={chunkingProgress} 
               isCancelling={isCancelling} 

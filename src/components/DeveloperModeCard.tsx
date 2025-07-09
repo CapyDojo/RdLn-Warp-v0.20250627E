@@ -276,6 +276,19 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
           </button>
           
           <button
+            onClick={() => toggleFeature('refinedResultsFirst')}
+            className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+              features.refinedResultsFirst
+                ? 'bg-violet-500 text-white hover:bg-violet-600'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="#10: 2-second overlay then animate to top position"
+          >
+            <Layers className="w-3 h-3" />
+            #10 Refined First {features.refinedResultsFirst ? 'ON' : 'OFF'}
+          </button>
+          
+          <button
             onClick={() => toggleFeature('resultsOverlay')}
             className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
               features.resultsOverlay
@@ -332,7 +345,7 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
         <div className="mt-2 text-xs text-theme-neutral-600">
           <div className="flex flex-wrap gap-x-4 gap-y-1">
             <span>🎯 Addresses: "Can't find results" + "Panel confusion"</span>
-            <span>📊 {Object.values(features).filter(f => f).length}/12 features active</span>
+            <span>📊 {Object.values(features).filter(f => f).length}/13 features active</span>
             <span>💾 Settings persist across sessions</span>
           </div>
         </div>

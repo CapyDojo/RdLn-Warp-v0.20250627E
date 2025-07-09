@@ -123,9 +123,32 @@
 /* Note: Output panel uses default RedlineOutput scrolling behavior */
 
 /* Integrated resize handle styling - remove rounded corners at intersections */
-.layout-current [data-input-panel] .glass-panel {
-  border-bottom-left-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
+/* Desktop only: Round top corners, square bottom corners for input panels */
+/* Higher specificity to override theme-specific border-radius */
+/* DEBUG: This should make top corners rounded (12px) and bottom corners square (0) */
+@media (min-width: 1024px) {
+  .layout-current [data-input-panel] .glass-panel.glass-content-panel {
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+  
+  /* Override Apple theme border-radius specifically */
+  [data-theme] .layout-current [data-input-panel] .glass-panel {
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+}
+
+/* Mobile: Keep existing behavior */
+@media (max-width: 1023px) {
+  .layout-current [data-input-panel] .glass-panel {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
 }
 
 /* Desktop: Target the parent .glass-panel that contains the resize handle */

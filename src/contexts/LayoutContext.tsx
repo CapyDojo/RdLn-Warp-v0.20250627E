@@ -2,12 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Import layout styles directly
 import '../styles/layouts/current-layout.css';
-import '../styles/layouts/option-a-responsive.css';
-import '../styles/layouts/option-b-container-queries.css';
-import '../styles/layouts/option-c-fluid-scaling.css';
-import '../styles/layouts/option-d-hybrid.css';
 
-export type LayoutMode = 'current' | 'option-a' | 'option-b' | 'option-c' | 'option-d';
+export type LayoutMode = 'current';
 
 interface LayoutContextType {
   currentLayout: LayoutMode;
@@ -49,26 +45,18 @@ export const LayoutProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const bodyClassList = document.body.classList;
     
     // Remove all layout classes
-    bodyClassList.remove('layout-current', 'layout-option-a', 'layout-option-b', 'layout-option-c', 'layout-option-d');
+    bodyClassList.remove('layout-current');
     
     // Add current layout class
-    const newClass = `layout-${currentLayout}`;
-    bodyClassList.add(newClass);
+    bodyClassList.add('layout-current');
     
     return () => {
       // Cleanup on unmount
-      bodyClassList.remove('layout-current', 'layout-option-a', 'layout-option-b', 'layout-option-c', 'layout-option-d');
+      bodyClassList.remove('layout-current');
     };
   }, [currentLayout]);
 
   const setLayout = (layout: LayoutMode) => {
-    // Fallback to current layout if container queries aren't supported
-    if (layout === 'option-b' && !supportsContainerQueries) {
-      console.warn('Container queries not supported, falling back to current layout');
-      setCurrentLayout('current');
-      return;
-    }
-    
     setCurrentLayout(layout);
   };
 

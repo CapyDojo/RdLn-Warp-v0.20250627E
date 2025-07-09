@@ -8,6 +8,7 @@ import { ExperimentalLayoutProvider, useExperimentalFeatures } from './contexts/
 import { OCRService } from './utils/OCRService';
 import { LogoTestPage } from './pages/LogoTestPage'; // Import the new LogoTestPage
 import { CuppingTestPage } from './pages/CuppingTestPage'; // Import the cupping test page
+import { DeveloperDashboard } from './pages/DeveloperDashboard'; // Import the developer dashboard
 import './styles/resize-overrides.css'; // SSMR CSS resize fixes
 
 function AppContent() {
@@ -127,10 +128,12 @@ function App() {
       <LayoutProvider>
         <ExperimentalLayoutProvider>
           {/* Conditional rendering for test pages */}
-          {window.location.pathname === '/logo-test' ? (
+{window.location.pathname === '/logo-test' ? (
             <LogoTestPage />
           ) : window.location.pathname === '/cupping-test' ? (
             <CuppingTestPage />
+          ) : window.location.pathname === '/dev-dashboard' ? (
+            <DeveloperDashboard />
           ) : (
             <AppContent />
           )}

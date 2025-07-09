@@ -482,23 +482,22 @@ h3 { font-size: 1.125rem; } /* 15.75px instead of 18px */
   border: none;
   background: transparent;
   color: rgb(var(--color-neutral-600, 75 85 99));
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   text-align: center;
   outline: none;
+  border-radius: 6px;
 }
 
-/* Auto button - precise sizing for "Auto" with equal padding */
+/* Auto button - content-based sizing */
 .segmented-control .segment:first-child {
   flex: 0 0 auto;
-  min-width: 54px;
   padding: 6px 12px;
 }
 
-/* Manual button - precise sizing for "Manual ↓" with equal padding */
+/* Manual button - content-based sizing */
 .segmented-control .segment:last-child {
   flex: 0 0 auto;
-  min-width: 78px;
   padding: 6px 12px;
 }
 
@@ -534,11 +533,19 @@ h3 { font-size: 1.125rem; } /* 15.75px instead of 18px */
 
 .segmented-control .segment:hover {
   color: rgb(var(--color-primary-700, 29 78 216));
+  transform: translateY(-1px);
+  background: rgba(var(--color-primary-50, 239 246 255), 0.5);
 }
 
 .segmented-control .segment.active {
   color: rgb(var(--color-primary-800, 30 64 175));
   font-weight: 600;
+  text-shadow: 0 1px 2px rgba(var(--color-primary-900, 30 58 138), 0.1);
+}
+
+.segmented-control .segment:active {
+  transform: translateY(0px);
+  transition: all 0.1s ease;
 }
 
 .segmented-control .sliding-indicator {
@@ -558,16 +565,16 @@ h3 { font-size: 1.125rem; } /* 15.75px instead of 18px */
   z-index: 1;
 }
 
-/* Auto position - precise width for "Auto" with equal padding */
+/* Auto position - match actual button content width */
 .segmented-control .sliding-indicator.to-left {
-  width: 59px;
+  width: 70px; /* Actual width of "🤖 Auto" content + padding */
   transform: translateX(0%);
 }
 
-/* Manual position - precise width for "Manual ↓" with equal padding */
+/* Manual position - match actual button content width */
 .segmented-control .sliding-indicator.to-right {
-  width: 89px;
-  transform: translateX(57px);
+  width: 90px; /* Actual width of "⚙️ Manual ↓" content + padding */
+  transform: translateX(70px); /* Start after the auto button */
 }
 
 /* Glassmorphism enhancement for different themes */

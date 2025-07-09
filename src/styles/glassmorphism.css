@@ -926,6 +926,15 @@ header .flex {
   box-shadow: 0 12px 40px 0 rgba(249, 115, 22, var(--glass-strong)), 0 4px 16px 0 rgba(14, 165, 233, var(--glass-panel)) !important;
 }
 
+/* Language Settings Dropdown - Enhanced opacity for classic light */
+[data-theme="classic-light"] .glass-panel.shadow-2xl {
+  background: rgba(248, 250, 252, 0.95) !important;
+  backdrop-filter: blur(20px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.4) !important;
+  border: 1px solid rgba(249, 115, 22, 0.3) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(249, 115, 22, 0.1) !important;
+}
+
 /* Classic Dark theme glassmorphism - Dark theme with pure greys and orange accent borders */
 [data-theme="classic-dark"] .glass-panel {
   background: rgba(38, 38, 38, var(--glass-panel)) !important;
@@ -1025,6 +1034,15 @@ header .flex {
 [data-theme="classic-dark"] .glass-panel.glass-content-panel:hover {
   border-color: rgba(249, 115, 22, var(--glass-focus)) !important;
   box-shadow: 0 8px 24px 0 rgba(249, 115, 22, var(--glass-panel)), 0 2px 8px 0 rgba(14, 165, 233, var(--glass-subtle)) !important;
+}
+
+/* Language Settings Dropdown - Enhanced opacity for classic dark */
+[data-theme="classic-dark"] .glass-panel.shadow-2xl {
+  background: rgba(38, 38, 38, 0.95) !important;
+  backdrop-filter: blur(20px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.4) !important;
+  border: 1px solid rgba(249, 115, 22, 0.3) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(249, 115, 22, 0.2) !important;
 }
 
 /* Comprehensive bamboo theme text harmonization - use extremely dark ochre everywhere */
