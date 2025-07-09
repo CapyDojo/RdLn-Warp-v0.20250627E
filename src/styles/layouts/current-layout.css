@@ -69,7 +69,7 @@
   /* Container-based scrolling for "paper in frame" effect */
   overflow-y: auto !important;
   /* Height constraints - allows resize handles to work */
-  min-height: 200px !important;
+  min-height: 390px !important;
   max-height: 800px !important;
 }
 
@@ -77,7 +77,7 @@
 .layout-current .glass-input-field {
   /* Scale with container when empty, expand with content when filled */
   height: auto !important;
-  min-height: calc(100% - 24px) !important; /* Fill container minus padding */
+  min-height: calc(100% - 6px) !important; /* Fill container minus padding */
   max-height: none !important;
   
   /* Disable textarea scrolling and resizing */

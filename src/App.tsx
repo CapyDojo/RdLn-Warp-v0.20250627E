@@ -37,7 +37,7 @@ function AppContent() {
   return (
     <div className="min-h-screen">
       <Header />
-      <main className="pt-24">
+<main className="pt-32">
         <ComparisonInterface 
           showAdvancedOcrCard={showAdvancedOcrCardState}
           showPerformanceDemoCard={showPerformanceDemoCardState}

@@ -301,10 +301,40 @@ textarea:focus {
   padding-right: 1rem !important;
 }
 
-/* Selection states */
+/* Selection states - Default for all themes */
 ::selection {
   background: var(--text-interactive) !important;
   color: white !important;
+}
+
+/* Classic Light theme - Dark selection background with white text for optimal contrast */
+[data-theme="classic-light"] ::selection {
+  background: #1e293b !important; /* Dark blue-gray for high contrast on light backgrounds */
+  color: #ffffff !important; /* Pure white text */
+}
+
+/* Classic Dark theme - Light selection background with dark text for optimal contrast */
+[data-theme="classic-dark"] ::selection {
+  background: #38bdf8 !important; /* Light blue for high contrast on dark backgrounds */
+  color: #0f172a !important; /* Very dark text for maximum readability */
+}
+
+/* Firefox compatibility - Default */
+::-moz-selection {
+  background: var(--text-interactive) !important;
+  color: white !important;
+}
+
+/* Firefox compatibility - Classic Light theme */
+[data-theme="classic-light"] ::-moz-selection {
+  background: #1e293b !important;
+  color: #ffffff !important;
+}
+
+/* Firefox compatibility - Classic Dark theme */
+[data-theme="classic-dark"] ::-moz-selection {
+  background: #38bdf8 !important;
+  color: #0f172a !important;
 }
 
 /* ENSURE BACKDROP-FILTER WORKS */

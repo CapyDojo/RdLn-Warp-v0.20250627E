@@ -109,7 +109,7 @@ export const OutputLayout: React.FC<OutputLayoutProps> = ({
       </div>
       
       {/* Comparison Statistics */}
-      <div className="mb-4">
+      <div className="mt-8 mb-4">
         <ComparisonStats 
           stats={stats} 
         />
