@@ -563,10 +563,11 @@ export class MyersAlgorithm {
 
   /**
    * Enhanced definition of connective punctuation
+   * Parentheses are excluded to allow for more granular token separation
    */
   private static isConnectivePunctuation(content: string): boolean {
     const trimmed = content.trim();
-    return [',', '.', '-', ':', ';', '(', ')'].includes(trimmed);
+    return [',', '.', '-', ':', ';'].includes(trimmed);
   }
 
   /**

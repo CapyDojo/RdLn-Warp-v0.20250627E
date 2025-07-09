@@ -16,15 +16,19 @@ import './styles/resize-overrides.css'; // SSMR CSS resize fixes
 interface AppContentProps {
   showAdvancedOcrCard: boolean;
   showPerformanceDemoCard: boolean;
+  showExtremeTestSuite: boolean;
   onToggleAdvancedOcr: () => void;
   onTogglePerformanceDemo: () => void;
+  onToggleExtremeTestSuite: () => void;
 }
 
 function AppContent({
   showAdvancedOcrCard,
   showPerformanceDemoCard,
+  showExtremeTestSuite,
   onToggleAdvancedOcr,
-  onTogglePerformanceDemo
+  onTogglePerformanceDemo,
+  onToggleExtremeTestSuite
 }: AppContentProps) {
   const { themeConfig } = useTheme();
   
@@ -68,8 +72,10 @@ function AppContent({
         <ComparisonInterface 
           showAdvancedOcrCard={showAdvancedOcrCard}
           showPerformanceDemoCard={showPerformanceDemoCard}
+          showExtremeTestSuite={showExtremeTestSuite}
           onToggleAdvancedOcr={onToggleAdvancedOcr}
           onTogglePerformanceDemo={onTogglePerformanceDemo}
+          onToggleExtremeTestSuite={onToggleExtremeTestSuite}
           onOverlayShow={handleOverlayShow}
           onOverlayHide={handleOverlayHide}
         />
@@ -151,18 +157,32 @@ function App() {
     return true;
   });
   
+  const [showExtremeTestSuiteState, setShowExtremeTestSuiteState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('developer-card-toggles');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.showExtremeTestSuite ?? false; // Default to false for extreme test suite
+      }
+    } catch (error) {
+      console.warn('Failed to load developer card toggles from localStorage:', error);
+    }
+    return false;
+  });
+  
   // Save to localStorage whenever toggles change
   useEffect(() => {
     try {
       const toggles = {
         showAdvancedOcrCard: showAdvancedOcrCardState,
-        showPerformanceDemoCard: showPerformanceDemoCardState
+        showPerformanceDemoCard: showPerformanceDemoCardState,
+        showExtremeTestSuite: showExtremeTestSuiteState
       };
       localStorage.setItem('developer-card-toggles', JSON.stringify(toggles));
     } catch (error) {
       console.warn('Failed to save developer card toggles to localStorage:', error);
     }
-  }, [showAdvancedOcrCardState, showPerformanceDemoCardState]);
+  }, [showAdvancedOcrCardState, showPerformanceDemoCardState, showExtremeTestSuiteState]);
   
   // Listen for storage events to sync changes across windows
   useEffect(() => {
@@ -175,6 +195,9 @@ function App() {
           }
           if (newToggles.showPerformanceDemoCard !== undefined) {
             setShowPerformanceDemoCardState(newToggles.showPerformanceDemoCard);
+          }
+          if (newToggles.showExtremeTestSuite !== undefined) {
+            setShowExtremeTestSuiteState(newToggles.showExtremeTestSuite);
           }
         } catch (error) {
           console.warn('Failed to parse developer card toggles from storage event:', error);
@@ -195,6 +218,10 @@ function App() {
     setShowPerformanceDemoCardState(!showPerformanceDemoCardState);
   };
   
+  const handleToggleExtremeTestSuite = () => {
+    setShowExtremeTestSuiteState(!showExtremeTestSuiteState);
+  };
+  
   return (
     <ThemeProvider>
       <LayoutProvider>
@@ -208,8 +235,10 @@ function App() {
             <DeveloperDashboard
               showAdvancedOcrCard={showAdvancedOcrCardState}
               showPerformanceDemoCard={showPerformanceDemoCardState}
+              showExtremeTestSuite={showExtremeTestSuiteState}
               onToggleAdvancedOcr={handleToggleAdvancedOcr}
               onTogglePerformanceDemo={handleTogglePerformanceDemo}
+              onToggleExtremeTestSuite={handleToggleExtremeTestSuite}
             />
           ) : window.location.pathname === '/boundary-test' ? (
             <BoundaryFragmentTest />
@@ -219,8 +248,10 @@ function App() {
             <AppContent 
               showAdvancedOcrCard={showAdvancedOcrCardState}
               showPerformanceDemoCard={showPerformanceDemoCardState}
+              showExtremeTestSuite={showExtremeTestSuiteState}
               onToggleAdvancedOcr={handleToggleAdvancedOcr}
               onTogglePerformanceDemo={handleTogglePerformanceDemo}
+              onToggleExtremeTestSuite={handleToggleExtremeTestSuite}
             />
           )}
         </ExperimentalLayoutProvider>

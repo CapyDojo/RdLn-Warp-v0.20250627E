@@ -12,6 +12,7 @@ import { DesktopControlsPanel } from './DesktopControlsPanel';
 import { MobileControlsPanel } from './MobileControlsPanel';
 import { DesktopInputLayout } from './DesktopInputLayout';
 import { MobileInputLayout } from './MobileInputLayout';
+import { ExtremeTestSuite } from '../testing/ExtremeTestSuite';
 // Background Loading Status
 import { BackgroundLoadingStatus } from './BackgroundLoadingStatus';
 // Resize and scroll handlers
@@ -35,8 +36,10 @@ import { BaseComponentProps } from '../types/components';
 interface ComparisonInterfaceProps extends BaseComponentProps {
   showAdvancedOcrCard?: boolean;
   showPerformanceDemoCard?: boolean;
+  showExtremeTestSuite?: boolean;
   onToggleAdvancedOcr?: () => void;
   onTogglePerformanceDemo?: () => void;
+  onToggleExtremeTestSuite?: () => void;
   onOverlayShow?: () => void;
   onOverlayHide?: () => void;
 }
@@ -44,8 +47,10 @@ interface ComparisonInterfaceProps extends BaseComponentProps {
 export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
   showAdvancedOcrCard = true,
   showPerformanceDemoCard = true,
+  showExtremeTestSuite = false,
   onToggleAdvancedOcr,
   onTogglePerformanceDemo,
+  onToggleExtremeTestSuite,
   onOverlayShow,
   onOverlayHide,
   style,
@@ -449,8 +454,8 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
       {/* Advanced Test Suite - Segregated Testing Module - DISABLED FOR PRODUCTION */}
       {/* <AdvancedTestSuite onLoadTest={handleLoadTest} /> */}
 
-      {/* Extreme Test Suite - Ultra-Complex Testing Module - DISABLED FOR PRODUCTION */}
-      {/* <ExtremeTestSuite onLoadTest={handleLoadTest} /> */}
+      {/* Extreme Test Suite - Ultra-Complex Testing Module - Toggleable via Dev Dashboard */}
+      {showExtremeTestSuite && <ExtremeTestSuite onLoadTest={handleLoadTest} />}
 
       {/* STEP 3b: Background Loading Status (Safe, Optional, Reversible) */}
       <BackgroundLoadingStatus 

@@ -11,16 +11,20 @@ interface DeveloperDashboardProps extends BaseComponentProps {
   onBackToApp?: () => void;
   showAdvancedOcrCard?: boolean;
   showPerformanceDemoCard?: boolean;
+  showExtremeTestSuite?: boolean;
   onToggleAdvancedOcr?: () => void;
   onTogglePerformanceDemo?: () => void;
+  onToggleExtremeTestSuite?: () => void;
 }
 
 export const DeveloperDashboard: React.FC<DeveloperDashboardProps> = ({ 
   onBackToApp,
   showAdvancedOcrCard = true,
   showPerformanceDemoCard = true,
+  showExtremeTestSuite = false,
   onToggleAdvancedOcr,
   onTogglePerformanceDemo,
+  onToggleExtremeTestSuite,
   style, 
   className 
 }) => {
@@ -90,8 +94,10 @@ export const DeveloperDashboard: React.FC<DeveloperDashboardProps> = ({
               <DevelopmentToolsPanel 
                 showAdvancedOcrCard={showAdvancedOcrCard}
                 showPerformanceDemoCard={showPerformanceDemoCard}
+                showExtremeTestSuite={showExtremeTestSuite}
                 onToggleAdvancedOcr={onToggleAdvancedOcr}
                 onTogglePerformanceDemo={onTogglePerformanceDemo}
+                onToggleExtremeTestSuite={onToggleExtremeTestSuite}
               />
             </div>
 
