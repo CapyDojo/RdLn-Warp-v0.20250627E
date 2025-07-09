@@ -45,7 +45,7 @@ export const FloatingDevToggle: React.FC<FloatingDevToggleProps> = ({
 
   return (
     <div 
-      className={`fixed bottom-6 right-6 z-50 ${className}`} 
+      className={`fixed bottom-6 right-6 z-50 ${className || ''}`}
       style={style}
     >
       {/* Tooltip */}
