@@ -39,16 +39,26 @@ export const LanguageSettingsDropdown: React.FC<LanguageSettingsDropdownProps> =
   if (!isOpen || !controlRect) return null;
 
   return createPortal(
-    <div className={`fixed inset-0 z-[9999] pointer-events-none ${className || ''}`} style={style}>
+    <div 
+      className={`fixed inset-0 z-[9999] pointer-events-auto ${className || ''}`} 
+      style={style}
+      onClick={onClose}
+    >
       <div 
         className="absolute pointer-events-auto"
         style={{
-          top: controlRect.bottom,
-          left: controlRect.right - 500, // Align right edge of dropdown with right edge of control
-          width: '500px'
+          top: controlRect.bottom + 8,
+          left: Math.max(16, controlRect.right - 500), // Prevent going off-screen on left
+          right: Math.max(16, window.innerWidth - controlRect.right), // Responsive right boundary
+          width: Math.min(500, window.innerWidth - 32), // Responsive width with 16px margins
+          maxWidth: '500px'
         }}
       >
-        <div className="glass-panel shadow-2xl border border-white/20 backdrop-blur-xl transition-all duration-300 rounded-xl overflow-hidden" style={{ width: '500px', maxHeight: '60vh' }}>
+        <div 
+          className="glass-panel shadow-2xl border border-white/20 backdrop-blur-xl transition-all duration-300 rounded-xl overflow-hidden" 
+          style={{ width: '100%', maxHeight: '60vh' }}
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* Header */}
           <div className="px-6 py-4 border-b border-white/10">
             <div className="flex items-center justify-between">

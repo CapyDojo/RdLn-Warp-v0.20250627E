@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Zap, Image, Layout, Monitor, Activity, BarChart3, Beaker, Target, Eye, Smartphone, ArrowUp, Layers, ExternalLink, Cog, Pin } from 'lucide-react';
-import { useLayout, LayoutMode } from '../contexts/LayoutContext';
+import { Settings, Zap, Image, Monitor, Activity, BarChart3, Beaker, Target, Eye, Smartphone, ArrowUp, Layers, ExternalLink, Cog, Pin } from 'lucide-react';
 import { BaseComponentProps } from '../types/components';
 import { PerformanceDebugPanel, usePerformanceDebugPanel } from './PerformanceDebugPanel';
 import { setupPerformanceDebugUtils } from '../utils/performanceDebugUtils';
@@ -22,7 +21,6 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
   style,
   className
 }) => {
-  const { currentLayout, setLayout, supportsContainerQueries } = useLayout();
   const { isVisible: isPerfDebugVisible, toggle: togglePerfDebug } = usePerformanceDebugPanel();
   const { features, toggleFeature, resetAllFeatures, enableTestGroup } = useExperimentalFeatures();
   const hasActiveExperimentalFeatures = useHasActiveExperimentalFeatures();
@@ -65,24 +63,14 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
         Developer Mode
       </h3>
       
-{/* Layout Section */}
+{/* Layout Section - Moved to Developer Dashboard */}
       <div className="mb-4">
-        <h4 className="text-sm font-medium text-theme-neutral-700 mb-2 flex items-center gap-1">
-          <Layout className="w-4 h-4" />
-          Current Layout
-        </h4>
-        <div>
-          <button
-            onClick={() => setLayout('current')}
-            className={`px-3 py-2 text-sm rounded transition-all flex items-center gap-2 bg-blue-500 text-white hover:bg-blue-600`}
-            title="Current production layout (max-w-7xl)"
-          >
-            <Monitor className="w-4 h-4" />
-            Active Layout
-          </button>
-        </div>
-        <div className="mt-2 text-xs text-theme-neutral-600">
-          Using optimized layout with glassmorphism effects.
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="text-sm text-blue-800">
+            <div className="font-medium mb-1">🔧 Layout Controls</div>
+            <div className="text-xs">Layout controls moved to Developer Dashboard for better organization.</div>
+            <div className="text-xs mt-1 opacity-75">Access via floating dev toggle or Ctrl+Shift+D</div>
+          </div>
         </div>
       </div>
       

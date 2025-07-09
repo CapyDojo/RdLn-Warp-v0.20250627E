@@ -2,6 +2,7 @@ import React from 'react';
 import { Settings, ArrowLeft, Monitor, Activity, Beaker, Layout } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { BaseComponentProps } from '../types/components';
+import { LayoutControlsPanel } from '../components/dev-dashboard/LayoutControlsPanel';
 
 interface DeveloperDashboardProps extends BaseComponentProps {
   onBackToApp?: () => void;
@@ -48,9 +49,7 @@ export const DeveloperDashboard: React.FC<DeveloperDashboardProps> = ({
                 <Layout className="w-5 h-5" />
                 Layout Controls
               </h2>
-              <div className="text-sm text-theme-neutral-600">
-                Layout controls will be moved here in the next step.
-              </div>
+              <LayoutControlsPanel />
             </div>
 
             {/* Experimental Features Section */}

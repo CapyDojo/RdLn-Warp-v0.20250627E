@@ -340,26 +340,35 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
           style={isDynamicScaling ? {} : { height: '100%' }}
         />
         
-        {/* OCR Progress Bar */}
+        {/* Enhanced OCR Progress Bar */}
         {isProcessing && (
-          <div className="absolute top-2 left-2 right-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <Image className="w-4 h-4 text-theme-primary-600" />
-              <span className="text-sm font-medium text-theme-neutral-700">
-                {progress < 40 ? 'Detecting language...' : 
-                 progress < 80 ? 'Extracting text...' : 'Processing text...'}
-              </span>
-            </div>
-            <div className="w-full bg-theme-neutral-200 rounded-full h-2">
-              <div 
-                className="bg-theme-primary-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              ></div>
+          <div className="absolute top-2 left-2 right-2 bg-white/90 dark:bg-black/80 backdrop-blur-md border border-white/30 rounded-lg p-4 shadow-lg">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="relative">
+                <Image className="w-5 h-5 text-theme-primary-600 animate-pulse" />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-theme-primary-500 rounded-full animate-ping"></div>
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-theme-neutral-800">
+                    {progress < 30 ? 'Initializing OCR...' : 
+                     progress < 60 ? 'Detecting language...' : 
+                     progress < 90 ? 'Extracting text...' : 'Finalizing...'}
+                  </span>
+                  <span className="text-xs text-theme-neutral-600 font-mono">{progress}%</span>
+                </div>
+                <div className="w-full bg-theme-neutral-200 rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-theme-primary-500 to-theme-primary-600 h-2 rounded-full transition-all duration-500 ease-out"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+              </div>
             </div>
             {detectedLanguages.length > 0 && (
-              <div className="mt-2 flex items-center gap-2">
-                <Languages className="w-3 h-3 text-theme-secondary-600" />
-                <span className="text-xs text-theme-neutral-600">
+              <div className="flex items-center gap-2 pt-2 border-t border-white/20">
+                <Languages className="w-4 h-4 text-theme-secondary-600" />
+                <span className="text-xs text-theme-neutral-700 font-medium">
                   Detected: {detectedLanguages.map(getLanguageShortName).join(', ')}
                 </span>
               </div>
