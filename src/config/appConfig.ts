@@ -34,7 +34,7 @@ export const UI_CONFIG = {
     // Semantic Chunking Configuration
     SEMANTIC_CHUNKING: {
       ENABLED: true, // ENABLED for testing
-      MAX_CONSECUTIVE_SAME_TYPE: 10, // Limit grouping
+      MAX_CONSECUTIVE_SAME_TYPE: 50, // Increase limit for longer contiguous blocks
       PRESERVE_WORD_BOUNDARIES: true,
       PRESERVE_NUMBER_PARENTHESES: true,
     },
@@ -172,7 +172,7 @@ export const FEATURE_FLAGS = {
   ENABLE_LAYOUT_EXPERIMENTS: IS_DEVELOPMENT,
   
   // Semantic Chunking Features
-  ENABLE_SEMANTIC_CHUNKING: false, // DISABLED due to performance issues
+  ENABLE_SEMANTIC_CHUNKING: true, // ENABLED to fix contiguous chunk rendering
 } as const;
 
 /**
