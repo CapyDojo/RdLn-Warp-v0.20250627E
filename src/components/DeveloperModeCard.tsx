@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Zap, Image, Monitor, Activity, BarChart3, Beaker } from 'lucide-react';
+import { Settings, Activity, Beaker } from 'lucide-react';
 import { BaseComponentProps } from '../types/components';
 import { PerformanceDebugPanel, usePerformanceDebugPanel } from './PerformanceDebugPanel';
 import { setupPerformanceDebugUtils } from '../utils/performanceDebugUtils';
@@ -7,54 +7,22 @@ import { appConfig } from '../config/appConfig';
 import { useExperimentalFeatures, useHasActiveExperimentalFeatures } from '../contexts/ExperimentalLayoutContext';
 
 interface DeveloperModeCardProps extends BaseComponentProps {
-  showAdvancedOcrCard?: boolean;
-  showPerformanceDemoCard?: boolean;
-  onToggleAdvancedOcr?: () => void;
-  onTogglePerformanceDemo?: () => void;
+  // All functionality moved to Developer Dashboard
 }
 
 export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
-  showAdvancedOcrCard = true,
-  showPerformanceDemoCard = true,
-  onToggleAdvancedOcr,
-  onTogglePerformanceDemo,
   style,
   className
 }) => {
   const { isVisible: isPerfDebugVisible, toggle: togglePerfDebug } = usePerformanceDebugPanel();
-  const { features } = useExperimentalFeatures();
   const hasActiveExperimentalFeatures = useHasActiveExperimentalFeatures();
-  const [perfMonitoringEnabled, setPerfMonitoringEnabled] = useState(() => {
-    try {
-      return localStorage.getItem('performance-monitoring-enabled') !== 'false';
-    } catch {
-      return true;
-    }
-  });
   
-
   // Setup performance debugging utilities on mount
   useEffect(() => {
     if (appConfig.dev.DEBUGGING.SHOW_PERFORMANCE_DEBUG) {
       setupPerformanceDebugUtils();
     }
   }, []);
-
-
-  const handleTogglePerfMonitoring = () => {
-    const newValue = !perfMonitoringEnabled;
-    setPerfMonitoringEnabled(newValue);
-    try {
-      localStorage.setItem('performance-monitoring-enabled', newValue.toString());
-      if (newValue) {
-        console.log('✅ Performance monitoring enabled');
-      } else {
-        console.log('❌ Performance monitoring disabled');
-      }
-    } catch (error) {
-      console.warn('Failed to toggle performance monitoring:', error);
-    }
-  };
   
   return (
     <div className="glass-panel border border-theme-neutral-300 rounded-lg p-4 shadow-lg transition-all duration-300">
@@ -74,71 +42,19 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
         </div>
       </div>
       
-      {/* Performance Monitoring Section */}
-      {appConfig.dev.DEBUGGING.SHOW_PERFORMANCE_DEBUG && (
-        <div className="mb-4">
-          <h4 className="text-sm font-medium text-theme-neutral-700 mb-2 flex items-center gap-1">
-            <Activity className="w-4 h-4" />
-            Performance Monitoring
-          </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-            <button
-              onClick={handleTogglePerfMonitoring}
-              className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
-                perfMonitoringEnabled
-                  ? 'bg-green-500 text-white hover:bg-green-600'
-                  : 'bg-gray-500 text-white hover:bg-gray-600'
-              }`}
-              title="Toggle performance data collection"
-            >
-              <BarChart3 className="w-3 h-3" />
-              Monitoring {perfMonitoringEnabled ? 'ON' : 'OFF'}
-            </button>
-            
-            <button
-              onClick={togglePerfDebug}
-              className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
-                isPerfDebugVisible
-                  ? 'bg-blue-500 text-white hover:bg-blue-600'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-              title="Toggle performance debug panel visibility"
-            >
-              <Monitor className="w-3 h-3" />
-              Debug Panel {isPerfDebugVisible ? 'ON' : 'OFF'}
-            </button>
-            
-            <button
-              onClick={() => {
-                try {
-                  if (window.showPerfReport) {
-                    window.showPerfReport(60000); // Last minute
-                  } else {
-                    console.warn('Performance utilities not available. Enable monitoring first.');
-                  }
-                } catch (error) {
-                  console.warn('Failed to show performance report:', error);
-                }
-              }}
-              className="px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 bg-purple-200 text-purple-700 hover:bg-purple-300"
-              title="Show performance report in console (Ctrl+Shift+R)"
-            >
-              <Activity className="w-3 h-3" />
-              Show Report
-            </button>
-          </div>
-          
-          {/* Performance Shortcuts Info */}
-          <div className="mt-2 text-xs text-theme-neutral-600">
-            <div className="flex flex-wrap gap-x-4 gap-y-1">
-              <span>📊 <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl+Shift+R</kbd> Report</span>
-              <span>📈 <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl+Shift+M</kbd> Metrics</span>
-              <span>🔧 <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl+Shift+P</kbd> Panel</span>
-              <span>🗑️ <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl+Shift+C</kbd> Clear</span>
+      {/* Performance Monitoring Section - Moved to Developer Dashboard */}
+      <div className="mb-4">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="text-sm text-blue-800">
+            <div className="font-medium mb-1 flex items-center gap-1">
+              <Activity className="w-4 h-4" />
+              📊 Performance Monitoring
             </div>
+            <div className="text-xs">Performance controls moved to Developer Dashboard for better organization.</div>
+            <div className="text-xs mt-1 opacity-75">Access via floating dev toggle or Ctrl+Shift+D</div>
           </div>
         </div>
-      )}
+      </div>
       
       {/* Experimental UX Features Section - Moved to Developer Dashboard */}
       <div className="mb-4">
@@ -159,53 +75,15 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
         </div>
       </div>
       
-      <div className="flex gap-2">
-        {onToggleAdvancedOcr && (
-          <button
-            onClick={onToggleAdvancedOcr}
-            className={`px-2 py-1 text-xs rounded transition-all ${
-              showAdvancedOcrCard 
-                ? 'bg-green-500 text-white hover:bg-green-600' 
-                : 'bg-gray-500 text-white hover:bg-gray-600'
-            }`}
-            title="Toggle Advanced OCR card visibility"
-            aria-label={`Toggle Advanced OCR card visibility ${showAdvancedOcrCard ? 'ON' : 'OFF'}`}
-          >
-            <Zap className="w-4 h-4" />
-            <span className="ml-1">OCR {showAdvancedOcrCard ? 'ON' : 'OFF'}</span>
-          </button>
-        )}
-        {onTogglePerformanceDemo && (
-          <button
-            onClick={onTogglePerformanceDemo}
-            className={`px-2 py-1 text-xs rounded transition-all ${
-              showPerformanceDemoCard 
-                ? 'bg-green-500 text-white hover:bg-green-600' 
-                : 'bg-gray-500 text-white hover:bg-gray-600'
-            }`}
-            title="Toggle Performance Demo card visibility"
-            aria-label={`Toggle Performance Demo card visibility ${showPerformanceDemoCard ? 'ON' : 'OFF'}`}
-          >
-            <Image className="w-4 h-4" />
-            <span className="ml-1">Demo {showPerformanceDemoCard ? 'ON' : 'OFF'}</span>
-          </button>
-        )}
-        <a 
-          href="/logo-test" 
-          className="px-3 py-2 bg-theme-primary-100/50 hover:bg-theme-primary-200/50 text-theme-primary-700 hover:text-theme-primary-800 text-sm font-medium rounded-lg border border-theme-primary-200/50 transition-all duration-200"
-          title="View logo concept designs"
-          aria-label="View logo concept designs"
-        >
-          Logo Test
-        </a>
-        <a 
-          href="/cupping-test" 
-          className="px-3 py-2 bg-theme-accent-100/50 hover:bg-theme-accent-200/50 text-theme-accent-700 hover:text-theme-accent-800 text-sm font-medium rounded-lg border border-theme-accent-200/50 transition-all duration-200"
-          title="View cupping effect investigations"
-          aria-label="View cupping effect investigations"
-        >
-          Cupping Test
-        </a>
+      {/* Development Tools Section - Moved to Developer Dashboard */}
+      <div className="mb-4">
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+          <div className="text-sm text-purple-800">
+            <div className="font-medium mb-1">🔧 Development Tools</div>
+            <div className="text-xs">Now available exclusively in Developer Dashboard</div>
+            <div className="text-xs mt-1 opacity-75">Access via floating dev toggle or Ctrl+Shift+D</div>
+          </div>
+        </div>
       </div>
       
       {/* Performance Debug Panel */}

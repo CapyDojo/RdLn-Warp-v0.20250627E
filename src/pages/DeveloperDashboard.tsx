@@ -5,13 +5,22 @@ import { BaseComponentProps } from '../types/components';
 import { LayoutControlsPanel } from '../components/dev-dashboard/LayoutControlsPanel';
 import { ExperimentalFeaturesPanel } from '../components/dev-dashboard/ExperimentalFeaturesPanel';
 import { PerformanceMonitoringPanel } from '../components/dev-dashboard/PerformanceMonitoringPanel';
+import { DevelopmentToolsPanel } from '../components/dev-dashboard/DevelopmentToolsPanel';
 
 interface DeveloperDashboardProps extends BaseComponentProps {
   onBackToApp?: () => void;
+  showAdvancedOcrCard?: boolean;
+  showPerformanceDemoCard?: boolean;
+  onToggleAdvancedOcr?: () => void;
+  onTogglePerformanceDemo?: () => void;
 }
 
 export const DeveloperDashboard: React.FC<DeveloperDashboardProps> = ({ 
-  onBackToApp, 
+  onBackToApp,
+  showAdvancedOcrCard = true,
+  showPerformanceDemoCard = true,
+  onToggleAdvancedOcr,
+  onTogglePerformanceDemo,
   style, 
   className 
 }) => {
@@ -69,7 +78,21 @@ export const DeveloperDashboard: React.FC<DeveloperDashboardProps> = ({
                 <Activity className="w-5 h-5" />
                 Performance Monitoring
               </h2>
-              <PerformanceMonitoringPanel />
+            <PerformanceMonitoringPanel />
+            </div>
+
+            {/* Development Tools Section */}
+            <div className="glass-panel border border-theme-neutral-300 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-theme-primary-900 mb-4 flex items-center gap-2">
+                <Monitor className="w-5 h-5" />
+                Development Tools
+              </h2>
+              <DevelopmentToolsPanel 
+                showAdvancedOcrCard={showAdvancedOcrCard}
+                showPerformanceDemoCard={showPerformanceDemoCard}
+                onToggleAdvancedOcr={onToggleAdvancedOcr}
+                onTogglePerformanceDemo={onTogglePerformanceDemo}
+              />
             </div>
 
           </div>

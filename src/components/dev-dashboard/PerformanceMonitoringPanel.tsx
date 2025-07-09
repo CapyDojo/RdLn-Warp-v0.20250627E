@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Activity, BarChart3, RotateCcw } from 'lucide-react';
+import { Activity, BarChart3, RotateCcw, Download, CheckCircle, Trash2 } from 'lucide-react';
 import { PerformanceDebugPanel, usePerformanceDebugPanel } from '../PerformanceDebugPanel';
 import { BaseComponentProps } from '../../types/components';
+import { setupPerformanceDebugUtils } from '../../utils/performanceDebugUtils';
+import { appConfig } from '../../config/appConfig';
 
 interface PerformanceMonitoringPanelProps extends BaseComponentProps {
   // Optional props for future expansion
@@ -35,6 +37,13 @@ export const PerformanceMonitoringPanel: React.FC<PerformanceMonitoringPanelProp
     }
   };
 
+  // Setup performance debugging utilities on mount
+  React.useEffect(() => {
+    if (appConfig.dev.DEBUGGING.SHOW_PERFORMANCE_DEBUG) {
+      setupPerformanceDebugUtils();
+    }
+  }, []);
+
   return (
     <div className={`space-y-4 ${className}`} style={style}>
       
@@ -46,7 +55,7 @@ export const PerformanceMonitoringPanel: React.FC<PerformanceMonitoringPanelProp
             Performance Monitoring
           </span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <button
             onClick={handleTogglePerfMonitoring}
             className={`px-3 py-2 text-sm rounded transition-all flex items-center gap-2 ${
@@ -84,11 +93,79 @@ export const PerformanceMonitoringPanel: React.FC<PerformanceMonitoringPanelProp
               }
             }}
             className="px-3 py-2 text-sm rounded transition-all flex items-center gap-2 bg-purple-200 text-purple-700 hover:bg-purple-300"
-            title="Show performance report in console"
+            title="Show performance report in console (Ctrl+Shift+R)"
           >
             <RotateCcw className="w-4 h-4" />
-            Show Report
+            Console Report
           </button>
+          <button
+            onClick={() => {
+              try {
+                if (window.showPerfMetrics) {
+                  window.showPerfMetrics();
+                } else {
+                  console.warn('Performance utilities not available. Enable monitoring first.');
+                }
+              } catch (error) {
+                console.warn('Failed to show performance metrics:', error);
+              }
+            }}
+            className="px-3 py-2 text-sm rounded transition-all flex items-center gap-2 bg-indigo-200 text-indigo-700 hover:bg-indigo-300"
+            title="Show current performance metrics (Ctrl+Shift+M)"
+          >
+            <CheckCircle className="w-4 h-4" />
+            Current Metrics
+          </button>
+          <button
+            onClick={() => {
+              try {
+                if (window.clearPerfData) {
+                  window.clearPerfData();
+                  console.log('✅ Performance data cleared');
+                } else {
+                  console.warn('Performance utilities not available. Enable monitoring first.');
+                }
+              } catch (error) {
+                console.warn('Failed to clear performance data:', error);
+              }
+            }}
+            className="px-3 py-2 text-sm rounded transition-all flex items-center gap-2 bg-red-200 text-red-700 hover:bg-red-300"
+            title="Clear all performance data (Ctrl+Shift+C)"
+          >
+            <Trash2 className="w-4 h-4" />
+            Clear Data
+          </button>
+          <button
+            onClick={() => {
+              try {
+                if (window.exportPerfData) {
+                  window.exportPerfData();
+                } else {
+                  console.warn('Performance utilities not available. Enable monitoring first.');
+                }
+              } catch (error) {
+                console.warn('Failed to export performance data:', error);
+              }
+            }}
+            className="px-3 py-2 text-sm rounded transition-all flex items-center gap-2 bg-green-200 text-green-700 hover:bg-green-300"
+            title="Export performance data as JSON"
+          >
+            <Download className="w-4 h-4" />
+            Export JSON
+          </button>
+        </div>
+      </div>
+      
+      {/* Performance Shortcuts Reference */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+        <div className="text-sm text-blue-800">
+          <div className="font-medium mb-2">⌨️ Keyboard Shortcuts</div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div>📊 <kbd className="px-1 py-0.5 bg-blue-100 rounded text-xs">Ctrl+Shift+R</kbd> Report</div>
+            <div>📈 <kbd className="px-1 py-0.5 bg-blue-100 rounded text-xs">Ctrl+Shift+M</kbd> Metrics</div>
+            <div>🔧 <kbd className="px-1 py-0.5 bg-blue-100 rounded text-xs">Ctrl+Shift+P</kbd> Panel</div>
+            <div>🗑️ <kbd className="px-1 py-0.5 bg-blue-100 rounded text-xs">Ctrl+Shift+C</kbd> Clear</div>
+          </div>
         </div>
       </div>
 

@@ -133,7 +133,12 @@ function App() {
           ) : window.location.pathname === '/cupping-test' ? (
             <CuppingTestPage />
           ) : window.location.pathname === '/dev-dashboard' ? (
-            <DeveloperDashboard />
+            <DeveloperDashboard 
+              showAdvancedOcrCard={showAdvancedOcrCardState}
+              showPerformanceDemoCard={showPerformanceDemoCardState}
+              onToggleAdvancedOcr={handleToggleAdvancedOcr}
+              onTogglePerformanceDemo={handleTogglePerformanceDemo}
+            />
           ) : (
             <AppContent />
           )}
