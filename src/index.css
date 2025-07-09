@@ -571,9 +571,9 @@ h3 { font-size: 1.125rem; } /* 15.75px instead of 18px */
   transform: translateX(0%);
 }
 
-/* Manual position - match actual button content width */
+/* Manual position - match actual button content width (dynamic for count badge) */
 .segmented-control .sliding-indicator.to-right {
-  width: 90px; /* Actual width of "⚙️ Manual ↓" content + padding */
+  width: calc(90px + var(--manual-badge-width, 0px)); /* Base width + dynamic badge width */
   transform: translateX(70px); /* Start after the auto button */
 }
 

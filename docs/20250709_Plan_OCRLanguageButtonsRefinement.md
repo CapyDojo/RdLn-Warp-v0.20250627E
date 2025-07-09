@@ -131,11 +131,33 @@ The OCR language buttons are implemented as a **segmented control** with two mod
 6. ✅ Enhanced hover states with subtle transform effects
 7. ✅ Improved button spacing and reduced excess whitespace
 
-### Phase 2: UX Enhancements (Medium Risk)
+### Phase 2: UX Enhancements (Medium Risk) 🔄 IN PROGRESS
 1. Streamline language detection display
 2. Add selected languages count to manual button
 3. Improve dropdown positioning and behavior
 4. Enhanced loading states
+
+#### Phase 2 Implementation Plan
+**Priority 1: Selected Languages Count Display** ✅ COMPLETED
+- ✅ Show count of selected languages in manual button with badge
+- ✅ Only display when in manual mode and languages are selected
+- ✅ Dynamic sliding indicator adjustment for badge width
+- ✅ Enhanced accessibility with updated ARIA labels
+
+**Priority 2: Streamlined Language Detection** ✅ COMPLETED
+- ✅ Consolidated language detection display to single location (bottom status bar)
+- ✅ Removed duplicate displays (header + bottom)
+- ✅ Improved visual hierarchy with combined detection/selection info
+- ✅ Better visual design with backdrop blur and enhanced styling
+
+**Priority 3: Enhanced Dropdown Behavior**
+- Better positioning for different screen sizes
+- Improved mobile experience
+- Smarter close behavior
+
+**Priority 4: Loading State Improvements**
+- Better visual feedback during language detection
+- Smooth transitions between states
 
 ### Phase 3: Accessibility & Advanced Features (Medium Risk)
 1. ✅ Full ARIA label support (completed in Phase 1)

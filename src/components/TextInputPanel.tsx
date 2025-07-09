@@ -76,6 +76,14 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
     }
   }, [value, detectedLanguages.length, clearDetectedLanguages]);
   
+  // Update sliding indicator width based on badge visibility
+  useEffect(() => {
+    if (segmentedControlRef.current) {
+      const badgeWidth = !autoDetect && selectedLanguages.length > 0 ? 25 : 0; // Approximate badge width
+      segmentedControlRef.current.style.setProperty('--manual-badge-width', `${badgeWidth}px`);
+    }
+  }, [autoDetect, selectedLanguages.length]);
+  
   // Track input performance metrics
   useEffect(() => {
     try {
@@ -239,33 +247,6 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         </div>
         
         <div className="flex items-center gap-2">
-          {/* Language Detection Display - Only show when there's content and detected languages */}
-          {detectedLanguages.length > 0 && !isProcessing && value.trim() && (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-theme-secondary-50 border border-theme-secondary-200 rounded-lg">
-              <Languages className="w-4 h-4 text-theme-secondary-600" />
-              <div className="flex items-center gap-1">
-                <span className="text-xs font-medium text-theme-secondary-800">Detected:</span>
-                <div className="flex items-center gap-1">
-                  {detectedLanguages.slice(0, 3).map((langCode, index) => (
-                    <span
-                      key={langCode}
-                      className="text-xs text-theme-secondary-700"
-                      title={getLanguageDisplayName(langCode)}
-                    >
-                      {getLanguageShortName(langCode)}
-                      {index < Math.min(detectedLanguages.length, 3) - 1 && ', '}
-                    </span>
-                  ))}
-                  {detectedLanguages.length > 3 && (
-                    <span className="text-xs text-theme-secondary-600">
-                      +{detectedLanguages.length - 3} more
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-          
           {/* OCR Language Segmented Control */}
           <div className="flex items-center gap-2">
 <span className="text-sm font-medium text-theme-neutral-700 hidden sm:inline">OCR Language</span>
@@ -302,10 +283,15 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
                 className={`segment flex items-center gap-1 ${!autoDetect ? 'active' : ''}`}
                 aria-pressed={!autoDetect}
                 aria-expanded={!autoDetect && showLanguageSettings}
-                aria-label="Manual language selection"
-                title="Manually select OCR languages"
+                aria-label={`Manual language selection${!autoDetect && selectedLanguages.length > 0 ? ` (${selectedLanguages.length} selected)` : ''}`}
+                title={`Manually select OCR languages${!autoDetect && selectedLanguages.length > 0 ? ` - ${selectedLanguages.length} languages selected` : ''}`}
               >
                 ⚙️ Manual
+                {!autoDetect && selectedLanguages.length > 0 && (
+                  <span className="text-xs bg-theme-primary-100 text-theme-primary-800 px-1.5 py-0.5 rounded-full ml-1">
+                    {selectedLanguages.length}
+                  </span>
+                )}
                 <ChevronDown
                   className={`w-3 h-3 transition-transform duration-200 ${
                     showLanguageSettings ? 'rotate-180' : ''
@@ -399,16 +385,37 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         
         {/* Bottom Status Bar */}
         <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
-          {/* Language Detection Status - Only show when there's content and detected languages */}
-          {detectedLanguages.length > 0 && !isProcessing && value.trim() && (
-            <div className="flex items-center gap-2 px-2 py-1 bg-transparent border border-white/20 rounded text-xs">
+          {/* Consolidated Language Status - Shows detection and selection */}
+          {((detectedLanguages.length > 0 && !isProcessing && value.trim()) || (!autoDetect && selectedLanguages.length > 0)) && (
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/80 dark:bg-black/60 backdrop-blur-sm border border-white/30 rounded-lg text-xs shadow-sm">
               <Languages className="w-3 h-3 text-theme-secondary-600" />
-              <span className="text-theme-secondary-700 font-medium">
-                {detectedLanguages.length === 1 
-                  ? getLanguageShortName(detectedLanguages[0])
-                  : `${detectedLanguages.length} languages`
-                }
-              </span>
+              <div className="flex items-center gap-2">
+                {/* Show detected languages when available */}
+                {detectedLanguages.length > 0 && !isProcessing && value.trim() && (
+                  <div className="flex items-center gap-1">
+                    <span className="text-theme-secondary-700 font-medium">Detected:</span>
+                    <span className="text-theme-secondary-600">
+                      {detectedLanguages.slice(0, 2).map(getLanguageShortName).join(', ')}
+                      {detectedLanguages.length > 2 && ` +${detectedLanguages.length - 2}`}
+                    </span>
+                  </div>
+                )}
+                
+                {/* Show separator if both detected and selected are present */}
+                {detectedLanguages.length > 0 && !isProcessing && value.trim() && !autoDetect && selectedLanguages.length > 0 && (
+                  <span className="text-theme-neutral-400">|</span>
+                )}
+                
+                {/* Show selected languages when in manual mode */}
+                {!autoDetect && selectedLanguages.length > 0 && (
+                  <div className="flex items-center gap-1">
+                    <span className="text-theme-primary-700 font-medium">Selected:</span>
+                    <span className="text-theme-primary-600">
+                      {selectedLanguages.length} language{selectedLanguages.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
