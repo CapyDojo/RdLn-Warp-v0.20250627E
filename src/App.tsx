@@ -11,27 +11,26 @@ import { CuppingTestPage } from './pages/CuppingTestPage'; // Import the cupping
 import { DeveloperDashboard } from './pages/DeveloperDashboard'; // Import the developer dashboard
 import './styles/resize-overrides.css'; // SSMR CSS resize fixes
 
-function AppContent() {
+interface AppContentProps {
+  showAdvancedOcrCard: boolean;
+  showPerformanceDemoCard: boolean;
+  onToggleAdvancedOcr: () => void;
+  onTogglePerformanceDemo: () => void;
+}
+
+function AppContent({
+  showAdvancedOcrCard,
+  showPerformanceDemoCard,
+  onToggleAdvancedOcr,
+  onTogglePerformanceDemo
+}: AppContentProps) {
   const { currentTheme, themeConfig } = useTheme();
   
   // Get experimental features to check if results overlay is enabled
   const { features } = useExperimentalFeatures();
   
-  // State for developer mode toggles
-  const [showAdvancedOcrCardState, setShowAdvancedOcrCardState] = useState(true);
-  const [showPerformanceDemoCardState, setShowPerformanceDemoCardState] = useState(true);
-  
   // State for overlay visibility (only used when results overlay feature is enabled)
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
-  
-  // Toggle functions for developer mode controls
-  const handleToggleAdvancedOcr = () => {
-    setShowAdvancedOcrCardState(!showAdvancedOcrCardState);
-  };
-  
-  const handleTogglePerformanceDemo = () => {
-    setShowPerformanceDemoCardState(!showPerformanceDemoCardState);
-  };
   
   // Overlay visibility handlers (only used when results overlay feature is enabled)
   const handleOverlayShow = () => {
@@ -65,10 +64,10 @@ function AppContent() {
       {!shouldHideHeader && <Header />}
       <main className={shouldHideHeader ? "pt-0" : "pt-32"}>
         <ComparisonInterface 
-          showAdvancedOcrCard={showAdvancedOcrCardState}
-          showPerformanceDemoCard={showPerformanceDemoCardState}
-          onToggleAdvancedOcr={handleToggleAdvancedOcr}
-          onTogglePerformanceDemo={handleTogglePerformanceDemo}
+          showAdvancedOcrCard={showAdvancedOcrCard}
+          showPerformanceDemoCard={showPerformanceDemoCard}
+          onToggleAdvancedOcr={onToggleAdvancedOcr}
+          onTogglePerformanceDemo={onTogglePerformanceDemo}
           onOverlayShow={handleOverlayShow}
           onOverlayHide={handleOverlayHide}
         />
@@ -123,6 +122,77 @@ function AppContent() {
 }
 
 function App() {
+  // State for developer mode toggles with localStorage persistence
+  const [showAdvancedOcrCardState, setShowAdvancedOcrCardState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('developer-card-toggles');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.showAdvancedOcrCard ?? true;
+      }
+    } catch (error) {
+      console.warn('Failed to load developer card toggles from localStorage:', error);
+    }
+    return true;
+  });
+  
+  const [showPerformanceDemoCardState, setShowPerformanceDemoCardState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('developer-card-toggles');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.showPerformanceDemoCard ?? true;
+      }
+    } catch (error) {
+      console.warn('Failed to load developer card toggles from localStorage:', error);
+    }
+    return true;
+  });
+  
+  // Save to localStorage whenever toggles change
+  useEffect(() => {
+    try {
+      const toggles = {
+        showAdvancedOcrCard: showAdvancedOcrCardState,
+        showPerformanceDemoCard: showPerformanceDemoCardState
+      };
+      localStorage.setItem('developer-card-toggles', JSON.stringify(toggles));
+    } catch (error) {
+      console.warn('Failed to save developer card toggles to localStorage:', error);
+    }
+  }, [showAdvancedOcrCardState, showPerformanceDemoCardState]);
+  
+  // Listen for storage events to sync changes across windows
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'developer-card-toggles' && event.newValue) {
+        try {
+          const newToggles = JSON.parse(event.newValue);
+          if (newToggles.showAdvancedOcrCard !== undefined) {
+            setShowAdvancedOcrCardState(newToggles.showAdvancedOcrCard);
+          }
+          if (newToggles.showPerformanceDemoCard !== undefined) {
+            setShowPerformanceDemoCardState(newToggles.showPerformanceDemoCard);
+          }
+        } catch (error) {
+          console.warn('Failed to parse developer card toggles from storage event:', error);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+  
+  // Toggle functions for developer mode controls
+  const handleToggleAdvancedOcr = () => {
+    setShowAdvancedOcrCardState(!showAdvancedOcrCardState);
+  };
+  
+  const handleTogglePerformanceDemo = () => {
+    setShowPerformanceDemoCardState(!showPerformanceDemoCardState);
+  };
+  
   return (
     <ThemeProvider>
       <LayoutProvider>
@@ -140,7 +210,12 @@ function App() {
               onTogglePerformanceDemo={handleTogglePerformanceDemo}
             />
           ) : (
-            <AppContent />
+            <AppContent 
+              showAdvancedOcrCard={showAdvancedOcrCardState}
+              showPerformanceDemoCard={showPerformanceDemoCardState}
+              onToggleAdvancedOcr={handleToggleAdvancedOcr}
+              onTogglePerformanceDemo={handleTogglePerformanceDemo}
+            />
           )}
         </ExperimentalLayoutProvider>
       </LayoutProvider>

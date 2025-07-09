@@ -110,13 +110,30 @@ export const ExperimentalLayoutProvider: React.FC<{ children: React.ReactNode }>
   });
 
   // Save to localStorage whenever features change
-  useEffect(() => {
+useEffect(() => {
     try {
       localStorage.setItem('experimental-features', JSON.stringify(features));
     } catch (error) {
       console.warn('Failed to save experimental features to localStorage:', error);
     }
   }, [features]);
+
+  // Listen for storage events to sync changes across windows
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'experimental-features' && event.newValue) {
+        try {
+          const newFeatures = JSON.parse(event.newValue);
+          setFeatures(prev => ({ ...prev, ...newFeatures }));
+        } catch (error) {
+          console.warn('Failed to parse experimental features from storage event:', error);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const toggleFeature = (feature: keyof ExperimentalFeatures) => {
     setFeatures(prev => ({

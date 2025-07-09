@@ -12,7 +12,6 @@ import { DesktopControlsPanel } from './DesktopControlsPanel';
 import { MobileControlsPanel } from './MobileControlsPanel';
 import { DesktopInputLayout } from './DesktopInputLayout';
 import { MobileInputLayout } from './MobileInputLayout';
-import { DeveloperModeCard } from './DeveloperModeCard';
 // Background Loading Status
 import { BackgroundLoadingStatus } from './BackgroundLoadingStatus';
 // Resize and scroll handlers
@@ -524,15 +523,6 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
         </div>
       )}
 
-      {/* Developer Mode Card - Always visible */}
-      <div className="mt-8 mb-4">
-        <DeveloperModeCard
-          showAdvancedOcrCard={showAdvancedOcrCard}
-          showPerformanceDemoCard={showPerformanceDemoCard}
-          onToggleAdvancedOcr={onToggleAdvancedOcr}
-          onTogglePerformanceDemo={onTogglePerformanceDemo}
-        />
-      </div>
       
       {(result || isProcessing) && (
         <div className="output-section" style={{ display: getPanelVisibility('output') }}>
