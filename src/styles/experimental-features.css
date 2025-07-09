@@ -1,0 +1,416 @@
+/* EXPERIMENTAL UX FEATURES CSS */
+
+/* 
+ * This file contains CSS for experimental UX features designed to address:
+ * - "I have to scroll down and 'find' the output result"
+ * - "Takes cognitive work to work out which panel I'm looking at" (mobile)
+ * 
+ * All features are controlled by CSS classes applied conditionally via feature flags.
+ * Features default to OFF for safety and can be easily removed.
+ */
+
+/* ==============================================
+   FEATURE #1: RESULTS SPOTLIGHT
+   ============================================== */
+.experimental-results-spotlight [data-output-panel] {
+  /* Placeholder for results spotlight animation */
+  transition: all 0.3s ease;
+}
+
+.experimental-results-spotlight [data-output-panel].results-appearing {
+  /* Will be implemented: Gold border, subtle glow, animated entrance */
+  animation: resultsSpotlightEntrance 0.5s ease-out;
+}
+
+@keyframes resultsSpotlightEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 0 20px 2px rgba(255, 215, 0, 0.3);
+  }
+}
+
+/* ==============================================
+   FEATURE #2: AUTO-SCROLL TO RESULTS
+   ============================================== */
+.experimental-auto-scroll {
+  /* Smooth scrolling behavior for auto-scroll feature */
+  scroll-behavior: smooth;
+}
+
+/* ==============================================
+   FEATURE #3: VISUAL PANEL DIFFERENTIATION
+   ============================================== */
+.experimental-visual-differentiation [data-input-panel] {
+  /* Input panels: Blue accent */
+  position: relative;
+}
+
+.experimental-visual-differentiation [data-input-panel]:before {
+  /* Blue accent indicator for input panels */
+  content: "📝 INPUT";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #1e40af;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.experimental-visual-differentiation [data-output-panel] {
+  /* Output panel: Green accent */
+  position: relative;
+}
+
+.experimental-visual-differentiation [data-output-panel]:before {
+  /* Green accent indicator for output panel */
+  content: "🎯 RESULTS";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(34, 197, 94, 0.1);
+  color: #15803d;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ==============================================
+   FEATURE #6: MOBILE TAB INTERFACE
+   ============================================== */
+.experimental-mobile-tabs .mobile-tab-interface {
+  /* Mobile tab interface styling */
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.experimental-mobile-tabs .mobile-tab-button {
+  flex: 1;
+  padding: 12px 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.experimental-mobile-tabs .mobile-tab-button.active {
+  background: rgba(59, 130, 246, 0.1);
+  color: #1e40af;
+  border-bottom: 2px solid #3b82f6;
+}
+
+.experimental-mobile-tabs .mobile-tab-button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* ==============================================
+   FEATURE #7: FLOATING JUMP BUTTON
+   ============================================== */
+.experimental-floating-jump .floating-jump-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  z-index: 30;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.experimental-floating-jump .floating-jump-button:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+}
+
+.experimental-floating-jump .floating-jump-button.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.8);
+}
+
+/* ==============================================
+   FEATURE #8: RESULTS OVERLAY
+   ============================================== */
+.experimental-results-overlay .results-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.experimental-results-overlay .results-overlay-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: overlaySlideIn 0.3s ease-out;
+}
+
+@keyframes overlaySlideIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ==============================================
+   FEATURE #9: RESULTS FIRST ANIMATION
+   ============================================== */
+.experimental-results-first.results-active .input-section {
+  /* Input section moves down when results are active */
+  transform: translateY(100px);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.experimental-results-first.results-active .output-section {
+  /* Output section moves up to input position */
+  transform: translateY(-100px);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==============================================
+   FEATURE #10: REFINED RESULTS FIRST
+   ============================================== */
+.experimental-refined-results-first .results-overlay-transition {
+  /* 2-second overlay then animate to top */
+  animation: refinedResultsFirstSequence 3s ease-out forwards;
+}
+
+@keyframes refinedResultsFirstSequence {
+  0% {
+    /* Start as overlay */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.8);
+  }
+  66% {
+    /* Hold overlay for 2 seconds */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+  }
+  100% {
+    /* Animate to top position */
+    position: static;
+    transform: none;
+    z-index: 1;
+    background: transparent;
+  }
+}
+
+/* ==============================================
+   FEATURE #12: POP-OUT RESULTS WINDOW
+   ============================================== */
+.experimental-popout-window [data-output-panel] {
+  /* Placeholder for pop-out window indicator */
+  position: relative;
+}
+
+.experimental-popout-window [data-output-panel]:after {
+  content: "🔗 Pop-out Available";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(168, 85, 247, 0.1);
+  color: #7c3aed;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* ==============================================
+   FEATURE #13: USER CONFIGURABLE ORDER
+   ============================================== */
+.experimental-configurable-order .panel-order-controls {
+  /* Controls for reordering panels */
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.experimental-configurable-order .panel-order-button {
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.experimental-configurable-order .panel-order-button:hover {
+  background: #f3f4f6;
+}
+
+.experimental-configurable-order .panel-order-button.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+/* ==============================================
+   FEATURE #15: RESULTS PEEK BUTTON
+   ============================================== */
+.experimental-peek-button .results-peek-button {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #10b981;
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  z-index: 30;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.experimental-peek-button .results-peek-button:hover {
+  background: #059669;
+  transform: scale(1.1);
+}
+
+.experimental-peek-button .results-peek-tooltip {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.experimental-peek-button .results-peek-button:hover .results-peek-tooltip {
+  opacity: 1;
+}
+
+/* ==============================================
+   FEATURE #16: STICKY RESULTS PANEL
+   ============================================== */
+.experimental-sticky-results [data-output-panel] {
+  /* Sticky results panel */
+  position: sticky;
+  top: 20px;
+  z-index: 10;
+}
+
+.experimental-sticky-results .sticky-results-indicator {
+  position: absolute;
+  top: -10px;
+  left: 8px;
+  background: #8b5cf6;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.experimental-sticky-results .sticky-results-indicator:before {
+  content: "📌 STICKY";
+}
+
+/* ==============================================
+   RESPONSIVE BEHAVIOR
+   ============================================== */
+@media (max-width: 768px) {
+  /* Mobile-specific adjustments for experimental features */
+  .experimental-floating-jump .floating-jump-button {
+    bottom: 80px; /* Avoid mobile UI elements */
+  }
+  
+  .experimental-peek-button .results-peek-button {
+    bottom: 140px; /* Stack above jump button */
+  }
+  
+  .experimental-visual-differentiation [data-input-panel]:before,
+  .experimental-visual-differentiation [data-output-panel]:before {
+    /* Larger indicators for mobile */
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}
+
+/* ==============================================
+   ACCESSIBILITY IMPROVEMENTS
+   ============================================== */
+.experimental-features button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.experimental-features [aria-label] {
+  /* Ensure proper screen reader support */
+  position: relative;
+}
+
+/* ==============================================
+   ANIMATION PERFORMANCE
+   ============================================== */
+.experimental-features * {
+  /* Use GPU acceleration for smooth animations */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}

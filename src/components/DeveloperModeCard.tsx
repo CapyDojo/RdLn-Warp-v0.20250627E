@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Zap, Image, Layout, Monitor, Activity, BarChart3 } from 'lucide-react';
+import { Settings, Zap, Image, Layout, Monitor, Activity, BarChart3, Beaker, Target, Eye, Smartphone, ArrowUp, Layers, ExternalLink, Cog } from 'lucide-react';
 import { useLayout, LayoutMode } from '../contexts/LayoutContext';
 import { BaseComponentProps } from '../types/components';
 import { PerformanceDebugPanel, usePerformanceDebugPanel } from './PerformanceDebugPanel';
 import { setupPerformanceDebugUtils } from '../utils/performanceDebugUtils';
 import { appConfig } from '../config/appConfig';
+import { useExperimentalFeatures, useHasActiveExperimentalFeatures } from '../contexts/ExperimentalLayoutContext';
 
 interface DeveloperModeCardProps extends BaseComponentProps {
   showAdvancedOcrCard?: boolean;
@@ -23,6 +24,8 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
 }) => {
   const { currentLayout, setLayout, supportsContainerQueries } = useLayout();
   const { isVisible: isPerfDebugVisible, toggle: togglePerfDebug } = usePerformanceDebugPanel();
+  const { features, toggleFeature, resetAllFeatures, enableTestGroup } = useExperimentalFeatures();
+  const hasActiveExperimentalFeatures = useHasActiveExperimentalFeatures();
   const [perfMonitoringEnabled, setPerfMonitoringEnabled] = useState(() => {
     try {
       return localStorage.getItem('performance-monitoring-enabled') !== 'false';
@@ -149,6 +152,190 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
         </div>
       )}
       
+      {/* Experimental UX Features Section */}
+      <div className="mb-4">
+        <h4 className="text-sm font-medium text-theme-neutral-700 mb-2 flex items-center gap-1">
+          <Beaker className="w-4 h-4" />
+          🧪 Experimental UX Features
+          {hasActiveExperimentalFeatures && (
+            <span className="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs rounded-full">
+              ACTIVE
+            </span>
+          )}
+        </h4>
+        
+        {/* Test Group Buttons */}
+        <div className="mb-3">
+          <div className="text-xs text-theme-neutral-600 mb-1">Quick Test Groups:</div>
+          <div className="flex flex-wrap gap-1">
+            <button
+              onClick={() => enableTestGroup('visual-only')}
+              className="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-all"
+              title="Enable: Results Spotlight + Visual Differentiation + Auto-Scroll"
+            >
+              Visual Only
+            </button>
+            <button
+              onClick={() => enableTestGroup('navigation-enhanced')}
+              className="px-2 py-1 text-xs rounded bg-green-100 text-green-700 hover:bg-green-200 transition-all"
+              title="Enable: Results Spotlight + Auto-Scroll + Jump Button + Mobile Tabs"
+            >
+              Navigation Enhanced
+            </button>
+            <button
+              onClick={() => enableTestGroup('results-first')}
+              className="px-2 py-1 text-xs rounded bg-purple-100 text-purple-700 hover:bg-purple-200 transition-all"
+              title="Enable: Results Spotlight + Auto-Scroll + Results First Animation"
+            >
+              Results First
+            </button>
+            <button
+              onClick={() => enableTestGroup('mobile-optimized')}
+              className="px-2 py-1 text-xs rounded bg-orange-100 text-orange-700 hover:bg-orange-200 transition-all"
+              title="Enable: Visual Differentiation + Mobile Tabs + Results Overlay"
+            >
+              Mobile Optimized
+            </button>
+            <button
+              onClick={resetAllFeatures}
+              className="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all"
+              title="Reset all experimental features to OFF"
+            >
+              Reset All
+            </button>
+          </div>
+        </div>
+        
+        {/* Individual Feature Toggles */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {/* Visual Enhancement Features */}
+          <button
+            onClick={() => toggleFeature('resultsSpotlight')}
+            className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+              features.resultsSpotlight
+                ? 'bg-yellow-500 text-white hover:bg-yellow-600'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="#1: Animated entrance with gold border and contextual header"
+          >
+            <Target className="w-3 h-3" />
+            Spotlight {features.resultsSpotlight ? 'ON' : 'OFF'}
+          </button>
+          
+          <button
+            onClick={() => toggleFeature('visualPanelDifferentiation')}
+            className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+              features.visualPanelDifferentiation
+                ? 'bg-blue-500 text-white hover:bg-blue-600'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="#3: Input panels (blue + 📝), Results (green + 🎯)"
+          >
+            <Eye className="w-3 h-3" />
+            Visual Diff {features.visualPanelDifferentiation ? 'ON' : 'OFF'}
+          </button>
+          
+          <button
+            onClick={() => toggleFeature('autoScrollToResults')}
+            className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+              features.autoScrollToResults
+                ? 'bg-green-500 text-white hover:bg-green-600'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="#2: Automatically scroll to results when generated"
+          >
+            <ArrowUp className="w-3 h-3" />
+            Auto-Scroll {features.autoScrollToResults ? 'ON' : 'OFF'}
+          </button>
+          
+          <button
+            onClick={() => toggleFeature('mobileTabInterface')}
+            className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+              features.mobileTabInterface
+                ? 'bg-purple-500 text-white hover:bg-purple-600'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="#6: [INPUT] [RESULTS] [BOTH] tabs for mobile"
+          >
+            <Smartphone className="w-3 h-3" />
+            Mobile Tabs {features.mobileTabInterface ? 'ON' : 'OFF'}
+          </button>
+          
+          <button
+            onClick={() => toggleFeature('floatingJumpButton')}
+            className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+              features.floatingJumpButton
+                ? 'bg-indigo-500 text-white hover:bg-indigo-600'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="#7: Follows scroll, appears when results ready"
+          >
+            <Monitor className="w-3 h-3" />
+            Jump Button {features.floatingJumpButton ? 'ON' : 'OFF'}
+          </button>
+          
+          <button
+            onClick={() => toggleFeature('resultsFirstAnimation')}
+            className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+              features.resultsFirstAnimation
+                ? 'bg-red-500 text-white hover:bg-red-600'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="#9: Output replaces input position with smooth animation"
+          >
+            <Layers className="w-3 h-3" />
+            Results First {features.resultsFirstAnimation ? 'ON' : 'OFF'}
+          </button>
+          
+          <button
+            onClick={() => toggleFeature('resultsOverlay')}
+            className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+              features.resultsOverlay
+                ? 'bg-teal-500 text-white hover:bg-teal-600'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="#8: Temporary overlay then animate to position"
+          >
+            <Layers className="w-3 h-3" />
+            Results Overlay {features.resultsOverlay ? 'ON' : 'OFF'}
+          </button>
+          
+          <button
+            onClick={() => toggleFeature('popoutResultsWindow')}
+            className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+              features.popoutResultsWindow
+                ? 'bg-pink-500 text-white hover:bg-pink-600'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="#12: Results open in separate browser window"
+          >
+            <ExternalLink className="w-3 h-3" />
+            Pop-out {features.popoutResultsWindow ? 'ON' : 'OFF'}
+          </button>
+          
+          <button
+            onClick={() => toggleFeature('userConfigurableOrder')}
+            className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+              features.userConfigurableOrder
+                ? 'bg-cyan-500 text-white hover:bg-cyan-600'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="#13: Save user's preferred layout order"
+          >
+            <Cog className="w-3 h-3" />
+            User Config {features.userConfigurableOrder ? 'ON' : 'OFF'}
+          </button>
+        </div>
+        
+        {/* Feature Status Info */}
+        <div className="mt-2 text-xs text-theme-neutral-600">
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            <span>🎯 Addresses: "Can't find results" + "Panel confusion"</span>
+            <span>📊 {Object.values(features).filter(f => f).length}/12 features active</span>
+            <span>💾 Settings persist across sessions</span>
+          </div>
+        </div>
+      </div>
       
       <div className="flex gap-2">
         {onToggleAdvancedOcr && (

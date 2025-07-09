@@ -5,6 +5,7 @@ import { DeveloperModeCard } from './components/DeveloperModeCard';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { useTheme } from './contexts/ThemeContext';
 import { LayoutProvider } from './contexts/LayoutContext';
+import { ExperimentalLayoutProvider } from './contexts/ExperimentalLayoutContext';
 import { OCRService } from './utils/OCRService';
 import { LogoTestPage } from './pages/LogoTestPage'; // Import the new LogoTestPage
 import { CuppingTestPage } from './pages/CuppingTestPage'; // Import the cupping test page
@@ -105,14 +106,16 @@ function App() {
   return (
     <ThemeProvider>
       <LayoutProvider>
-        {/* Conditional rendering for test pages */}
-        {window.location.pathname === '/logo-test' ? (
-          <LogoTestPage />
-        ) : window.location.pathname === '/cupping-test' ? (
-          <CuppingTestPage />
-        ) : (
-          <AppContent />
-        )}
+        <ExperimentalLayoutProvider>
+          {/* Conditional rendering for test pages */}
+          {window.location.pathname === '/logo-test' ? (
+            <LogoTestPage />
+          ) : window.location.pathname === '/cupping-test' ? (
+            <CuppingTestPage />
+          ) : (
+            <AppContent />
+          )}
+        </ExperimentalLayoutProvider>
       </LayoutProvider>
     </ThemeProvider>
   );
