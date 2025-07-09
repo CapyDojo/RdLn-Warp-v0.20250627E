@@ -418,16 +418,117 @@
 /* ==============================================
    FEATURE #9: RESULTS FIRST ANIMATION
    ============================================== */
+
+/* Initial state - output section is positioned below input */
+.experimental-results-first .output-section {
+  transform: translateY(0);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 1;
+}
+
+.experimental-results-first .input-section {
+  transform: translateY(0);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 2;
+}
+
+/* Results active state - create seamless position swap */
 .experimental-results-first.results-active .input-section {
-  /* Input section moves down when results are active */
-  transform: translateY(100px);
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Input section slides down to a more reasonable position */
+  transform: translateY(60vh);
+  opacity: 0.8;
+  z-index: 1;
 }
 
 .experimental-results-first.results-active .output-section {
-  /* Output section moves up to input position */
-  transform: translateY(-100px);
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Output section moves up to occupy input's original prime position */
+  transform: translateY(-30vh);
+  z-index: 3;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  margin: 20px 0;
+}
+
+/* Enhanced visual continuity with scaling effect */
+.experimental-results-first.results-active .output-section [data-output-panel] {
+  transform: scale(1.02);
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Smooth entrance animation for results content */
+.experimental-results-first.results-active .output-section .redline-output {
+  animation: resultsFirstContentEntrance 1s ease-out 0.3s both;
+}
+
+@keyframes resultsFirstContentEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Theme-aware background for output section in results-first mode */
+[data-theme="professional"] .experimental-results-first.results-active .output-section {
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+[data-theme="apple-dark"] .experimental-results-first.results-active .output-section,
+[data-theme="classic-dark"] .experimental-results-first.results-active .output-section,
+[data-theme="new-york"] .experimental-results-first.results-active .output-section {
+  background: rgba(23, 23, 23, 0.95);
+  border: 1px solid rgba(64, 64, 64, 0.8);
+}
+
+[data-theme="bamboo"] .experimental-results-first.results-active .output-section {
+  background: rgba(183, 203, 165, 0.95);
+  border: 1px solid rgba(146, 183, 113, 0.8);
+}
+
+[data-theme="kyoto"] .experimental-results-first.results-active .output-section {
+  background: rgba(122, 61, 26, 0.95);
+  border: 1px solid rgba(197, 90, 17, 0.8);
+}
+
+[data-theme="autumn"] .experimental-results-first.results-active .output-section {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(139, 69, 19, 0.3);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .experimental-results-first.results-active .input-section {
+    transform: translateY(50vh);
+  }
+  
+  .experimental-results-first.results-active .output-section {
+    transform: translateY(-25vh);
+    margin: 10px;
+    padding: 15px;
+  }
+}
+
+/* Accessibility: Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .experimental-results-first .output-section,
+  .experimental-results-first .input-section {
+    transition: none;
+  }
+  
+  .experimental-results-first.results-active .output-section [data-output-panel] {
+    transform: none;
+  }
+  
+  .experimental-results-first.results-active .output-section .redline-output {
+    animation: none;
+  }
 }
 
 /* ==============================================

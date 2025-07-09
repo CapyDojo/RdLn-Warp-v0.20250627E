@@ -359,23 +359,58 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
     }
   }, [features.resultsSpotlight, result, isProcessing]);
   
-  // Results First Animation (Feature #9)
+  // Results First Animation (Feature #9) - Enhanced with proper cleanup and diagnostics
   useEffect(() => {
+    const container = document.querySelector('.comparison-interface-container');
+    
+    if (!container) {
+      console.error('🔧 FEATURE #9 ERROR: Container .comparison-interface-container not found');
+      return;
+    }
+
     if (features.resultsFirstAnimation && result && !isProcessing) {
       // Wait for DOM to update, then trigger position swap animation
       setTimeout(() => {
-        const container = document.querySelector('.comparison-interface-container');
-        if (container) {
-          // Add results-active class to trigger CSS animations
-          container.classList.add('results-active');
-          console.log('🔄 Results First Animation activated (Feature #9) - Input/Output position swap');
+        // DIAGNOSTIC: Check current classes and DOM structure
+        console.log('🔧 FEATURE #9 DIAGNOSTIC: Activating animation');
+        console.log('🔧 Current container classes:', container.className);
+        console.log('🔧 Input section exists:', !!container.querySelector('.input-section'));
+        console.log('🔧 Output section exists:', !!container.querySelector('.output-section'));
+        console.log('🔧 Has experimental-results-first class:', container.classList.contains('experimental-results-first'));
+        
+        // Ensure we have the base experimental class
+        if (!container.classList.contains('experimental-results-first')) {
+          console.warn('🔧 FEATURE #9 WARNING: Missing experimental-results-first class, animation may not work properly');
         }
-      }, 50);
-    } else if (!result) {
-      // Remove animation class when results are cleared
-      const container = document.querySelector('.comparison-interface-container');
-      if (container) {
+        
+        // Add results-active class to trigger CSS animations
+        container.classList.add('results-active');
+        console.log('🔄 Results First Animation activated (Feature #9) - Seamless position swap');
+        console.log('🔧 Container classes after adding results-active:', container.className);
+        
+        // Verify the animation elements exist
+        const inputSection = container.querySelector('.input-section');
+        const outputSection = container.querySelector('.output-section');
+        
+        if (inputSection && outputSection) {
+          console.log('✅ FEATURE #9: Animation elements found, transition should be smooth');
+        } else {
+          console.error('❌ FEATURE #9: Missing animation elements', {
+            inputSection: !!inputSection,
+            outputSection: !!outputSection
+          });
+        }
+      }, 100); // Slightly longer delay to ensure DOM is fully ready
+    } else {
+      // Remove animation class when feature is disabled or no results
+      if (container.classList.contains('results-active')) {
         container.classList.remove('results-active');
+        
+        if (!features.resultsFirstAnimation && result) {
+          console.log('🔧 FEATURE #9: Removed results-active class (feature disabled)');
+        } else if (!result) {
+          console.log('🔧 FEATURE #9: Removed results-active class (no results)');
+        }
       }
     }
   }, [features.resultsFirstAnimation, result, isProcessing]);
@@ -551,10 +586,6 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
                   scrollRef={redlineOutputRef}
                   onShowOverlay={showOverlay}
                   isInOverlayMode={false}
-                  showAdvancedOcrCard={showAdvancedOcrCard}
-                  showPerformanceDemoCard={showPerformanceDemoCard}
-                  onToggleAdvancedOcr={onToggleAdvancedOcr}
-                  onTogglePerformanceDemo={onTogglePerformanceDemo}
                 />
               </StickyResultsPanel>
             ) : (
@@ -568,10 +599,6 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
                 scrollRef={redlineOutputRef}
                 onShowOverlay={showOverlay}
                 isInOverlayMode={false}
-                showAdvancedOcrCard={showAdvancedOcrCard}
-                showPerformanceDemoCard={showPerformanceDemoCard}
-                onToggleAdvancedOcr={onToggleAdvancedOcr}
-                onTogglePerformanceDemo={onTogglePerformanceDemo}
               />
             )
           )}

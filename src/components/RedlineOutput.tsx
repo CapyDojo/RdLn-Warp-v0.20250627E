@@ -2,7 +2,7 @@ import React from 'react';
 import { Copy, Sparkles, Image } from 'lucide-react';
 import { DiffChange } from '../types';
 import { BaseComponentProps } from '../types/components';
-import { UI_CONFIG } from '../config/appConfig';
+import { UI_CONFIG, FEATURE_FLAGS, DEV_CONFIG } from '../config/appConfig';
 import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils.tsx';
 import { useExperimentalFeatures } from '../contexts/ExperimentalLayoutContext';
 import { ResultsOverlayTrigger } from './experimental/ResultsOverlayTrigger';
@@ -69,14 +69,22 @@ const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
     
     console.log(`Memoizing ${changes.length} changes into chunks of ${CHUNK_SIZE}`);
     const chunkedChanges = [];
-    for (let i = 0; i < changes.length; i += CHUNK_SIZE) {
-      chunkedChanges.push(changes.slice(i, i + CHUNK_SIZE));
+    let i = 0;
+    while (i < changes.length) {
+      const chunkEnd = FEATURE_FLAGS.ENABLE_SEMANTIC_CHUNKING
+        ? findSemanticChunkBoundary(changes, i, CHUNK_SIZE)
+        : Math.min(i + CHUNK_SIZE, changes.length);
+      
+      chunkedChanges.push(changes.slice(i, chunkEnd));
+      i = chunkEnd;
     }
     
     const result = chunkedChanges.map((chunk, index) => ({
       id: `chunk-${index}`,
       changes: chunk,
-      html: generateHTMLString(chunk),
+      html: FEATURE_FLAGS.ENABLE_SEMANTIC_CHUNKING
+        ? generateSemanticHTMLString(chunk)
+        : generateHTMLString(chunk),
     }));
     
     // Track chunking performance
@@ -104,7 +112,7 @@ const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
       performanceTracker.trackMetric('copy_success', { textLength: text.length });
     } catch (err) {
       console.error('Failed to copy text:', err);
-      performanceTracker.trackMetric('copy_failure', { error: err.message });
+      performanceTracker.trackMetric('copy_failure', { error: err instanceof Error ? err.message : 'Unknown error' });
     }
   }, 'copy_to_clipboard', performanceTracker);
 
@@ -164,9 +172,11 @@ const RedlineOutputBase: React.FC<RedlineOutputProps> = ({
       )}
       <div
         ref={(el) => {
-          scrollContainerRef.current = el;
-          if (scrollRef && el) {
-            scrollRef.current = el;
+          if (scrollContainerRef.current !== el) {
+            (scrollContainerRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+          }
+          if (scrollRef && el && scrollRef.current !== el) {
+            (scrollRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
           }
         }}
         className="glass-panel-inner-content overflow-y-auto"
@@ -262,6 +272,121 @@ const generateHTMLString = (changes: DiffChange[]) => {
         break;
     }
   });
+  return html;
+};
+
+// Semantic boundary detection functions
+const isSemanticBoundary = (change: DiffChange) => {
+  const content = change.content || '';
+  return content.includes(' ') || content.includes('\n') || content.includes('.') || content.includes(',');
+};
+
+const findSemanticChunkBoundary = (changes: DiffChange[], startIndex: number, targetSize: number) => {
+  if (!UI_CONFIG.RENDERING.SEMANTIC_CHUNKING.ENABLED) {
+    return Math.min(startIndex + targetSize, changes.length);
+  }
+  
+  let currentSize = 0;
+  let lastGoodBoundary = startIndex;
+  
+  for (let i = startIndex; i < changes.length && currentSize < targetSize * 1.2; i++) {
+    currentSize++;
+    
+    // Look for natural boundaries
+    if (isSemanticBoundary(changes[i])) {
+      lastGoodBoundary = i + 1;
+    }
+    
+    if (currentSize >= targetSize && lastGoodBoundary > startIndex) {
+      return lastGoodBoundary;
+    }
+  }
+  
+  return Math.min(startIndex + targetSize, changes.length);
+};
+
+// Helper functions for semantic grouping
+const collectConsecutiveChanges = (changes: DiffChange[], startIndex: number, type: string) => {
+  const group = [];
+  let i = startIndex;
+  const maxGroup = UI_CONFIG.RENDERING.SEMANTIC_CHUNKING.MAX_CONSECUTIVE_SAME_TYPE;
+  
+  while (i < changes.length && changes[i].type === type && group.length < maxGroup) {
+    group.push(changes[i]);
+    i++;
+  }
+  
+  return group;
+};
+
+const renderChangeGroup = (group: DiffChange[], type: string) => {
+  const combinedContent = group.map(change => change.content || '').join('');
+  const escape = (str: string) => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
+  
+  const className = type === 'added'
+    ? 'bg-theme-secondary-100 text-theme-secondary-800 border border-theme-secondary-300 underline decoration-2 decoration-theme-secondary-600'
+    : 'bg-theme-accent-100 text-theme-accent-800 border border-theme-accent-300 line-through decoration-2 decoration-theme-accent-600';
+    
+  return `<span class="${className}">${escape(combinedContent)}</span>`;
+};
+
+const renderSingleChange = (change: DiffChange) => {
+  // Use existing logic for single changes
+  const escape = (str: string) => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
+  
+  switch (change.type) {
+    case 'changed':
+      return `<span class="bg-theme-accent-100 text-theme-accent-800 border border-theme-accent-300 line-through decoration-2 decoration-theme-accent-600">${escape(change.originalContent || '')}</span>` +
+             `<span class="bg-theme-secondary-100 text-theme-secondary-800 border border-theme-secondary-300 underline decoration-2 decoration-theme-secondary-600">${escape(change.revisedContent || '')}</span>`;
+    default:
+      return `<span>${escape(change.content || '')}</span>`;
+  }
+};
+
+// New semantic-aware HTML generation function
+const generateSemanticHTMLString = (changes: DiffChange[]) => {
+  if (!FEATURE_FLAGS.ENABLE_SEMANTIC_CHUNKING) {
+    return generateHTMLString(changes); // Fallback to original
+  }
+  
+  if (DEV_CONFIG.DEBUGGING.SEMANTIC_CHUNKING_DEBUG) {
+    console.log('🔧 Semantic chunking enabled for', changes.length, 'changes');
+  }
+  
+  let html = '';
+  let i = 0;
+  let groupsCreated = 0;
+  
+  while (i < changes.length) {
+    const current = changes[i];
+    
+    // Group consecutive changes of same type
+    if (current.type === 'added' || current.type === 'removed') {
+      const group = collectConsecutiveChanges(changes, i, current.type);
+      if (group.length > 1) {
+        html += renderChangeGroup(group, current.type);
+        groupsCreated++;
+        if (DEV_CONFIG.DEBUGGING.SEMANTIC_CHUNKING_DEBUG) {
+          console.log(`📦 Grouped ${group.length} consecutive ${current.type} changes`);
+        }
+      } else {
+        html += renderSingleChange(current);
+      }
+      i += group.length;
+    } else {
+      html += renderSingleChange(current);
+      i++;
+    }
+  }
+  
+  if (DEV_CONFIG.DEBUGGING.SEMANTIC_CHUNKING_DEBUG) {
+    console.log('🎯 Semantic chunking results:', {
+      originalLength: changes.length,
+      groupsCreated,
+      enabled: FEATURE_FLAGS.ENABLE_SEMANTIC_CHUNKING
+    });
+  }
+  
   return html;
 };
 

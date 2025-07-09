@@ -30,6 +30,14 @@ export const UI_CONFIG = {
     ESTIMATED_CHUNK_HEIGHT: 5000, // Pixels
     INTERSECTION_MARGIN: '200px', // Preload distance
     SCROLL_SYNC_THROTTLE: 16, // 60fps
+    
+    // Semantic Chunking Configuration
+    SEMANTIC_CHUNKING: {
+      ENABLED: false, // Default OFF
+      MAX_CONSECUTIVE_SAME_TYPE: 10, // Limit grouping
+      PRESERVE_WORD_BOUNDARIES: true,
+      PRESERVE_NUMBER_PARENTHESES: true,
+    },
   },
 
   // Animation and Transitions
@@ -139,6 +147,7 @@ export const DEV_CONFIG = {
     COMPARISON_DEBUG: IS_DEVELOPMENT,
     OCR_DEBUG: IS_DEVELOPMENT,
     SHOW_PERFORMANCE_DEBUG: IS_DEVELOPMENT,
+    SEMANTIC_CHUNKING_DEBUG: IS_DEVELOPMENT,
   }
 } as const;
 
@@ -152,7 +161,7 @@ export const FEATURE_FLAGS = {
   ENABLE_CSS_RESIZE: true,
   ENABLE_BACKGROUND_LANGUAGE_LOADING: true,
 
-  // Performance Features  
+  // Performance Features
   ENABLE_WORKER_CACHING: true,
   ENABLE_THEME_CACHING: true,
   ENABLE_PROGRESSIVE_SECTIONS: true,
@@ -161,6 +170,9 @@ export const FEATURE_FLAGS = {
   ENABLE_ADVANCED_OCR: true,
   ENABLE_PERFORMANCE_DEMO: IS_DEVELOPMENT,
   ENABLE_LAYOUT_EXPERIMENTS: IS_DEVELOPMENT,
+  
+  // Semantic Chunking Features
+  ENABLE_SEMANTIC_CHUNKING: false, // Default OFF for safety
 } as const;
 
 /**
