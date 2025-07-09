@@ -14,6 +14,7 @@ interface TextInputPanelProps extends BaseComponentProps {
   placeholder: string;
   disabled?: boolean;
   height?: number;
+  iconEmoji?: string;
 }
 
 export const TextInputPanel: React.FC<TextInputPanelProps> = ({
@@ -23,6 +24,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   placeholder,
   disabled = false,
   height = 400,
+  iconEmoji,
   style,
   className,
   ...props
@@ -50,6 +52,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   // Detect layout to conditionally apply dynamic scaling behavior
   const { currentLayout } = useLayout();
   const isDynamicScaling = currentLayout === 'option-c' || currentLayout === 'current';
+  
   
   const { 
     isProcessing, 
@@ -221,7 +224,11 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
     <div className="glass-panel glass-content-panel overflow-hidden shadow-lg transition-all duration-300">
       <div className="glass-panel-header-footer px-4 py-3 border-b border-theme-neutral-200 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <FileText className="w-5 h-5 text-theme-primary-900" />
+          {iconEmoji ? (
+            <span className="text-xl" role="img" aria-label="Input panel">{iconEmoji}</span>
+          ) : (
+            <FileText className="w-5 h-5 text-theme-primary-900" />
+          )}
           <h3 className="text-lg font-semibold text-theme-primary-900">{title}</h3>
           {isProcessing && (
             <div className="flex items-center gap-2">

@@ -65,6 +65,7 @@ export const DesktopInputLayout: React.FC<DesktopInputLayoutProps> = ({
             placeholder="Paste your original legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
             disabled={isProcessing}
             height={USE_CSS_RESIZE ? 9999 : panelHeight}
+            iconEmoji="📝"
           />
         </div>
         
@@ -76,6 +77,7 @@ export const DesktopInputLayout: React.FC<DesktopInputLayoutProps> = ({
             placeholder="Paste your revised legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
             disabled={isProcessing}
             height={USE_CSS_RESIZE ? 9999 : panelHeight}
+            iconEmoji="📝"
           />
         </div>
       </div>
@@ -87,7 +89,7 @@ export const DesktopInputLayout: React.FC<DesktopInputLayoutProps> = ({
           <div className="flex items-center gap-4">
             {/* Original character count */}
             <div className="text-xs text-theme-neutral-600 whitespace-nowrap">
-              <span className="font-medium">Original:</span> {originalText.length.toLocaleString()} chars
+              <span className="font-medium">  Original:</span> {originalText.length.toLocaleString()} chars
             </div>
             
             {/* Resize handle grip */}

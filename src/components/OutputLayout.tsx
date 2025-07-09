@@ -23,6 +23,12 @@ interface OutputLayoutProps extends BaseComponentProps {
   };
   /** Scroll ref for RedlineOutput */
   scrollRef: React.RefObject<HTMLDivElement>;
+  /** Callback for showing results overlay */
+  onShowOverlay?: () => void;
+  /** Whether we're currently in overlay mode */
+  isInOverlayMode?: boolean;
+  /** Whether to hide the header */
+  hideHeader?: boolean;
 }
 
 /**
@@ -45,6 +51,9 @@ export const OutputLayout: React.FC<OutputLayoutProps> = ({
   onCopy,
   outputResizeHandlers,
   scrollRef,
+  onShowOverlay,
+  isInOverlayMode = false,
+  hideHeader = false,
   style,
   className
 }) => {
@@ -59,6 +68,9 @@ export const OutputLayout: React.FC<OutputLayoutProps> = ({
           isProcessing={false}
           processingStatus=""
           scrollRef={scrollRef}
+          onShowOverlay={onShowOverlay}
+          isInOverlayMode={isInOverlayMode}
+          hideHeader={hideHeader}
         />
       </div>
       

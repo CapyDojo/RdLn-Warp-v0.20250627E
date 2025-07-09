@@ -132,11 +132,18 @@ export const generateGlassmorphismVariables = (themeConfig: ThemeConfig): Array<
   const effects = themeConfig.effects || {};
   const glassVariables: Array<[string, string]> = [];
   
+  // Always generate essential CSS variables for overlay compatibility
+  // Even if glassmorphism is disabled, the overlay CSS still uses these variables
+  glassVariables.push(['--effect-backdropBlur', effects.backdropBlur || '16px']);
+  
   if (!effects.glassmorphism) {
+    // For non-glassmorphism themes, provide minimal variables
+    glassVariables.push(['--glass-blur', effects.backdropBlur || '0px']);
+    glassVariables.push(['--glass-opacity', effects.backgroundOpacity || '1']);
     return glassVariables;
   }
   
-  // Basic glassmorphism variables
+  // Basic glassmorphism variables - match the actual CSS usage
   glassVariables.push(['--glass-blur', effects.backdropBlur || '24px']);
   glassVariables.push(['--glass-opacity', effects.backgroundOpacity || '0.8']);
   

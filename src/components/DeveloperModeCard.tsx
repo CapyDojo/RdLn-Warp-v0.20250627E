@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Zap, Image, Layout, Monitor, Activity, BarChart3, Beaker, Target, Eye, Smartphone, ArrowUp, Layers, ExternalLink, Cog } from 'lucide-react';
+import { Settings, Zap, Image, Layout, Monitor, Activity, BarChart3, Beaker, Target, Eye, Smartphone, ArrowUp, Layers, ExternalLink, Cog, Pin } from 'lucide-react';
 import { useLayout, LayoutMode } from '../contexts/LayoutContext';
 import { BaseComponentProps } from '../types/components';
 import { PerformanceDebugPanel, usePerformanceDebugPanel } from './PerformanceDebugPanel';
@@ -171,7 +171,7 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
             <button
               onClick={() => enableTestGroup('visual-only')}
               className="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-all"
-              title="Enable: Results Spotlight + Visual Differentiation + Auto-Scroll"
+              title="Enable: Results Spotlight + Auto-Scroll"
             >
               Visual Only
             </button>
@@ -192,7 +192,7 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
             <button
               onClick={() => enableTestGroup('mobile-optimized')}
               className="px-2 py-1 text-xs rounded bg-orange-100 text-orange-700 hover:bg-orange-200 transition-all"
-              title="Enable: Visual Differentiation + Mobile Tabs + Results Overlay"
+              title="Enable: Mobile Tabs + Results Overlay"
             >
               Mobile Optimized
             </button>
@@ -219,21 +219,9 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
             title="#1: Animated entrance with gold border and contextual header"
           >
             <Target className="w-3 h-3" />
-            Spotlight {features.resultsSpotlight ? 'ON' : 'OFF'}
+            #1 Spotlight {features.resultsSpotlight ? 'ON' : 'OFF'}
           </button>
           
-          <button
-            onClick={() => toggleFeature('visualPanelDifferentiation')}
-            className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
-              features.visualPanelDifferentiation
-                ? 'bg-blue-500 text-white hover:bg-blue-600'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-            title="#3: Input panels (blue + 📝), Results (green + 🎯)"
-          >
-            <Eye className="w-3 h-3" />
-            Visual Diff {features.visualPanelDifferentiation ? 'ON' : 'OFF'}
-          </button>
           
           <button
             onClick={() => toggleFeature('autoScrollToResults')}
@@ -245,7 +233,7 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
             title="#2: Automatically scroll to results when generated"
           >
             <ArrowUp className="w-3 h-3" />
-            Auto-Scroll {features.autoScrollToResults ? 'ON' : 'OFF'}
+            #2 Auto-Scroll {features.autoScrollToResults ? 'ON' : 'OFF'}
           </button>
           
           <button
@@ -258,7 +246,7 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
             title="#6: [INPUT] [RESULTS] [BOTH] tabs for mobile"
           >
             <Smartphone className="w-3 h-3" />
-            Mobile Tabs {features.mobileTabInterface ? 'ON' : 'OFF'}
+            #6 Mobile Tabs {features.mobileTabInterface ? 'ON' : 'OFF'}
           </button>
           
           <button
@@ -271,7 +259,7 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
             title="#7: Follows scroll, appears when results ready"
           >
             <Monitor className="w-3 h-3" />
-            Jump Button {features.floatingJumpButton ? 'ON' : 'OFF'}
+            #7 Jump Button {features.floatingJumpButton ? 'ON' : 'OFF'}
           </button>
           
           <button
@@ -284,7 +272,7 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
             title="#9: Output replaces input position with smooth animation"
           >
             <Layers className="w-3 h-3" />
-            Results First {features.resultsFirstAnimation ? 'ON' : 'OFF'}
+            #9 Results First {features.resultsFirstAnimation ? 'ON' : 'OFF'}
           </button>
           
           <button
@@ -294,10 +282,10 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
                 ? 'bg-teal-500 text-white hover:bg-teal-600'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
-            title="#8: Temporary overlay then animate to position"
+            title="#8: Full-screen modal overlay for results visibility"
           >
-            <Layers className="w-3 h-3" />
-            Results Overlay {features.resultsOverlay ? 'ON' : 'OFF'}
+            <Eye className="w-3 h-3" />
+            #8 Results Overlay {features.resultsOverlay ? 'ON' : 'OFF'}
           </button>
           
           <button
@@ -310,7 +298,7 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
             title="#12: Results open in separate browser window"
           >
             <ExternalLink className="w-3 h-3" />
-            Pop-out {features.popoutResultsWindow ? 'ON' : 'OFF'}
+            #12 Pop-out {features.popoutResultsWindow ? 'ON' : 'OFF'}
           </button>
           
           <button
@@ -323,7 +311,20 @@ export const DeveloperModeCard: React.FC<DeveloperModeCardProps> = ({
             title="#13: Save user's preferred layout order"
           >
             <Cog className="w-3 h-3" />
-            User Config {features.userConfigurableOrder ? 'ON' : 'OFF'}
+            #13 User Config {features.userConfigurableOrder ? 'ON' : 'OFF'}
+          </button>
+          
+          <button
+            onClick={() => toggleFeature('stickyResultsPanel')}
+            className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+              features.stickyResultsPanel
+                ? 'bg-orange-500 text-white hover:bg-orange-600'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="#16: Fixed position panel with pin/unpin and minimize controls"
+          >
+            <Pin className="w-3 h-3" />
+            #16 Sticky Panel {features.stickyResultsPanel ? 'ON' : 'OFF'}
           </button>
         </div>
         

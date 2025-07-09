@@ -13,7 +13,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 export interface ExperimentalFeatures {
   // Visual Enhancement Features (Low Risk)
   resultsSpotlight: boolean;              // #1: Animated entrance with gold border, contextual header
-  visualPanelDifferentiation: boolean;    // #3: Input panels (blue + "📝"), Results (green + "🎯")
   floatingJumpButton: boolean;           // #7: Follows scroll, appears when results ready
   resultsPeekButton: boolean;            // #15: Floating preview button
   
@@ -45,7 +44,6 @@ const ExperimentalLayoutContext = createContext<ExperimentalLayoutContextType | 
 const defaultFeatures: ExperimentalFeatures = {
   // Visual Enhancement Features
   resultsSpotlight: false,
-  visualPanelDifferentiation: false,
   floatingJumpButton: false,
   resultsPeekButton: false,
   
@@ -68,7 +66,6 @@ const defaultFeatures: ExperimentalFeatures = {
 const testGroups = {
   'visual-only': {
     resultsSpotlight: true,
-    visualPanelDifferentiation: true,
     autoScrollToResults: true,
   },
   'navigation-enhanced': {
@@ -83,7 +80,6 @@ const testGroups = {
     resultsFirstAnimation: true,
   },
   'mobile-optimized': {
-    visualPanelDifferentiation: true,
     mobileTabInterface: true,
     resultsOverlay: true,
   },
@@ -175,7 +171,6 @@ export const useExperimentalCSSClasses = () => {
   const classes: string[] = [];
   
   if (features.resultsSpotlight) classes.push('experimental-results-spotlight');
-  if (features.visualPanelDifferentiation) classes.push('experimental-visual-differentiation');
   if (features.floatingJumpButton) classes.push('experimental-floating-jump');
   if (features.resultsPeekButton) classes.push('experimental-peek-button');
   if (features.autoScrollToResults) classes.push('experimental-auto-scroll');

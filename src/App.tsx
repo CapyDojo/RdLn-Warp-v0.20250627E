@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Header } from './components/Header';
 import { ComparisonInterface } from './components/ComparisonInterface';
-import { DeveloperModeCard } from './components/DeveloperModeCard';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { useTheme } from './contexts/ThemeContext';
 import { LayoutProvider } from './contexts/LayoutContext';
-import { ExperimentalLayoutProvider } from './contexts/ExperimentalLayoutContext';
+import { ExperimentalLayoutProvider, useExperimentalFeatures } from './contexts/ExperimentalLayoutContext';
 import { OCRService } from './utils/OCRService';
 import { LogoTestPage } from './pages/LogoTestPage'; // Import the new LogoTestPage
 import { CuppingTestPage } from './pages/CuppingTestPage'; // Import the cupping test page
@@ -14,9 +13,15 @@ import './styles/resize-overrides.css'; // SSMR CSS resize fixes
 function AppContent() {
   const { currentTheme, themeConfig } = useTheme();
   
+  // Get experimental features to check if results overlay is enabled
+  const { features } = useExperimentalFeatures();
+  
   // State for developer mode toggles
   const [showAdvancedOcrCardState, setShowAdvancedOcrCardState] = useState(true);
   const [showPerformanceDemoCardState, setShowPerformanceDemoCardState] = useState(true);
+  
+  // State for overlay visibility (only used when results overlay feature is enabled)
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   
   // Toggle functions for developer mode controls
   const handleToggleAdvancedOcr = () => {
@@ -27,6 +32,21 @@ function AppContent() {
     setShowPerformanceDemoCardState(!showPerformanceDemoCardState);
   };
   
+  // Overlay visibility handlers (only used when results overlay feature is enabled)
+  const handleOverlayShow = () => {
+    if (features.resultsOverlay) {
+      setIsOverlayVisible(true);
+      console.log('🎯 App: Results overlay shown - hiding header');
+    }
+  };
+  
+  const handleOverlayHide = () => {
+    if (features.resultsOverlay) {
+      setIsOverlayVisible(false);
+      console.log('🎯 App: Results overlay hidden - showing header');
+    }
+  };
+  
 
   // Cleanup OCR worker on app unmount
   useEffect(() => {
@@ -35,25 +55,24 @@ function AppContent() {
     };
   }, []);
 
+  // Determine if header should be hidden (only when results overlay feature is enabled AND overlay is visible)
+  const shouldHideHeader = features.resultsOverlay && isOverlayVisible;
+  
   return (
     <div className="min-h-screen">
-      <Header />
-<main className="pt-32">
+      {/* Conditionally render header - only hide when results overlay experimental feature is enabled AND overlay is visible */}
+      {!shouldHideHeader && <Header />}
+      <main className={shouldHideHeader ? "pt-0" : "pt-32"}>
         <ComparisonInterface 
-          showAdvancedOcrCard={showAdvancedOcrCardState}
-          showPerformanceDemoCard={showPerformanceDemoCardState}
-        />
-      </main>
-      
-      {/* Developer Mode Card - Always Visible */}
-      <div className="comparison-interface-container mb-6">
-        <DeveloperModeCard
           showAdvancedOcrCard={showAdvancedOcrCardState}
           showPerformanceDemoCard={showPerformanceDemoCardState}
           onToggleAdvancedOcr={handleToggleAdvancedOcr}
           onTogglePerformanceDemo={handleTogglePerformanceDemo}
+          onOverlayShow={handleOverlayShow}
+          onOverlayHide={handleOverlayHide}
         />
-      </div>
+      </main>
+      
       
       {/* Footer - Enhanced with glassmorphism to match top sections */}
       <footer className="mt-16 glass-panel border-t border-theme-neutral-200 shadow-lg transition-all duration-300">

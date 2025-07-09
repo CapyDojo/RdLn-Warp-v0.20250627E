@@ -37,7 +37,7 @@
   font-weight: 700;
   z-index: 20;
   box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
-  animation: resultsHeaderPulse 0.5s ease-out;
+  animation: resultsHeaderSequence 6s ease-out forwards;
 }
 
 @keyframes resultsSpotlightEntrance {
@@ -61,17 +61,24 @@
   }
 }
 
-@keyframes resultsHeaderPulse {
+@keyframes resultsHeaderSequence {
   0% {
     opacity: 0;
     transform: translateX(-50%) scale(0.8);
   }
-  50% {
+  8.33% {
+    /* ~0.5s - entrance complete */
     opacity: 1;
-    transform: translateX(-50%) scale(1.05);
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    /* 3s - persist phase complete, start fade */
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
   }
   100% {
-    opacity: 1;
+    /* 6s - fade complete */
+    opacity: 0;
     transform: translateX(-50%) scale(1);
   }
 }
@@ -84,84 +91,74 @@
   scroll-behavior: smooth;
 }
 
-/* ==============================================
-   FEATURE #3: VISUAL PANEL DIFFERENTIATION
-   ============================================== */
-.experimental-visual-differentiation [data-input-panel] {
-  /* Input panels: Blue accent */
-  position: relative;
-}
-
-.experimental-visual-differentiation [data-input-panel]:before {
-  /* Blue accent indicator for input panels */
-  content: "📝 INPUT";
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(59, 130, 246, 0.1);
-  color: #1e40af;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  z-index: 10;
-  pointer-events: none;
-}
-
-.experimental-visual-differentiation [data-output-panel] {
-  /* Output panel: Green accent */
-  position: relative;
-}
-
-.experimental-visual-differentiation [data-output-panel]:before {
-  /* Green accent indicator for output panel */
-  content: "🎯 RESULTS";
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(34, 197, 94, 0.1);
-  color: #15803d;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  z-index: 10;
-  pointer-events: none;
-}
 
 /* ==============================================
    FEATURE #6: MOBILE TAB INTERFACE
    ============================================== */
-.experimental-mobile-tabs .mobile-tab-interface {
+.mobile-tab-interface {
   /* Mobile tab interface styling */
   display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 16px;
   border-bottom: 1px solid #e5e7eb;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
   z-index: 20;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.experimental-mobile-tabs .mobile-tab-button {
-  flex: 1;
-  padding: 12px 8px;
+.mobile-tab-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
   border: none;
-  background: transparent;
+  border-radius: 8px;
+  background: #f3f4f6;
+  color: #6b7280;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
+  min-width: 80px;
 }
 
-.experimental-mobile-tabs .mobile-tab-button.active {
-  background: rgba(59, 130, 246, 0.1);
-  color: #1e40af;
-  border-bottom: 2px solid #3b82f6;
+.mobile-tab-button.active {
+  background: #3b82f6;
+  color: white;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
-.experimental-mobile-tabs .mobile-tab-button:hover {
-  background: rgba(0, 0, 0, 0.05);
+.mobile-tab-button:hover:not(.active) {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.mobile-tab-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mobile-tab-button:disabled:hover {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* Icon styling within mobile tab buttons */
+.mobile-tab-button svg {
+  margin-right: 4px;
+  width: 16px;
+  height: 16px;
+}
+
+/* Responsive behavior */
+@media (min-width: 1024px) {
+  .mobile-tab-interface {
+    display: none; /* Hide on desktop */
+  }
 }
 
 /* ==============================================
@@ -206,23 +203,168 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.4); /* Default lighter backdrop */
   backdrop-filter: blur(10px);
   z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  animation: overlayFadeIn 0.3s ease-out;
 }
 
-.experimental-results-overlay .results-overlay-content {
-  background: white;
-  border-radius: 12px;
+.experimental-results-overlay .results-overlay-direct-content {
+  /* Direct content wrapper - no glassmorphism (RedlineOutput handles its own) */
   max-width: 90vw;
   max-height: 90vh;
-  overflow: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: visible; /* Let RedlineOutput handle its own overflow */
   animation: overlaySlideIn 0.3s ease-out;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Theme-specific container styling removed - RedlineOutput handles its own theme styling */
+
+/* ==============================================
+   THEME-SPECIFIC BACKDROP STYLES - EXACT THEME BACKGROUNDS
+   ============================================== */
+
+/* Professional theme - exact same background as app */
+[data-theme="professional"] .experimental-results-overlay .results-overlay {
+  background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 25%, #f8fafc  50%, #f1f5f9 75%, #e2e8f0 100%) !important;
+  background-image: 
+    linear-gradient(138deg, rgba(59, 130, 246, 0.35) 0%, rgba(147, 197, 253, 0.28) 22%, transparent 48%, rgba(219, 234, 254, 0.22) 73%, rgba(239, 246, 255, 0.15) 100%),
+    radial-gradient(ellipse at 28% 18%, rgba(226, 232, 240, 0.25) 0%, transparent 52%),
+    radial-gradient(ellipse at 78% 82%, rgba(203, 213, 225, 0.20) 0%, transparent 47%) !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  background-size: 100% 100% !important;
+}
+
+/* Bamboo theme - exact same background as app */
+[data-theme="bamboo"] .experimental-results-overlay .results-overlay {
+  background: linear-gradient(45deg, #2d5016 0%,rgb(146, 183, 113) 25%,rgb(113, 155, 81) 63%,rgb(183, 203, 165) 85%, #7ba05f 100%) !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  background-size: 100% 100% !important;
+}
+
+/* Apple Dark theme - exact same background as app */
+[data-theme="apple-dark"] .experimental-results-overlay .results-overlay {
+  background: #0a0a0a !important;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(23, 23, 23, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(38, 38, 38, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(15, 15, 15, 0.03) 0%, transparent 50%) !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  background-size: 100% 100% !important;
+}
+
+/* Kyoto theme - exact same background as app */
+[data-theme="kyoto"] .experimental-results-overlay .results-overlay {
+  background-image: 
+    /* Added subtle green and orange blurs for organic breakup */
+    radial-gradient(ellipse 1800px 900px at 15% 20%, rgba(13, 142, 48, 0.39) 0%, transparent 35%),
+    radial-gradient(ellipse 900px 600px at 85% 80%, rgba(197, 90, 17, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 1200px 900px at 15% 25%, rgba(122, 61, 26, 0.6) 0%, rgba(155, 74, 31, 0.4) 25%, transparent 60%),
+    radial-gradient(ellipse 12300px 1800px at 78% 69%, rgba(20, 54, 20, 0.76) 0%, rgba(80, 63, 30, 0.2) 27%, transparent 90%),
+    /* Organic transition helper - subtle horizontal band to break up the diagonal */
+    radial-gradient(ellipse 1200px 600px at 48% 63%, rgba(197, 90, 17, 0.2) 30%, rgba(217, 119, 6, 0.15) 20%, transparent 70%),
+    radial-gradient(ellipse 900px 600px at 60% 10%, rgba(197, 90, 17, 0.4) 0%, rgba(217, 119, 6, 0.25) 40%, transparent 80%),
+    radial-gradient(ellipse 900px 1200px at 5% 85%, rgba(122, 61, 26, 0.3) 0%, rgba(155, 74, 31, 0.15) 50%, transparent 85%),
+    radial-gradient(ellipse 500px 700px at 95% 45%, rgba(19, 78, 74, 0.4) 0%, rgba(58, 118, 15, 0.2) 45%, transparent 90%),
+    /* Modified gradient with left-shifted emphasis */
+    linear-gradient(160deg, 
+      #7A3D1A 0%,     /* Rich burnt sienna */
+      #9B4A1F 5%,     /* Deep rust */
+      #C55A11 10%,    /* Burnt orange */
+      #D97706 15%,    /* Amber 700 */
+      rgb(220, 8, 8) 18%,    /* Amber 700 darker */
+      rgb(173, 76, 16) 27%,    /* Amber 800 */
+      #6B4423 35%,    /* Mixed brown */
+      #4A5D23 45%,    /* Olive brown - organic break */
+      #3A4D1F 55%,    /* Deeper olive */
+      #2A3D1A 60%,    /* Forest transition */
+      #1E3A1E 65%,    /* Deep forest */
+      rgb(87, 69, 12) 70%,    /* Teal 800 */
+      rgb(7, 59, 27) 80%,    /* Teal 700 */
+      #C55A11 95%,    /* Burnt orange */
+      rgb(186, 101, 3) 100%    /* Amber 700 */
+    ),
+    radial-gradient(circle at 40% 60%, rgba(30, 85, 80, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 60% 40%, rgba(140, 70, 50, 0.1) 0%, transparent 50%) !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  background-size: 100% 100% !important;
+}
+
+/* New York theme - exact same background as app */
+[data-theme="new-york"] .experimental-results-overlay .results-overlay {
+  background: #0a0a0a !important;
+  background-image: 
+    linear-gradient(180deg, #0f172a 0%, #1e293b 30%, #451a03 100%),
+    radial-gradient(circle at 50% 100%, rgba(251, 140, 0, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 25% 80%, rgba(255, 152, 0, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 75% 90%, rgba(239, 108, 0, 0.03) 0%, transparent 35%),
+    repeating-linear-gradient(90deg, transparent 0%, rgba(16, 16, 16, 0.6) 2%, transparent 4%) !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 2px !important;
+}
+
+/* Autumn theme - exact same background as app */
+[data-theme="autumn"] .experimental-results-overlay .results-overlay {
+  background-image: url('/images/autumn-background.jpg') !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+/* Classic Light theme - exact same background as app */
+[data-theme="classic-light"] .experimental-results-overlay .results-overlay {
+  background: #dedcd5 !important;
+}
+
+/* Classic Dark theme - exact same background as app */
+[data-theme="classic-dark"] .experimental-results-overlay .results-overlay {
+  background: #171717 !important;
+}
+
+/* ==============================================
+   GLASSMORPHISM MODE OVERRIDE
+   ============================================== */
+
+/* When glassmorphism mode is enabled, use translucent backdrop instead of theme background */
+.experimental-results-overlay.glassmorphism-mode .results-overlay {
+  background: rgba(255, 255, 255, 0.1) !important;
+  background-image: none !important;
+  backdrop-filter: blur(20px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+}
+
+/* Dark themes get darker glassmorphism backdrop */
+[data-theme="kyoto"] .experimental-results-overlay.glassmorphism-mode .results-overlay,
+[data-theme="apple-dark"] .experimental-results-overlay.glassmorphism-mode .results-overlay,
+[data-theme="classic-dark"] .experimental-results-overlay.glassmorphism-mode .results-overlay,
+[data-theme="new-york"] .experimental-results-overlay.glassmorphism-mode .results-overlay {
+  background: rgba(0, 0, 0, 0.2) !important;
+  background-image: none !important;
+  backdrop-filter: blur(20px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+}
+
+/* Container wrapper styling removed - using direct RedlineOutput */
+
+@keyframes overlayFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes overlaySlideIn {
@@ -235,6 +377,25 @@
     transform: scale(1) translateY(0);
   }
 }
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .experimental-results-overlay .results-overlay {
+    padding: 10px;
+  }
+  
+  .experimental-results-overlay .results-overlay-direct-content {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+}
+
+/* Ensure proper stacking above other experimental features */
+.experimental-results-overlay .results-overlay {
+  z-index: 200; /* Higher than floating buttons (z-index: 30) */
+}
+
+/* Auto-show period removed - users can close immediately */
 
 /* ==============================================
    FEATURE #9: RESULTS FIRST ANIMATION
@@ -390,6 +551,109 @@
 /* ==============================================
    FEATURE #16: STICKY RESULTS PANEL
    ============================================== */
+.sticky-results-panel {
+  /* Base sticky results panel styling */
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.sticky-results-panel.active {
+  /* Active sticky state */
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 400px;
+  max-height: 70vh;
+  z-index: 50;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e5e7eb;
+}
+
+.sticky-results-panel.minimized {
+  /* Minimized state */
+  height: 60px;
+  overflow: hidden;
+}
+
+.sticky-results-panel.minimized .sticky-content {
+  display: none;
+}
+
+.sticky-controls {
+  /* Control bar for sticky panel */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sticky-control-button {
+  /* Control buttons (pin, minimize, etc.) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sticky-control-button:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.sticky-control-button.active {
+  background: #3b82f6;
+  color: white;
+}
+
+.sticky-content {
+  /* Content area of sticky panel */
+  padding: 16px;
+  max-height: calc(70vh - 60px);
+  overflow-y: auto;
+}
+
+/* Responsive behavior for sticky panel */
+@media (max-width: 768px) {
+  .sticky-results-panel.active {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    max-height: 60vh;
+  }
+}
+
+/* Animation for sticky panel activation */
+@keyframes stickyPanelActivate {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.sticky-results-panel.active {
+  animation: stickyPanelActivate 0.3s ease-out;
+}
+
+/* Legacy experimental-sticky-results class for backward compatibility */
 .experimental-sticky-results [data-output-panel] {
   /* Sticky results panel */
   position: sticky;
@@ -424,13 +688,6 @@
   
   .experimental-peek-button .results-peek-button {
     bottom: 140px; /* Stack above jump button */
-  }
-  
-  .experimental-visual-differentiation [data-input-panel]:before,
-  .experimental-visual-differentiation [data-output-panel]:before {
-    /* Larger indicators for mobile */
-    font-size: 12px;
-    padding: 4px 8px;
   }
 }
 

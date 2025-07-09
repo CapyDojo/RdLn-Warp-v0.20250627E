@@ -1069,3 +1069,35 @@ header .flex {
 [data-theme="bamboo"] .glass-panel * {
   color: inherit;
 }
+
+/* MOBILE UNIFIED LAYOUT: Create seamless input panel unit */
+@media (max-width: 1023px) {
+  /* Top panel: rounded top corners only */
+  .mobile-top-panel .glass-panel.glass-content-panel {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  
+  /* Bottom panel: rounded bottom corners only */
+  .mobile-bottom-panel .glass-panel.glass-content-panel {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: 0.5rem !important;
+    border-bottom-right-radius: 0.5rem !important;
+    margin-top: 0 !important;
+  }
+  
+  /* Handle bar: no rounded corners to integrate seamlessly - all layouts */
+  .lg\:hidden [data-resize-handle="input-panels"],
+  .layout-current .lg\:hidden [data-resize-handle="input-panels"].glass-panel,
+  .layout-option-c .lg\:hidden [data-resize-handle="input-panels"].glass-panel {
+    border-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}

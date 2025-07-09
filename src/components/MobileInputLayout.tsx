@@ -66,6 +66,7 @@ export const MobileInputLayout: React.FC<MobileInputLayoutProps> = ({
             placeholder="Paste your original legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
             disabled={isProcessing}
             height={USE_CSS_RESIZE ? 9999 : panelHeight}
+            iconEmoji="📝"
           />
         </div>
         
@@ -101,7 +102,9 @@ export const MobileInputLayout: React.FC<MobileInputLayoutProps> = ({
           <div className="flex justify-between items-center w-full text-xs text-theme-neutral-600 cursor-row-resize touch-none select-none">
             {/* Original character count - left aligned */}
             <div className="text-left">
-              <span className="font-medium">Original:</span> {originalText.length.toLocaleString()} chars
+              <span className="font-medium text-lg">&nbsp;&nbsp;&nbsp;⬆️ </span>
+              <span className="font-medium text-sm">Original: </span>
+              <span className="text-sm">{originalText.length.toLocaleString()} chars</span>
             </div>
             
             {/* Grip handle - center aligned */}
@@ -111,7 +114,9 @@ export const MobileInputLayout: React.FC<MobileInputLayoutProps> = ({
             
             {/* Revised character count - right aligned */}
             <div className="text-right">
-              <span className="font-medium">Revised:</span> {revisedText.length.toLocaleString()} chars
+              <span className="font-medium text-sm">Revised: </span>
+              <span className="text-sm">{revisedText.length.toLocaleString()} chars</span>
+              <span className="font-medium text-lg">⬇️&nbsp;&nbsp;&nbsp;</span>
             </div>
           </div>
         </div>
@@ -125,6 +130,7 @@ export const MobileInputLayout: React.FC<MobileInputLayoutProps> = ({
             placeholder="Paste your revised legal document text here, or paste a screenshot to extract text automatically using multi-language OCR..."
             disabled={isProcessing}
             height={USE_CSS_RESIZE ? 9999 : panelHeight}
+            iconEmoji="📝"
           />
         </div>
       </div>

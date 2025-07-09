@@ -70,7 +70,7 @@
   overflow-y: auto !important;
   /* Height constraints - allows resize handles to work */
   min-height: 200px !important;
-  max-height: 800px !important;
+  max-height: 1200px !important;
 }
 
 /* Textarea: Auto-expand without scrollbars */
@@ -128,8 +128,21 @@
   border-bottom-right-radius: 0 !important;
 }
 
-.layout-option-c [data-resize-handle="input-panels"].glass-panel {
-  border-radius: 0.5rem !important; /* Full rounded corners for cupping effect */
+/* Desktop: Target the parent .glass-panel that contains the resize handle */
+.layout-option-c .glass-panel:has([data-resize-handle="input-panels"]) {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-left-radius: 0.5rem !important;
+  border-bottom-right-radius: 0.5rem !important;
+  margin-top: -1px !important; /* Overlap border for seamless connection */
+}
+
+/* Fallback for browsers that don't support :has() - target the container */
+.layout-option-c .hidden.lg\:block .glass-panel:last-child {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-left-radius: 0.5rem !important;
+  border-bottom-right-radius: 0.5rem !important;
   margin-top: -1px !important; /* Overlap border for seamless connection */
 }
 
@@ -138,8 +151,21 @@
   border-bottom-right-radius: 0 !important;
 }
 
-.layout-option-c [data-resize-handle="output-panel"].glass-panel {
-  border-radius: 0.5rem !important; /* Full rounded corners for cupping effect */
+/* Output panel: Target the parent .glass-panel that contains the resize handle */
+.layout-option-c .glass-panel:has([data-resize-handle="output-panel"]) {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-left-radius: 0.5rem !important;
+  border-bottom-right-radius: 0.5rem !important;
+  margin-top: -1px !important; /* Overlap border for seamless connection */
+}
+
+/* Fallback for browsers that don't support :has() - target output container */
+.layout-option-c [data-output-panel] + .flex .glass-panel {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-left-radius: 0.5rem !important;
+  border-bottom-right-radius: 0.5rem !important;
   margin-top: -1px !important; /* Overlap border for seamless connection */
 }
 
@@ -190,7 +216,6 @@
   height: 2rem !important; /* Match Option A height */
   padding: 0 !important;
   font-size: inherit !important;
-  border-radius: 0.5rem !important;
 }
 
 /* Resize handle containers */

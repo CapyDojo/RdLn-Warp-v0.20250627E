@@ -5,12 +5,14 @@ import { TextInputPanel } from './TextInputPanel';
 import { RedlineOutput } from './RedlineOutput';
 import { ProcessingDisplay } from './ProcessingDisplay';
 import { OutputLayout } from './OutputLayout';
+import { ComparisonStats } from './ComparisonStats';
 import { OCRFeatureCard } from './OCRFeatureCard';
 import { PerformanceDemoCard } from './PerformanceDemoCard';
 import { DesktopControlsPanel } from './DesktopControlsPanel';
 import { MobileControlsPanel } from './MobileControlsPanel';
 import { DesktopInputLayout } from './DesktopInputLayout';
 import { MobileInputLayout } from './MobileInputLayout';
+import { DeveloperModeCard } from './DeveloperModeCard';
 // Background Loading Status
 import { BackgroundLoadingStatus } from './BackgroundLoadingStatus';
 // Resize and scroll handlers
@@ -20,17 +22,32 @@ import { useScrollSync } from '../hooks/useScrollSync';
 import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils.tsx';
 // Experimental features
 import { useExperimentalFeatures, useExperimentalCSSClasses } from '../contexts/ExperimentalLayoutContext';
+import { FloatingJumpButton } from './experimental/FloatingJumpButton';
+import { MobileTabInterface } from './experimental/MobileTabInterface';
+import { StickyResultsPanel } from './experimental/StickyResultsPanel';
+import { ResultsOverlay } from './experimental/ResultsOverlay';
+import { useJumpToResults } from '../hooks/useJumpToResults';
+import { useMobileTabInterface } from '../hooks/useMobileTabInterface';
+import { useResultsOverlay } from '../hooks/useResultsOverlay';
 
 import { BaseComponentProps } from '../types/components';
 
 interface ComparisonInterfaceProps extends BaseComponentProps {
   showAdvancedOcrCard?: boolean;
   showPerformanceDemoCard?: boolean;
+  onToggleAdvancedOcr?: () => void;
+  onTogglePerformanceDemo?: () => void;
+  onOverlayShow?: () => void;
+  onOverlayHide?: () => void;
 }
 
 export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
   showAdvancedOcrCard = true,
   showPerformanceDemoCard = true,
+  onToggleAdvancedOcr,
+  onTogglePerformanceDemo,
+  onOverlayShow,
+  onOverlayHide,
   style,
   className,
   ...props
@@ -179,11 +196,42 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
     }
   }, [result, USE_CSS_RESIZE, setOutputHeightCSS]);
 
+  // Get experimental features (moved here before useEffect that depends on it)
+  const { features } = useExperimentalFeatures();
+  const experimentalCSSClasses = useExperimentalCSSClasses();
+  
+  // Jump to results functionality for experimental features
+  const { jumpToResults } = useJumpToResults();
+  
+  // Mobile tab interface hook
+  const { getPanelVisibility } = useMobileTabInterface();
+  
+  // Results overlay hook - only active when feature is enabled (moved here before useEffect)
+  const {
+    isVisible: overlayVisible,
+    showOverlay,
+    hideOverlay,
+    forceHideOverlay
+  } = useResultsOverlay(
+    !!result, 
+    isProcessing, 
+    {
+      autoShow: features.resultsOverlay,
+      onShow: onOverlayShow,
+      onHide: onOverlayHide
+    }
+  );
+
   // Keyboard shortcuts and global cancellation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-        // Global ESC key cancellation - highest priority
+        // Global ESC key cancellation - but check overlay first
         if (e.key === 'Escape') {
+          // If overlay is visible, let it handle the ESC key
+          if (features.resultsOverlay && overlayVisible) {
+            return; // Let overlay handle ESC
+          }
+          
           e.preventDefault();
           e.stopPropagation();
           if (isProcessing && !isCancelling) {
@@ -202,7 +250,7 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
     // Use capture phase for ESC to ensure it works regardless of focus
     window.addEventListener('keydown', handleKeyDown, { capture: true });
     return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-  }, [compareDocuments, isProcessing, isCancelling, cancelComparison]);
+  }, [compareDocuments, isProcessing, isCancelling, cancelComparison, features.resultsOverlay, overlayVisible]);
 
   // Performance-aware handlers
   const handleCopy = usePerformanceAwareHandler(() => {
@@ -261,10 +309,6 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
     });
   }, 'swap_content', performanceTracker);
 
-  // Get experimental features
-  const { features } = useExperimentalFeatures();
-  const experimentalCSSClasses = useExperimentalCSSClasses();
-  
   // Auto-scroll to results when they appear (Feature #2)
   useEffect(() => {
     if (features.autoScrollToResults && result && !isProcessing) {
@@ -274,10 +318,10 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
         if (outputPanel) {
           outputPanel.scrollIntoView({ 
             behavior: 'smooth', 
-            block: 'start',
+            block: 'center',  // Center in viewport for better continuity
             inline: 'nearest'
           });
-          console.log('🎯 Auto-scrolled to results (Feature #2)');
+          console.log('🎯 Auto-scrolled to results (Feature #2) - centered for better UX');
         }
       }, 100);
     }
@@ -292,12 +336,12 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
         if (outputPanel) {
           // Add spotlight animation class
           outputPanel.classList.add('results-appearing');
-          console.log('✨ Results spotlight activated (Feature #1)');
+          console.log('✨ Results spotlight activated (Feature #1) - 3s persist + 3s fade');
           
-          // Remove animation class after animation completes
+          // Remove animation class after 6 seconds (3s persist + 3s fade)
           setTimeout(() => {
             outputPanel.classList.remove('results-appearing');
-          }, 500);
+          }, 6000);
         }
       }, 50); // Slightly faster than auto-scroll for immediate visual feedback
     }
@@ -335,8 +379,14 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
       />
 
 
+      {/* Mobile Tab Interface - Experimental Feature #6 */}
+      <MobileTabInterface
+        isVisible={true}
+        hasResults={!!result}
+      />
+      
       {/* Input Section with Centered Swap Button - Enhanced with glassmorphism */}
-      <div className="relative mb-8">
+      <div className="relative mb-8" style={{ display: getPanelVisibility('input') }}>
         {/* Desktop Input Layout Component */}
         <DesktopInputLayout
           originalText={originalText}
@@ -414,8 +464,18 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
         </div>
       )}
 
+      {/* Developer Mode Card - Always visible */}
+      <div className="mt-8 mb-4">
+        <DeveloperModeCard
+          showAdvancedOcrCard={showAdvancedOcrCard}
+          showPerformanceDemoCard={showPerformanceDemoCard}
+          onToggleAdvancedOcr={onToggleAdvancedOcr}
+          onTogglePerformanceDemo={onTogglePerformanceDemo}
+        />
+      </div>
+      
       {(result || (isProcessing && chunkingProgress.enabled && chunkingProgress.isChunking)) && (
-        <>
+        <div style={{ display: getPanelVisibility('output') }}>
           {isProcessing && chunkingProgress.enabled && chunkingProgress.isChunking && (
             <ProcessingDisplay 
               chunkingProgress={chunkingProgress} 
@@ -424,17 +484,90 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
             />
           )}
           {result && !isProcessing && (
-            <OutputLayout
-              changes={result.changes}
-              stats={result.stats}
-              USE_CSS_RESIZE={USE_CSS_RESIZE}
-              outputHeight={outputHeight}
-              onCopy={handleCopy}
-              outputResizeHandlers={outputResizeHandlers}
-              scrollRef={redlineOutputRef}
-            />
+            features.stickyResultsPanel ? (
+              <StickyResultsPanel
+                isVisible={true}
+                hasResults={!!result}
+                onTogglePin={(isPinned) => console.log('🧪 Sticky Results Panel: Pin toggled', isPinned)}
+                onToggleMinimize={(isMinimized) => console.log('🧪 Sticky Results Panel: Minimize toggled', isMinimized)}
+              >
+                <OutputLayout
+                  changes={result.changes}
+                  stats={result.stats}
+                  USE_CSS_RESIZE={USE_CSS_RESIZE}
+                  outputHeight={outputHeight}
+                  onCopy={handleCopy}
+                  outputResizeHandlers={outputResizeHandlers}
+                  scrollRef={redlineOutputRef}
+                  onShowOverlay={showOverlay}
+                  isInOverlayMode={false}
+                  showAdvancedOcrCard={showAdvancedOcrCard}
+                  showPerformanceDemoCard={showPerformanceDemoCard}
+                  onToggleAdvancedOcr={onToggleAdvancedOcr}
+                  onTogglePerformanceDemo={onTogglePerformanceDemo}
+                />
+              </StickyResultsPanel>
+            ) : (
+              <OutputLayout
+                changes={result.changes}
+                stats={result.stats}
+                USE_CSS_RESIZE={USE_CSS_RESIZE}
+                outputHeight={outputHeight}
+                onCopy={handleCopy}
+                outputResizeHandlers={outputResizeHandlers}
+                scrollRef={redlineOutputRef}
+                onShowOverlay={showOverlay}
+                isInOverlayMode={false}
+                showAdvancedOcrCard={showAdvancedOcrCard}
+                showPerformanceDemoCard={showPerformanceDemoCard}
+                onToggleAdvancedOcr={onToggleAdvancedOcr}
+                onTogglePerformanceDemo={onTogglePerformanceDemo}
+              />
+            )
           )}
-        </>
+        </div>
+      )}
+      
+      {/* Experimental Features */}
+      {features.floatingJumpButton && (
+        <FloatingJumpButton
+          isVisible={features.floatingJumpButton}
+          onJumpToResults={jumpToResults}
+          hasResults={!!result}
+        />
+      )}
+      
+      {/* Results Overlay - Feature #8 */}
+      {features.resultsOverlay && result && (
+        <ResultsOverlay
+          isVisible={overlayVisible}
+          onClose={hideOverlay}
+          onForceClose={forceHideOverlay}
+        >
+          <RedlineOutput
+            changes={result.changes}
+            onCopy={handleCopy}
+            height={9999} // Full height in overlay
+            isProcessing={false}
+            processingStatus=""
+            scrollRef={redlineOutputRef}
+            onShowOverlay={hideOverlay} // Convert to close overlay function
+            isInOverlayMode={true} // Enable overlay mode styling
+            hideHeader={false} // Show header with controls in overlay
+            onBackgroundModeChange={(mode) => {
+              // Update overlay class based on background mode
+              const overlayElement = document.querySelector('.experimental-results-overlay');
+              if (overlayElement) {
+                if (mode === 'glassmorphism') {
+                  overlayElement.classList.add('glassmorphism-mode');
+                } else {
+                  overlayElement.classList.remove('glassmorphism-mode');
+                }
+              }
+              console.log('🎯 Background mode changed:', mode);
+            }}
+          />
+        </ResultsOverlay>
       )}
 
     </div>
