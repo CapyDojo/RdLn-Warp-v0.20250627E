@@ -18,6 +18,8 @@ import { useResizeHandlers } from '../hooks/useResizeHandlers';
 import { useScrollSync } from '../hooks/useScrollSync';
 // Performance monitoring
 import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils.tsx';
+// Experimental features
+import { useExperimentalFeatures, useExperimentalCSSClasses } from '../contexts/ExperimentalLayoutContext';
 
 import { BaseComponentProps } from '../types/components';
 
@@ -259,8 +261,50 @@ export const ComparisonInterface: React.FC<ComparisonInterfaceProps> = ({
     });
   }, 'swap_content', performanceTracker);
 
+  // Get experimental features
+  const { features } = useExperimentalFeatures();
+  const experimentalCSSClasses = useExperimentalCSSClasses();
+  
+  // Auto-scroll to results when they appear (Feature #2)
+  useEffect(() => {
+    if (features.autoScrollToResults && result && !isProcessing) {
+      // Wait for DOM to update, then scroll to results
+      setTimeout(() => {
+        const outputPanel = document.querySelector('[data-output-panel]');
+        if (outputPanel) {
+          outputPanel.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          });
+          console.log('🎯 Auto-scrolled to results (Feature #2)');
+        }
+      }, 100);
+    }
+  }, [features.autoScrollToResults, result, isProcessing]);
+  
+  // Results spotlight animation (Feature #1)
+  useEffect(() => {
+    if (features.resultsSpotlight && result && !isProcessing) {
+      // Wait for DOM to update, then trigger spotlight animation
+      setTimeout(() => {
+        const outputPanel = document.querySelector('[data-output-panel]');
+        if (outputPanel) {
+          // Add spotlight animation class
+          outputPanel.classList.add('results-appearing');
+          console.log('✨ Results spotlight activated (Feature #1)');
+          
+          // Remove animation class after animation completes
+          setTimeout(() => {
+            outputPanel.classList.remove('results-appearing');
+          }, 500);
+        }
+      }, 50); // Slightly faster than auto-scroll for immediate visual feedback
+    }
+  }, [features.resultsSpotlight, result, isProcessing]);
+  
   return (
-    <div className="comparison-interface-container">
+    <div className={`comparison-interface-container ${experimentalCSSClasses}`}>
       {/* Test Suite - DISABLED FOR PRODUCTION */}
       {/* <TestSuite onLoadTest={handleLoadTest} /> */}
 

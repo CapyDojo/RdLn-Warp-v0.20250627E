@@ -18,8 +18,26 @@
 }
 
 .experimental-results-spotlight [data-output-panel].results-appearing {
-  /* Will be implemented: Gold border, subtle glow, animated entrance */
+  /* Enhanced spotlight animation with gold border and contextual header */
   animation: resultsSpotlightEntrance 0.5s ease-out;
+  position: relative;
+}
+
+.experimental-results-spotlight [data-output-panel].results-appearing::before {
+  content: "✨ Your Results Are Ready!";
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #92400e;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+  animation: resultsHeaderPulse 0.5s ease-out;
 }
 
 @keyframes resultsSpotlightEntrance {
@@ -27,11 +45,34 @@
     opacity: 0;
     transform: translateY(-20px);
     box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+    border-color: transparent;
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(-5px);
+    box-shadow: 0 0 30px 5px rgba(255, 215, 0, 0.5);
+    border-color: rgba(255, 215, 0, 0.8);
   }
   100% {
     opacity: 1;
     transform: translateY(0);
     box-shadow: 0 0 20px 2px rgba(255, 215, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.6);
+  }
+}
+
+@keyframes resultsHeaderPulse {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
   }
 }
 
