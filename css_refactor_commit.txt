@@ -1,6 +1,0 @@
-refactor(css): Reorganize glassmorphism styles into modular themes
-
-- Breaks down monolithic glassmorphism.css into base and theme-specific files.
-- Creates src/styles/themes/ directory for organized theme styles.
-- Updates main.tsx to import new modular theme structure.
-- Improves maintainability and readability of CSS.
