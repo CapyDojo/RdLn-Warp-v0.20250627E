@@ -46,7 +46,8 @@
   border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* DEFINITIVE FIX: Force transparent base layers */
+/*
+DEFINITIVE FIX: Force transparent base layers
 html {
   height: 100% !important;
   margin: 0 !important;
@@ -58,13 +59,14 @@ body {
   height: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
-  /* Background will be set by ThemeContext with !important */
+  
 }
 
 #root {
   min-height: 100vh !important;
   background: transparent !important;
 }
+*/
 
 /* FORCE REMOVE ANY CONFLICTING STYLES */
 * {

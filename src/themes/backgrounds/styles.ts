@@ -106,15 +106,12 @@ rgb(186, 101, 3) 100%    /* Amber 700 */
     padding: 0 !important;
   `,
   'classic-light': `
-    background: #dedcd5 !important;
+    background: rgba(222, 220, 213, 0.8) !important;
     min-height: 100vh !important;
     margin: 0 !important;
     padding: 0 !important;
   `,
   'classic-dark': `
-    background: #171717 !important;
-    min-height: 100vh !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  `
+    background: rgba(23, 23, 23, 0.8) !important;
+  `,
 };
