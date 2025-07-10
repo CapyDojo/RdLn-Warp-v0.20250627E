@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { OCRService } from '../src/utils/OCRService';
+import { OCRService } from '../src/services/OCRService';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import fs from 'fs';

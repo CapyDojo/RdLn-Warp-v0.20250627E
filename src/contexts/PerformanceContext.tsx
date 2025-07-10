@@ -290,7 +290,7 @@ export function PerformanceProvider({
 
   // Development tools integration
   useEffect(() => {
-    if (!enableDevTools || !appConfig.env.IS_DEVELOPMENT) return;
+    if (!enableDevTools || !(appConfig?.env?.IS_DEVELOPMENT ?? true)) return;
 
     // Expose performance tools to global scope for debugging
     (window as any).__PERFORMANCE_MONITOR__ = {

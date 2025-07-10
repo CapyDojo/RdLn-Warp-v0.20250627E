@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { OCRService } from '../OCRService';
+import { OCRService } from '../../services/OCRService';
 import { OCRLanguage } from '../../types/ocr-types';
 
 // Import the orchestrator module for mocking

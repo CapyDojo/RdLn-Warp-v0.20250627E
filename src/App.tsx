@@ -5,7 +5,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { useTheme } from './contexts/ThemeContext';
 import { LayoutProvider } from './contexts/LayoutContext';
 import { ExperimentalLayoutProvider, useExperimentalFeatures } from './contexts/ExperimentalLayoutContext';
-import { OCRService } from './utils/OCRService';
+import { OCRService } from './services/OCRService';
 import { LogoTestPage } from './pages/LogoTestPage'; // Import the new LogoTestPage
 import { CuppingTestPage } from './pages/CuppingTestPage'; // Import the cupping test page
 import { DeveloperDashboard } from './pages/DeveloperDashboard'; // Import the developer dashboard

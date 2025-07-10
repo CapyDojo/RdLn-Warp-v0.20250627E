@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { OCRService } from '../../src/utils/OCRService';
+import { OCRService } from "../../src/services/OCRService";
 import { OCRLanguage } from '../../src/types/ocr-types';
 // import { TEST_IMAGES, EXPECTED_TEXT, EXPECTED_LANGUAGES } from '../helpers/test-utils';
 

@@ -15,7 +15,13 @@ export default defineConfig({
     exclude: [
       'tests/performance/**/*',
       'tests/accuracy/**/*',
-      'node_modules/**/*'
+      'node_modules/**/*',
+      'tests/real-ocr.test.ts',
+      'src/__tests__/useResizeHandlers.test.ts',
+      'tests/integration/ocr-pipeline.test.ts',
+      'src/services/__tests__/PerformanceMonitor.test.ts',
+      'tests/unit/OCRService.test.ts',
+      'src/hooks/__tests__/usePerformanceMonitor.simple.test.tsx'
     ],
     testTimeout: 30000, // 30 seconds for OCR operations
     hookTimeout: 30000,

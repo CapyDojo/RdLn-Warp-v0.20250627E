@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { OCRService } from '../utils/OCRService';
+import { OCRService } from '../services/OCRService';
 import { OCROptions, OCRLanguage } from '../types/ocr-types';
 import { SUPPORTED_LANGUAGES } from '../config/ocrConfig';
 import { BaseHookReturn } from '../types/components';

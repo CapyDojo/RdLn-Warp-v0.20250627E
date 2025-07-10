@@ -172,33 +172,8 @@ vi.mock('tesseract.js', () => ({
     load: vi.fn(),
     loadLanguage: vi.fn(),
     initialize: vi.fn(),
-    recognize: vi.fn((image: any) => {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          const mockText = 'Mock OCR Result for ' + (image ? (image.name || 'image') : 'unknown');
-          resolve({
-            data: {
-              text: mockText,
-              confidence: 0.95,
-              words: [],
-              lines: [],
-              paragraphs: [],
-              blocks: [],
-              html: `<p>${mockText}</p>`,
-              hocr: `<div>${mockText}</div>`,
-              tsv: `				${mockText}
-`,
-              unmangled_text: mockText,
-              text_direction: 'ltr',
-              orientation: '0',
-              page_number: 1,
-              progress: 1,
-            },
-          });
-        }, 1); // Simulate a minimal delay
-      });
-    }),
-    terminate: vi.fn(),
+    recognize: vi.fn(() => Promise.resolve({ data: { text: 'mock text' }})),
+    terminate: vi.fn(() => Promise.resolve()),
     get  progress() { return 0.5; }, // Mock progress
     set progress(value) { /* do nothing */ },
   })),
