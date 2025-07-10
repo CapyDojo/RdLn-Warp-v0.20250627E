@@ -154,9 +154,25 @@
 
 /* Mobile: Keep existing behavior */
 @media (max-width: 1023px) {
-  .layout-current [data-input-panel] .glass-panel {
+  /* Original input panel: top rounded (12px), bottom square */
+  .layout-current .mobile-top-panel .glass-panel {
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
+  }
+
+  /* Revised input panel: top square, bottom rounded (12px) */
+  .layout-current .mobile-bottom-panel .glass-panel {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+  }
+
+  /* Ensure mobile drag handle has square corners */
+  .layout-current [data-resize-handle="input-panels"].glass-panel {
+    border-radius: 0 !important;
   }
 }
 
@@ -164,8 +180,8 @@
 .layout-current .glass-panel:has([data-resize-handle="input-panels"]) {
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
-  border-bottom-left-radius: 0.5rem !important;
-  border-bottom-right-radius: 0.5rem !important;
+  border-bottom-left-radius: 12px !important;
+  border-bottom-right-radius: 12px !important;
   margin-top: -1px !important; /* Overlap border for seamless connection */
 }
 
@@ -173,8 +189,8 @@
 .layout-current .hidden.lg\:block .glass-panel:last-child {
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
-  border-bottom-left-radius: 0.5rem !important;
-  border-bottom-right-radius: 0.5rem !important;
+  border-bottom-left-radius: 12px !important;
+  border-bottom-right-radius: 12px !important;
   margin-top: -1px !important; /* Overlap border for seamless connection */
 }
 
@@ -187,18 +203,27 @@
 .layout-current .glass-panel:has([data-resize-handle="output-panel"]) {
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
-  border-bottom-left-radius: 0.5rem !important;
-  border-bottom-right-radius: 0.5rem !important;
+  border-bottom-left-radius: 12px !important;
+  border-bottom-right-radius: 12px !important;
   margin-top: -1px !important; /* Overlap border for seamless connection */
 }
 
-/* Fallback for browsers that don't support :has() - target output container */
-.layout-current [data-output-panel] + .flex .glass-panel {
-  border-top-left-radius: 0 !important;
-  border-top-right-radius: 0 !important;
-  border-bottom-left-radius: 0.5rem !important;
-  border-bottom-right-radius: 0.5rem !important;
-  margin-top: -1px !important; /* Overlap border for seamless connection */
+/* Fallback for browsers that don't support :has() - target output container */.layout-current [data-output-panel] + .flex .glass-panel {  border-top-left-radius: 0 !important;  border-top-right-radius: 0 !important;  border-bottom-left-radius: 12px !important;  border-bottom-right-radius: 12px !important;  margin-top: -1px !important; /* Overlap border for seamless connection */} 
+
+/* Mobile: Output panel drag handle */
+@media (max-width: 1023px) {
+  .layout-current [data-resize-handle="output-panel"].glass-panel {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+  }
+
+  /* Mobile: Output panel bottom corners */
+  .layout-current [data-output-panel] + .flex .glass-panel {
+    border-bottom-left-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+  }
 }
 
 

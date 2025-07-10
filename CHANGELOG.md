@@ -582,6 +582,7 @@ Version 0.4.3 represents the final production polish for our MVP, introducing in
 - Implement semantic chunking fix and boundary fragment handling improvements
 
 ### Fixed
+- **UI Consistency:** Resolved inconsistent corner radii for input and output panels' drag handle bars in both mobile and desktop views.
 - chore: Remove temporary commit message files
 
 ### Changed
