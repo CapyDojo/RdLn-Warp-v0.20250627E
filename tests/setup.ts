@@ -1,6 +1,18 @@
 import { beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom';
 
+// Set environment for tests
+process.env.NODE_ENV = 'development';
+
+// Mock appConfig globally for tests
+vi.mock('../config/appConfig', () => ({
+  appConfig: {
+    env: {
+      IS_DEVELOPMENT: true,
+    },
+  },
+}));
+
 // Mock Canvas API for JSDOM environment
 const createMockCanvas = () => {
   const canvas = {
@@ -88,10 +100,18 @@ global.FileReader = class {
       if (this.onload) this.onload({} as ProgressEvent);
     }, 0);
   }
+
+  readAsArrayBuffer(file: Blob) {
+    setTimeout(() => {
+      // Mock a simple ArrayBuffer for testing purposes
+      this.result = new ArrayBuffer(8); // A small buffer
+      if (this.onload) this.onload({} as ProgressEvent);
+    }, 0);
+  }
   
   onload: ((event: ProgressEvent) => void) | null = null;
   onerror: ((event: ProgressEvent) => void) | null = null;
-  result: string | null = null;
+  result: string | ArrayBuffer | null = null;
 } as any;
 
 // Mock Blob
@@ -106,13 +126,83 @@ if (!global.Blob) {
   } as any;
 }
 
-// Mock URL.createObjectURL
-if (!global.URL) {
-  global.URL = {
-    createObjectURL: () => 'blob:mock-url',
-    revokeObjectURL: () => {}
-  } as any;
+// Mock Blob.prototype.arrayBuffer
+if (typeof Blob !== 'undefined' && !Blob.prototype.arrayBuffer) {
+  Blob.prototype.arrayBuffer = function() {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result instanceof ArrayBuffer) {
+          resolve(reader.result);
+        } else if (typeof reader.result === 'string') {
+          // Basic conversion for data URL strings if needed, though ArrayBuffer is preferred
+          const base64 = reader.result.split(',')[1];
+          const binaryString = atob(base64);
+          const len = binaryString.length;
+          const bytes = new Uint8Array(len);
+          for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          resolve(bytes.buffer);
+        } else {
+          resolve(new ArrayBuffer(0)); // Resolve with empty buffer if result is not ArrayBuffer or string
+        }
+      };
+      reader.readAsArrayBuffer(this);
+    });
+  };
 }
+
+// Mock File.prototype.arrayBuffer (File inherits from Blob)
+if (typeof File !== 'undefined' && !File.prototype.arrayBuffer) {
+  File.prototype.arrayBuffer = function() {
+    return Blob.prototype.arrayBuffer.call(this);
+  };
+}
+
+// Mock URL.createObjectURL
+global.URL = {
+    createObjectURL: vi.fn(() => 'blob:mock-url'),
+    revokeObjectURL: vi.fn(() => {}),
+  } as any;
+
+// Mock tesseract.js
+vi.mock('tesseract.js', () => ({
+  createWorker: vi.fn(() => ({
+    load: vi.fn(),
+    loadLanguage: vi.fn(),
+    initialize: vi.fn(),
+    recognize: vi.fn((image: any) => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          const mockText = 'Mock OCR Result for ' + (image ? (image.name || 'image') : 'unknown');
+          resolve({
+            data: {
+              text: mockText,
+              confidence: 0.95,
+              words: [],
+              lines: [],
+              paragraphs: [],
+              blocks: [],
+              html: `<p>${mockText}</p>`,
+              hocr: `<div>${mockText}</div>`,
+              tsv: `				${mockText}
+`,
+              unmangled_text: mockText,
+              text_direction: 'ltr',
+              orientation: '0',
+              page_number: 1,
+              progress: 1,
+            },
+          });
+        }, 1); // Simulate a minimal delay
+      });
+    }),
+    terminate: vi.fn(),
+    get  progress() { return 0.5; }, // Mock progress
+    set progress(value) { /* do nothing */ },
+  })),
+}));
 
 // Test environment setup
 beforeAll(async () => {

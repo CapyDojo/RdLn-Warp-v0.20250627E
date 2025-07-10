@@ -98,7 +98,7 @@ export function mockPerformanceTiming(): {
   
   const originalNow = Date.now;
   
-  const mockNow = jest.fn(() => mockTime);
+  const mockNow = vi.fn(() => mockTime);
   Date.now = mockNow;
   
   return {

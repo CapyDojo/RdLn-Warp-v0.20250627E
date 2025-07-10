@@ -68,7 +68,7 @@ function AppContent({
     <div className="min-h-screen">
       {/* Conditionally render header - only hide when results overlay experimental feature is enabled AND overlay is visible */}
       {!shouldHideHeader && <Header />}
-      <main className={shouldHideHeader ? "pt-0" : "pt-32"}>
+      <main className={shouldHideHeader ? "pt-0" : "pt-36"}>
         <ComparisonInterface 
           showAdvancedOcrCard={showAdvancedOcrCard}
           showPerformanceDemoCard={showPerformanceDemoCard}

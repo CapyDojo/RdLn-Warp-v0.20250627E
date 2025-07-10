@@ -22,20 +22,18 @@ import {
  */
 
 describe('OCR Pipeline Integration Tests', () => {
-  let ocrService: OCRService;
   let performanceTracker: PerformanceTracker;
   let testReporter: TestReporter;
 
   beforeAll(async () => {
     console.log('🚀 Setting up OCR Integration Tests...');
-    ocrService = OCRService.getInstance();
     performanceTracker = new PerformanceTracker();
     testReporter = new TestReporter();
   });
 
   afterAll(async () => {
     console.log('🧹 Cleaning up OCR Integration Tests...');
-    await ocrService.cleanup();
+    await OCRService.terminate();
     
     // Export test results
     const results = testReporter.exportToJson();
@@ -61,10 +59,10 @@ describe('OCR Pipeline Integration Tests', () => {
         const imageUrl = URL.createObjectURL(imageFile);
         
         // Detect languages
-        const detectedLanguages = await ocrService.detectLanguages(imageUrl);
+        const detectedLanguages = await OCRService.detectLanguages(imageUrl);
         
         // Extract text
-        const result = await ocrService.extractText(
+        const result = await OCRService.extractText(
           imageUrl,
           detectedLanguages,
           { preserveParagraphs: true }
@@ -125,8 +123,8 @@ describe('OCR Pipeline Integration Tests', () => {
         const imageFile = createTestImageFromDocument(document);
         const imageUrl = URL.createObjectURL(imageFile);
         
-        const detectedLanguages = await ocrService.detectLanguages(imageUrl);
-        const result = await ocrService.extractText(
+        const detectedLanguages = await OCRService.detectLanguages(imageUrl);
+        const result = await OCRService.extractText(
           imageUrl,
           detectedLanguages,
           { preserveParagraphs: true, processChineseVariants: true }
@@ -183,13 +181,13 @@ describe('OCR Pipeline Integration Tests', () => {
         const imageUrl = URL.createObjectURL(imageFile);
         
         // Test automatic language detection
-        const detectedLanguages = await ocrService.detectLanguages(imageUrl);
+        const detectedLanguages = await OCRService.detectLanguages(imageUrl);
         
         // Should detect multiple languages
         expect(detectedLanguages.length).toBeGreaterThan(1);
         
         // Extract text with detected languages
-        const result = await ocrService.extractText(
+        const result = await OCRService.extractText(
           imageUrl,
           detectedLanguages,
           { preserveParagraphs: true, processChineseVariants: true }

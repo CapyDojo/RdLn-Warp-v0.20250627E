@@ -136,8 +136,8 @@ describe('OCRService Integration with Orchestrator', () => {
       
       await OCRService.extractTextFromImage(mockImage, options);
       
-      const { OCROrchestrator } = require('../services/OCROrchestrator');
-      expect(OCROrchestrator.extractText).toHaveBeenCalledWith(mockImage, expect.objectContaining({
+      // OCROrchestrator is already imported at the top of the file and mocked.
+      expect(mockOCROrchestrator.extractText).toHaveBeenCalledWith(mockImage, expect.objectContaining({
         languages: ['fra', 'deu'],
         autoDetect: false,
         primaryLanguage: 'fra'
@@ -146,8 +146,8 @@ describe('OCRService Integration with Orchestrator', () => {
 
     it('should fall back to legacy implementation if orchestrator fails', async () => {
       // Mock orchestrator failure
-      const { OCROrchestrator } = require('../services/OCROrchestrator');
-      OCROrchestrator.extractText = vi.fn().mockRejectedValue(new Error('Orchestrator failed'));
+      // OCROrchestrator is already imported at the top of the file and mocked.
+      mockOCROrchestrator.extractText = vi.fn().mockRejectedValue(new Error('Orchestrator failed'));
       
       const mockImage = new File(['test'], 'test.png', { type: 'image/png' });
       
@@ -164,8 +164,8 @@ describe('OCRService Integration with Orchestrator', () => {
   describe('Convenience Methods', () => {
     beforeEach(() => {
       // Mock successful orchestrator
-      const { OCROrchestrator } = require('../services/OCROrchestrator');
-      OCROrchestrator.extractText = vi.fn().mockResolvedValue({
+      // OCROrchestrator is already imported at the top of the file and mocked.
+      mockOCROrchestrator.extractText = vi.fn().mockResolvedValue({
         text: 'Orchestrator convenience text',
         detectedLanguages: ['eng'],
         extractionTime: 100,
@@ -185,8 +185,8 @@ describe('OCRService Integration with Orchestrator', () => {
       
       expect(result).toBe('Orchestrator convenience text');
       
-      const { OCROrchestrator } = require('../services/OCROrchestrator');
-      expect(OCROrchestrator.extractText).toHaveBeenCalled();
+      // OCROrchestrator is already imported at the top of the file and mocked.
+      expect(mockOCROrchestrator.extractText).toHaveBeenCalled();
     });
 
     it('should pass options to extractTextWithOrchestrator correctly', async () => {
@@ -196,8 +196,8 @@ describe('OCRService Integration with Orchestrator', () => {
         languages: ['spa'] as OCRLanguage[]
       });
       
-      const { OCROrchestrator } = require('../services/OCROrchestrator');
-      expect(OCROrchestrator.extractText).toHaveBeenCalledWith(mockImage, expect.objectContaining({
+      // OCROrchestrator is already imported at the top of the file and mocked.
+      expect(mockOCROrchestrator.extractText).toHaveBeenCalledWith(mockImage, expect.objectContaining({
         languages: ['spa']
       }));
     });
@@ -205,9 +205,9 @@ describe('OCRService Integration with Orchestrator', () => {
 
   describe('Health and Statistics Methods', () => {
     beforeEach(() => {
-      const { OCROrchestrator } = require('../../services/OCROrchestrator');
+      // OCROrchestrator is already imported at the top of the file and mocked.
       
-      OCROrchestrator.getHealthStatus = vi.fn().mockResolvedValue({
+      mockOCROrchestrator.getHealthStatus = vi.fn().mockResolvedValue({
         status: 'healthy',
         services: {
           textProcessing: true,
@@ -231,13 +231,13 @@ describe('OCRService Integration with Orchestrator', () => {
       
       expect(isAvailable).toBe(true);
       
-      const { OCROrchestrator } = require('../../services/OCROrchestrator');
-      expect(OCROrchestrator.getHealthStatus).toHaveBeenCalled();
+      // OCROrchestrator is already imported at the top of the file and mocked.
+      expect(mockOCROrchestrator.getHealthStatus).toHaveBeenCalled();
     });
 
     it('should handle orchestrator unavailability gracefully', async () => {
-      const { OCROrchestrator } = require('../../services/OCROrchestrator');
-      OCROrchestrator.getHealthStatus = vi.fn().mockRejectedValue(new Error('Not available'));
+      // OCROrchestrator is already imported at the top of the file and mocked.
+      mockOCROrchestrator.getHealthStatus = vi.fn().mockRejectedValue(new Error('Not available'));
       
       const isAvailable = await OCRService.isOrchestratorAvailable();
       
@@ -245,6 +245,7 @@ describe('OCRService Integration with Orchestrator', () => {
     });
 
     it('should get orchestrator stats', () => {
+      // OCROrchestrator is already imported at the top of the file and mocked.
       const stats = OCRService.getOrchestratorStats();
       
       expect(stats).toEqual(expect.objectContaining({
@@ -255,8 +256,8 @@ describe('OCRService Integration with Orchestrator', () => {
     });
 
     it('should handle orchestrator stats failure gracefully', () => {
-      const { OCROrchestrator } = require('../../services/OCROrchestrator');
-      OCROrchestrator.getPerformanceStats = vi.fn().mockImplementation(() => {
+      // OCROrchestrator is already imported at the top of the file and mocked.
+      mockOCROrchestrator.getPerformanceStats = vi.fn().mockImplementation(() => {
         throw new Error('Stats not available');
       });
       
@@ -281,8 +282,8 @@ describe('OCRService Integration with Orchestrator', () => {
 
   describe('Cleanup Integration', () => {
     it('should cleanup both legacy and orchestrator resources', async () => {
-      const { OCROrchestrator } = require('../../services/OCROrchestrator');
-      OCROrchestrator.cleanup = vi.fn();
+      // OCROrchestrator is already imported at the top of the file and mocked.
+      mockOCROrchestrator.cleanup = vi.fn();
       
       await OCRService.terminate();
       
@@ -290,8 +291,8 @@ describe('OCRService Integration with Orchestrator', () => {
     });
 
     it('should handle orchestrator cleanup failure gracefully', async () => {
-      const { OCROrchestrator } = require('../../services/OCROrchestrator');
-      OCROrchestrator.cleanup = vi.fn().mockImplementation(() => {
+      // OCROrchestrator is already imported at the top of the file and mocked.
+      mockOCROrchestrator.cleanup = vi.fn().mockImplementation(() => {
         throw new Error('Cleanup failed');
       });
       

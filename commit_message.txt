@@ -1,0 +1,6 @@
+feat(themes): Enhance glass effect for classic themes
+
+- Increases the background opacity of the header's glass panel in the classic-light and classic-dark themes to 0.65 for a more pronounced and legible glass effect.
+- Strengthens the border and adjusts the box-shadow to improve definition and depth.
+- Increases the backdrop-filter blur and saturation to enhance the frosted glass look.
+- Adds new agent development rules to the documentation.
