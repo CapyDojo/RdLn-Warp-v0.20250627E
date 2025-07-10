@@ -16,11 +16,10 @@ This document outlines a strategic plan for refactoring the application architec
     *   Create an initial "store" for a key piece of application state (e.g., the document content or user settings).
     *   Refactor one or two components to use the new global store instead of local state or prop drilling.
 
-2.  **Create a Dedicated Service Layer (#5):**
-    *   Create a `src/services` directory if it doesn't already exist.
-    *   Create an `OcrService.ts` module.
-    *   Move all Tesseract.js related logic into this service. The service should expose simple functions (e.g., `processImage(imageData)`).
-    *   Refactor the components that use OCR to call the new `OcrService` instead of interacting with Tesseract.js directly.
+2.  **Create a Dedicated Service Layer (#5):** (Completed)
+    *   `src/services` directory created.
+    *   `OcrService.ts` module created and Tesseract.js related logic consolidated into it.
+    *   Components refactored to use `OcrService`.
 
 3.  **Isolate Business Logic (#3):**
     *   Review `MyersAlgorithm.ts` and ensure it has no UI-related code.

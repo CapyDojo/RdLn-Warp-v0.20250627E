@@ -1,13 +1,3 @@
-chore: Decommission old, failing test files
+docs: Update ARCHITECTURE_REFACTOR_ROADMAP.md for OCRService consolidation
 
-Excluded outdated and brittle test files from the Vitest test runner and moved them to a dedicated archive directory (`tests/archive/decommissioned`). This action aims to streamline the test suite, reduce noise in test results, and improve development efficiency by focusing on relevant and passing tests.
-
-The decommissioned tests include:
-- tests/real-ocr.test.ts
-- src/__tests__/useResizeHandlers.test.ts
-- tests/integration/ocr-pipeline.test.ts
-- src/services/__tests__/PerformanceMonitor.test.ts
-- tests/unit/OCRService.test.ts
-- src/hooks/__tests__/usePerformanceMonitor.simple.test.tsx
-
-A new documentation file (`docs/DECOMMISSIONED_TESTS.md`) has been added to explain the rationale and location of these archived tests.
+Marked the "Create a Dedicated Service Layer" task as completed in Sprint 1 of the architectural refactor roadmap, reflecting the successful consolidation of Tesseract.js logic into `OCRService.ts`.
