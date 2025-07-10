@@ -583,6 +583,7 @@ Version 0.4.3 represents the final production polish for our MVP, introducing in
 
 ### Fixed
 - **UI Consistency:** Resolved inconsistent corner radii for input and output panels' drag handle bars in both mobile and desktop views.
+- **Input Panel:** Fixed language detection overlay sticker to remain sticky in the bottom-left corner and appear correctly after OCR detection.
 - chore: Remove temporary commit message files
 
 ### Changed

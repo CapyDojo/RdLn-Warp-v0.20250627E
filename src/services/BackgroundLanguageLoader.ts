@@ -12,9 +12,9 @@
  * - CPU-friendly loading schedule
  */
 
-import { createWorker } from 'tesseract.js';
-import type { Worker as TesseractWorker } from 'tesseract.js';
+
 import { OCRLanguage } from '../types/ocr-types';
+import { OCRService } from './OCRService'; // Import OCRService
 
 export interface LanguageLoadingStatus {
   language: OCRLanguage;
@@ -58,7 +58,6 @@ export class BackgroundLanguageLoader {
   // State tracking
   private static isLoading = false;
   private static loadingStatus = new Map<OCRLanguage, LanguageLoadingStatus>();
-  private static loadedWorkers = new Map<OCRLanguage, TesseractWorker>();
   private static loadingTimeouts: NodeJS.Timeout[] = [];
   private static statusCallbacks: Array<(status: Map<OCRLanguage, LanguageLoadingStatus>) => void> = [];
   
@@ -164,8 +163,8 @@ export class BackgroundLanguageLoader {
   /**
    * Get loaded worker for a language (if available)
    */
-  public static getLoadedWorker(language: OCRLanguage): TesseractWorker | null {
-    return this.loadedWorkers.get(language) || null;
+  public static getLoadedWorker(language: OCRLanguage): null {
+    return null;
   }
 
   /**
@@ -254,19 +253,12 @@ export class BackgroundLanguageLoader {
       status.loadStartTime = Date.now();
       this.notifyStatusCallbacks();
 
-      // Create worker for this language with suppressed warnings
-      const worker = await createWorker([language], 1, {
-        logger: () => {}, // Silent loading
-        // Suppress Tesseract WASM warnings
-        errorHandler: () => {}
-      });
+      // Use OCRService to get the worker
+      await OCRService.getWorkerForLanguage(language);
 
       // Update status to ready
       status.status = 'ready';
       status.loadEndTime = Date.now();
-      
-      // Store the worker
-      this.loadedWorkers.set(language, worker);
       
       const loadTime = status.loadEndTime - (status.loadStartTime || 0);
       if (process.env.NODE_ENV === 'development') {
@@ -350,15 +342,6 @@ export class BackgroundLanguageLoader {
     
     this.stopBackgroundLoading();
     
-    // Terminate all loaded workers
-    const cleanupPromises = Array.from(this.loadedWorkers.values()).map(worker => 
-      worker.terminate().catch(error => 
-        console.warn('Error terminating background worker:', error)
-      )
-    );
-    
-    await Promise.all(cleanupPromises);
-    this.loadedWorkers.clear();
     this.loadingStatus.clear();
     this.statusCallbacks = [];
     

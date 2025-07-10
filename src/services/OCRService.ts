@@ -1575,4 +1575,13 @@ export class OCRService {
     
     console.log('🧹 All OCR workers terminated and caches cleared');
   }
+
+  /**
+   * Get a Tesseract worker for a specific language, leveraging caching.
+   * This method is intended for use by background loaders or other services
+   * that need direct access to a worker.
+   */
+  public static async getWorkerForLanguage(language: OCRLanguage): Promise<TesseractWorker> {
+    return this.initializeWorker([language]);
+  }
 }
