@@ -410,67 +410,55 @@ export class MyersAlgorithm {
     return result;
   }
 
-  /**
-   * PRECISE chunking that preserves all characters while creating intelligent substitutions
-   */
   private static preciseChunking(changes: Array<{type: string, content: string}>): Array<{type: string, content: string, originalContent?: string, revisedContent?: string}> {
-    if (DEBUG_MODE) {
-      debugLog('🎯 Starting precise chunking with character preservation');
-    }
-    const processed: Array<{type: string, content: string, originalContent?: string, revisedContent?: string}> = [];
+    const result: Array<{type: string, content: string, originalContent?: string, revisedContent?: string}> = [];
     let i = 0;
-    
+
     while (i < changes.length) {
-      const current = changes[i];
-      
-      // Process unchanged tokens directly
-      if (current.type === 'unchanged') {
-        processed.push(current);
+      const currentChange = changes[i];
+
+      if (currentChange.type === 'unchanged') {
+        result.push(currentChange);
         i++;
         continue;
       }
-      
-      // For added/removed tokens, look for substitution opportunities
-      if (current.type === 'added' || current.type === 'removed') {
-        const segment = this.collectPreciseChangeSegment(changes, i);
-        if (DEBUG_MODE) {
-          debugLog(`🔍 Collected precise segment from index ${i} to ${segment.endIndex - 1}:`, segment.tokens);
-        }
-        
-        // Check if this segment should become a substitution
-        const substitutionResult = this.evaluateSubstitution(segment.tokens);
-        
-        if (substitutionResult.isSubstitution) {
-          if (DEBUG_MODE) {
-            debugLog(`✅ Creating substitution: "${substitutionResult.removedContent}" -> "${substitutionResult.addedContent}"`);
+
+      // Start of a change block (added or removed)
+      let removedContent = '';
+      let addedContent = '';
+      let j = i;
+
+      // Collect all subsequent adds and removes until a significant unchanged block
+      while (j < changes.length) {
+        const change = changes[j];
+        if (change.type === 'removed') {
+          removedContent += change.content;
+        } else if (change.type === 'added') {
+          addedContent += change.content;
+        } else { // unchanged
+          // If the unchanged part is more than just a single space, it's a boundary.
+          if (change.content.length > 1 || change.content.trim().length > 0) {
+            break;
           }
-          processed.push({
-            type: 'changed',
-            content: '',
-            originalContent: substitutionResult.removedContent,
-            revisedContent: substitutionResult.addedContent
-          });
-        } else {
-          // Process tokens individually with intelligent grouping
-          if (DEBUG_MODE) {
-            debugLog(`📝 Processing segment tokens individually`);
-          }
-          this.processTokensIndividually(segment.tokens, processed);
+          // Otherwise, it's just a space within a phrase, so append it.
+          removedContent += change.content;
+          addedContent += change.content;
         }
-        
-        i = segment.endIndex;
-        continue;
+        j++;
       }
-      
-      // Default case: add the token as-is
-      processed.push(current);
-      i++;
+
+      if (removedContent && addedContent) {
+        result.push({ type: 'changed', content: '', originalContent: removedContent, revisedContent: addedContent });
+      } else if (removedContent) {
+        result.push({ type: 'removed', content: removedContent });
+      } else if (addedContent) {
+        result.push({ type: 'added', content: addedContent });
+      }
+
+      i = j;
     }
-    
-    if (DEBUG_MODE) {
-      debugLog('🏁 Precise chunking complete. Result:', processed.length, 'items');
-    }
-    return processed;
+
+    return result;
   }
 
   /**
@@ -559,15 +547,6 @@ export class MyersAlgorithm {
       debugLog(`📦 Collected precise segment with ${tokens.length} tokens`);
     }
     return { tokens, endIndex: i };
-  }
-
-  /**
-   * Enhanced definition of connective punctuation
-   * Parentheses are excluded to allow for more granular token separation
-   */
-  private static isConnectivePunctuation(content: string): boolean {
-    const trimmed = content.trim();
-    return [',', '.', '-', ':', ';'].includes(trimmed);
   }
 
   /**
@@ -1012,6 +991,7 @@ export class MyersAlgorithm {
       });
     }
     
+    
     const endTime = performance.now();
     debugLog(`⚡ Result reconstruction completed in ${(endTime - startTime).toFixed(2)}ms`);
     
@@ -1027,7 +1007,7 @@ export class MyersAlgorithm {
    */
   private static trimCommonParagraphs(
     originalText: string, 
-    revisedText: string,
+    revisedText: string, 
     enableParagraphTrimming: boolean = true // ROLLBACK: Set to false to disable
   ): {
     commonPrefixParagraphs: string;
