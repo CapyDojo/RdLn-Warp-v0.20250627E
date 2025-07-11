@@ -1,3 +1,23 @@
+## 2025-07-12: The Two-Front War of Diffing: Core Logic vs. Visual Rendering
+
+**Problem**: After major algorithm enhancements, two critical but distinct bugs emerged: one in the core diff logic and one in the final visual rendering, highlighting the need to debug the entire data-to-display pipeline.
+
+**Solution Journey & Technical Insights**:
+
+### **1. The Logic Bug: "Mashed Words" & The Failure of Greedy Grouping**
+- **Problem**: Multiple, distinct edits within a single block (e.g., "Goldman Sachs International" → "J.P. Morgan Securities plc") were being incorrectly merged, producing garbled output like `GoldmanJ.P. SachsMorgan`.
+- **Root Cause**: The `preciseChunking` function in `MyersAlgorithm.ts` was too "greedy." It correctly collected all additions and deletions but failed to recognize the separators (spaces, punctuation) that defined the boundaries between distinct logical edits.
+- **Solution**: The `preciseChunking` function was re-architected to implement **intelligent boundary detection**. Instead of just collecting all consecutive changes, it now stops grouping when it encounters a meaningful unchanged separator (like a multi-character space or punctuation). This ensures that separate edits are preserved as separate changes, resulting in a clean, human-readable output.
+
+### **2. The Rendering Bug: The Invisible Added Clause**
+- **Problem**: A large, newly added clause was correctly identified by the diff engine (statistics showed "1 Addition") but was rendered as plain, un-styled text, making it invisible to the user.
+- **Root Cause**: The `renderSingleChange` helper function in the `RedlineOutput.tsx` React component was missing a specific `case` for the `'added'` change type. It handled `'changed'` and had a `default`, but simple additions fell through to the default, which applied no special styling.
+- **Solution**: A simple, targeted fix was applied to add explicit `case 'added':` and `case 'removed':` blocks to the `switch` statement. This ensures that all change types receive their correct CSS classes for highlighting, perfectly aligning the visual output with the underlying diff data.
+
+**Key Insight**: A diffing system has two critical components that must be validated together: the **core algorithm** that finds the changes, and the **rendering layer** that displays them. A bug in either one can make the entire system feel broken to the end-user. This session proved that a correct algorithm is useless if the UI doesn't faithfully represent its results, and that debugging must always consider the full pipeline from raw text to final pixels.
+
+---
+
 ## 2025-07-03: Waterfall Theme Selector - Advanced UX Animation Implementation
 
 **Problem**: Creating an intuitive, elegant theme selection interface that showcases authentic theme previews while maintaining drag-and-drop reordering functionality.

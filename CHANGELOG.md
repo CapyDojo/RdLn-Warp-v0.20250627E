@@ -1,5 +1,25 @@
 # RdLn Document Comparison Tool - Comprehensive Changelog
 
+## Version 0.4.3 - "Intelligent Change Grouping & Rendering Fixes"
+*Released: July 12, 2025*
+
+### 🐞 Critical Bug Fixes
+
+#### **Intelligent Change Grouping**
+- **Problem Solved**: Fixed a critical bug where multiple, distinct changes within the same sentence were being incorrectly merged, resulting in "mashed together" words in the output (e.g., `GoldmanJ.P. SachsMorgan`).
+- **Root Cause**: The change grouping logic in `preciseChunking` was too "greedy" and failed to recognize the boundaries between separate logical edits.
+- **Solution**: Re-architected the `preciseChunking` function in `MyersAlgorithm.ts` to use intelligent boundary detection. The algorithm now correctly identifies separators (like commas and spaces) between distinct changes, ensuring that each edit is grouped correctly. This provides a clean, readable output for complex, multi-part substitutions.
+
+#### **Correct Rendering of Added Clauses**
+- **Problem Solved**: Fixed a rendering issue where large, newly added clauses were not highlighted and appeared as plain, unchanged text, despite being correctly identified by the diff engine.
+- **Root Cause**: The `renderSingleChange` helper function in `RedlineOutput.tsx` was missing a `case` for `'added'` changes, causing it to fall through to the default, un-styled rendering logic.
+- **Solution**: Added the missing `case` statements for both `'added'` and `'removed'` changes to the rendering function. This ensures all change types are now correctly styled, providing an accurate visual representation of the comparison.
+
+### 🧪 Testing & Validation
+- **Key Test Case**: The "J.P. Morgan vs. Goldman Sachs" test case, along with other multi-part substitutions, now resolves correctly into clean, separate changes.
+
+---
+
 ## Version 0.1.0 - "Foundation"
 - Basic document comparison functionality
 - React + TypeScript + Tailwind CSS foundation
