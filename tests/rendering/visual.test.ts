@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { setupRenderingTest, createMockDocument, createMockDiff } from './setup';
-import { EnhancedRedlineOutput } from '../../src/components/EnhancedRedlineOutput';
+import { RedlineOutput } from '../../src/components/RedlineOutput';
 
 describe('Visual and UX Tests', () => {
   beforeEach(() => {

@@ -12,7 +12,7 @@ export const Header: React.FC<BaseComponentProps> = ({ style, className }) => {
             <img 
               src="/images/rdln-logo.png" 
               alt="RdLn Logo" 
-              className="object-contain rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
+              className="object-contain rounded-3xl shadow-md transform hover:scale-105 transition-all duration-200"
               style={{ flexShrink: 0, aspectRatio: '1/1', width: '72px', height: '72px' }}
             />
           </div>

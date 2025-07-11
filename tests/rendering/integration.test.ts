@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import React from 'react';
 import { render } from '@testing-library/react';
 import { setupRenderingTest, createMockDocument, createMockDiff } from './setup';
-import { EnhancedRedlineOutput } from '../../src/components/EnhancedRedlineOutput';
+import { RedlineOutput } from '../../src/components/RedlineOutput';
 import { analyzeRenderingStrategy } from '../../src/components/RenderingStrategy';
 
 describe('Integration Tests - Components Working', () => {
@@ -34,7 +34,7 @@ describe('Integration Tests - Components Working', () => {
     const mockChanges = createMockDiff('few');
     
     // Use React.createElement to avoid JSX compilation issues
-    const component = React.createElement(EnhancedRedlineOutput, {
+    const component = React.createElement(RedlineOutput, {
       changes: mockChanges,
       onCopy: () => {},
       useEnhancedStrategy: true,
@@ -82,7 +82,7 @@ describe('Integration Tests - Components Working', () => {
     expect(() => {
       const mockChanges = createMockDiff('few');
       
-      const component = React.createElement(EnhancedRedlineOutput, {
+      const component = React.createElement(RedlineOutput, {
         changes: mockChanges,
         onCopy: () => {},
         useEnhancedStrategy: false, // Test legacy mode

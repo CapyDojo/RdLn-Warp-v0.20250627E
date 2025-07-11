@@ -7,7 +7,7 @@ import {
   createMockDocument, 
   createMockDiff 
 } from './setup';
-import { EnhancedRedlineOutput } from '../../src/components/EnhancedRedlineOutput';
+import { RedlineOutput } from '../../src/components/RedlineOutput';
 import { analyzeRenderingStrategy } from '../../src/components/RenderingStrategy';
 
 // Mock the hooks
@@ -41,7 +41,7 @@ describe('Rendering Performance Tests', () => {
 
         const renderTime = await measureRenderTime(async () => {
           render(
-            React.createElement(EnhancedRedlineOutput, {
+            React.createElement(RedlineOutput, {
               changes: mockChanges,
               originalText: mockDoc1,
               revisedText: mockDoc2,
@@ -63,7 +63,7 @@ describe('Rendering Performance Tests', () => {
       
       const renderTime = await measureRenderTime(async () => {
         render(
-          React.createElement(EnhancedRedlineOutput, {
+          React.createElement(RedlineOutput, {
             changes: largeChanges,
             onCopy: () => {},
             useEnhancedStrategy: true
@@ -86,7 +86,7 @@ describe('Rendering Performance Tests', () => {
 
       const renderTime = await measureRenderTime(async () => {
         render(
-          React.createElement(EnhancedRedlineOutput, {
+          React.createElement(RedlineOutput, {
             changes: moderateChanges,
             onCopy: () => {},
             useEnhancedStrategy: true
@@ -107,7 +107,7 @@ describe('Rendering Performance Tests', () => {
       const initialMemory = performance.memory?.usedJSHeapSize || 0;
       
       render(
-        React.createElement(EnhancedRedlineOutput, {
+        React.createElement(RedlineOutput, {
           changes: xlargeDiff,
           onCopy: () => {},
           useEnhancedStrategy: true
@@ -130,7 +130,7 @@ describe('Rendering Performance Tests', () => {
       const changes = createMockDiff('many');
       
       const { container } = render(
-        React.createElement(EnhancedRedlineOutput, {
+        React.createElement(RedlineOutput, {
           changes: changes,
           onCopy: () => {},
           useEnhancedStrategy: true
