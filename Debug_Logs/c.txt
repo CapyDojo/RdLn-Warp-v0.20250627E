@@ -1,0 +1,376 @@
+useComparison.ts:249 🔥 System protection disabled - allowing unrestricted processing for stress testing
+(anonymous) @ useComparison.ts:249
+onCompare @ ComparisonInterface.tsx:542
+callCallback2 @ chunk-ZFBEYDM4.js?v=bdf5722b:3674
+invokeGuardedCallbackDev @ chunk-ZFBEYDM4.js?v=bdf5722b:3699
+invokeGuardedCallback @ chunk-ZFBEYDM4.js?v=bdf5722b:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-ZFBEYDM4.js?v=bdf5722b:3736
+executeDispatch @ chunk-ZFBEYDM4.js?v=bdf5722b:7014
+processDispatchQueueItemsInOrder @ chunk-ZFBEYDM4.js?v=bdf5722b:7034
+processDispatchQueue @ chunk-ZFBEYDM4.js?v=bdf5722b:7043
+dispatchEventsForPlugins @ chunk-ZFBEYDM4.js?v=bdf5722b:7051
+(anonymous) @ chunk-ZFBEYDM4.js?v=bdf5722b:7174
+batchedUpdates$1 @ chunk-ZFBEYDM4.js?v=bdf5722b:18913
+batchedUpdates @ chunk-ZFBEYDM4.js?v=bdf5722b:3579
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=bdf5722b:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=bdf5722b:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=bdf5722b:5472
+dispatchDiscreteEvent @ chunk-ZFBEYDM4.js?v=bdf5722b:5449
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+useComparison.ts:324 🎯 Progress tracking enabled by algorithm
+useComparison.ts:413 🔧 Post-comparison chunking state update: {progress: 100, stage: 'Complete', isChunking: false, enabled: true}
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+useComparison.ts:413 🔧 Post-comparison chunking state update: {progress: 100, stage: 'Complete', isChunking: false, enabled: true}
+useComparison.ts:413 🔧 Post-comparison chunking state update: {progress: 100, stage: 'Complete', isChunking: false, enabled: true}
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+RedlineOutput.tsx:452 🔧 Semantic chunking processing 25 changes
+RedlineOutput.tsx:459 --- DEBUG: Changes Array --- (25) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+RedlineOutput.tsx:468 --- DEBUG: Iteration 0 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'This ISDA Master Agreement (Multicurrency-Cross Border) ("Agreement") is entered into between ', index: 0}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 1 ---
+RedlineOutput.tsx:469 Current Change: {type: 'removed', content: 'Goldman', originalContent: undefined, revisedContent: undefined, index: 1}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 2 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: 'J.P.', originalContent: undefined, revisedContent: undefined, index: 2}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 3 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 3}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 4 ---
+RedlineOutput.tsx:469 Current Change: {type: 'removed', content: 'Sachs', originalContent: undefined, revisedContent: undefined, index: 4}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 5 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: 'Morgan', originalContent: undefined, revisedContent: undefined, index: 5}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 6 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 6}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 7 ---
+RedlineOutput.tsx:469 Current Change: {type: 'removed', content: 'International', originalContent: undefined, revisedContent: undefined, index: 7}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 8 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: 'Securities plc', originalContent: undefined, revisedContent: undefined, index: 8}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 9 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ',', originalContent: undefined, revisedContent: undefined, index: 9}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 10 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 10}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 11 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'a', originalContent: undefined, revisedContent: undefined, index: 11}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 12 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 12}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 13 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'company', originalContent: undefined, revisedContent: undefined, index: 13}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 14 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 14}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 15 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'incorporated', originalContent: undefined, revisedContent: undefined, index: 15}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 16 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 16}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 17 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'in', originalContent: undefined, revisedContent: undefined, index: 17}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 18 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 18}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 19 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'England', originalContent: undefined, revisedContent: undefined, index: 19}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 20 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 20}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 21 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'and', originalContent: undefined, revisedContent: undefined, index: 21}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 22 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 22}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 23 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'Wales', originalContent: undefined, revisedContent: undefined, index: 23}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 24 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: ' ', originalContent: undefined, revisedContent: undefined, index: 24}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:503 🔧 Semantic chunking results: {originalLength: 25, groupsCreated: 0, enabled: true}
+RedlineOutput.tsx:452 🔧 Semantic chunking processing 25 changes
+RedlineOutput.tsx:459 --- DEBUG: Changes Array --- (25) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+RedlineOutput.tsx:468 --- DEBUG: Iteration 0 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'This ISDA Master Agreement (Multicurrency-Cross Border) ("Agreement") is entered into between ', index: 0}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 1 ---
+RedlineOutput.tsx:469 Current Change: {type: 'removed', content: 'Goldman', originalContent: undefined, revisedContent: undefined, index: 1}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 2 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: 'J.P.', originalContent: undefined, revisedContent: undefined, index: 2}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 3 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 3}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 4 ---
+RedlineOutput.tsx:469 Current Change: {type: 'removed', content: 'Sachs', originalContent: undefined, revisedContent: undefined, index: 4}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 5 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: 'Morgan', originalContent: undefined, revisedContent: undefined, index: 5}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 6 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 6}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 7 ---
+RedlineOutput.tsx:469 Current Change: {type: 'removed', content: 'International', originalContent: undefined, revisedContent: undefined, index: 7}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 8 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: 'Securities plc', originalContent: undefined, revisedContent: undefined, index: 8}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 9 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ',', originalContent: undefined, revisedContent: undefined, index: 9}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 10 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 10}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 11 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'a', originalContent: undefined, revisedContent: undefined, index: 11}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 12 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 12}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 13 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'company', originalContent: undefined, revisedContent: undefined, index: 13}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 14 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 14}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 15 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'incorporated', originalContent: undefined, revisedContent: undefined, index: 15}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 16 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 16}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 17 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'in', originalContent: undefined, revisedContent: undefined, index: 17}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 18 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 18}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 19 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'England', originalContent: undefined, revisedContent: undefined, index: 19}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 20 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 20}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 21 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'and', originalContent: undefined, revisedContent: undefined, index: 21}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 22 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 22}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 23 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'Wales', originalContent: undefined, revisedContent: undefined, index: 23}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 24 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: ' ', originalContent: undefined, revisedContent: undefined, index: 24}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:503 🔧 Semantic chunking results: {originalLength: 25, groupsCreated: 0, enabled: true}
+ComparisonInterface.tsx:340 🎯 Auto-scrolled to output section (processing started) - Feature #2
+ComparisonInterface.tsx:159 🔧 SCROLL LOCK DEBUG: useEffect triggered - updating refs. Triggers: {isScrollLocked: false, hasResult: true, resultChanges: 25}
+useScrollSync.ts:153 🔄 SCROLL SYNC: Scroll elements detected via layout adaptation: {input1: true, input2: true, output: true, outputRefDirect: true, isScrollLocked: false, …}
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+RedlineOutput.tsx:452 🔧 Semantic chunking processing 25 changes
+RedlineOutput.tsx:459 --- DEBUG: Changes Array --- (25) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+RedlineOutput.tsx:468 --- DEBUG: Iteration 0 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'This ISDA Master Agreement (Multicurrency-Cross Border) ("Agreement") is entered into between ', index: 0}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 1 ---
+RedlineOutput.tsx:469 Current Change: {type: 'removed', content: 'Goldman', originalContent: undefined, revisedContent: undefined, index: 1}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 2 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: 'J.P.', originalContent: undefined, revisedContent: undefined, index: 2}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 3 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 3}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 4 ---
+RedlineOutput.tsx:469 Current Change: {type: 'removed', content: 'Sachs', originalContent: undefined, revisedContent: undefined, index: 4}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 5 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: 'Morgan', originalContent: undefined, revisedContent: undefined, index: 5}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 6 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 6}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 7 ---
+RedlineOutput.tsx:469 Current Change: {type: 'removed', content: 'International', originalContent: undefined, revisedContent: undefined, index: 7}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 8 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: 'Securities plc', originalContent: undefined, revisedContent: undefined, index: 8}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 9 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ',', originalContent: undefined, revisedContent: undefined, index: 9}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 10 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 10}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 11 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'a', originalContent: undefined, revisedContent: undefined, index: 11}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 12 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 12}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 13 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'company', originalContent: undefined, revisedContent: undefined, index: 13}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 14 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 14}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 15 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'incorporated', originalContent: undefined, revisedContent: undefined, index: 15}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 16 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 16}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 17 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'in', originalContent: undefined, revisedContent: undefined, index: 17}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 18 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 18}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 19 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'England', originalContent: undefined, revisedContent: undefined, index: 19}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 20 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 20}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 21 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'and', originalContent: undefined, revisedContent: undefined, index: 21}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 22 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 22}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 23 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'Wales', originalContent: undefined, revisedContent: undefined, index: 23}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 24 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: ' ', originalContent: undefined, revisedContent: undefined, index: 24}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:503 🔧 Semantic chunking results: {originalLength: 25, groupsCreated: 0, enabled: true}
+RedlineOutput.tsx:452 🔧 Semantic chunking processing 25 changes
+RedlineOutput.tsx:459 --- DEBUG: Changes Array --- (25) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+RedlineOutput.tsx:468 --- DEBUG: Iteration 0 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'This ISDA Master Agreement (Multicurrency-Cross Border) ("Agreement") is entered into between ', index: 0}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 1 ---
+RedlineOutput.tsx:469 Current Change: {type: 'removed', content: 'Goldman', originalContent: undefined, revisedContent: undefined, index: 1}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 2 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: 'J.P.', originalContent: undefined, revisedContent: undefined, index: 2}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 3 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 3}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 4 ---
+RedlineOutput.tsx:469 Current Change: {type: 'removed', content: 'Sachs', originalContent: undefined, revisedContent: undefined, index: 4}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 5 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: 'Morgan', originalContent: undefined, revisedContent: undefined, index: 5}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 6 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 6}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 7 ---
+RedlineOutput.tsx:469 Current Change: {type: 'removed', content: 'International', originalContent: undefined, revisedContent: undefined, index: 7}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 8 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: 'Securities plc', originalContent: undefined, revisedContent: undefined, index: 8}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:468 --- DEBUG: Iteration 9 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ',', originalContent: undefined, revisedContent: undefined, index: 9}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 10 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 10}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 11 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'a', originalContent: undefined, revisedContent: undefined, index: 11}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 12 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 12}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 13 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'company', originalContent: undefined, revisedContent: undefined, index: 13}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 14 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 14}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 15 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'incorporated', originalContent: undefined, revisedContent: undefined, index: 15}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 16 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 16}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 17 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'in', originalContent: undefined, revisedContent: undefined, index: 17}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 18 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 18}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 19 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'England', originalContent: undefined, revisedContent: undefined, index: 19}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 20 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 20}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 21 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'and', originalContent: undefined, revisedContent: undefined, index: 21}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 22 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 22}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 23 ---
+RedlineOutput.tsx:469 Current Change: {type: 'unchanged', content: 'Wales', originalContent: undefined, revisedContent: undefined, index: 23}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:468 --- DEBUG: Iteration 24 ---
+RedlineOutput.tsx:469 Current Change: {type: 'added', content: ' ', originalContent: undefined, revisedContent: undefined, index: 24}
+RedlineOutput.tsx:470 Substitution Found: null
+RedlineOutput.tsx:482 🔧 Found group of 1 added changes
+RedlineOutput.tsx:503 🔧 Semantic chunking results: {originalLength: 25, groupsCreated: 0, enabled: true}
+ComparisonInterface.tsx:356 ✨ Results spotlight activated (Feature #1) - 3s persist + 3s fade

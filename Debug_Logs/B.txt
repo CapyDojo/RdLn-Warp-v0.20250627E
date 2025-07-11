@@ -1,0 +1,67 @@
+[vite] Internal server error: C:\temp\rdln-project\src\components\RedlineOutput.tsx: Unterminated string constant. (389:2)
+
+  387 |
+  388 | // Semantic-aware HTML generation function
+> 389 | '''// Helper function to find and combine logical substitutions (removed + added sequences)
+      |   ^
+  390 | const findAndCombineSubstitution = (changes: DiffChange[], startIndex: number) => {
+  391 |   let originalContent = '';
+  392 |   let revisedContent = '';
+  Plugin: vite:react-babel
+  File: C:/temp/rdln-project/src/components/RedlineOutput.tsx:389:2
+  387|
+  388|  // Semantic-aware HTML generation function
+  389|  '''// Helper function to find and combine logical substitutions (removed + added sequences)
+     |    ^
+  390|  const findAndCombineSubstitution = (changes: DiffChange[], startIndex: number) => {
+  391|    let originalContent = '';
+      at constructor (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:362:19)
+      at TypeScriptParserMixin.raise (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:3259:19)
+      at Object.unterminated (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:2328:20)
+      at readStringContents (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:2071:16)
+      at TypeScriptParserMixin.readString (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:3158:9)
+      at TypeScriptParserMixin.getTokenFromCode (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:2919:14)
+      at TypeScriptParserMixin.getTokenFromCode (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:6844:11)
+      at TypeScriptParserMixin.getTokenFromCode (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:9634:11)
+      at TypeScriptParserMixin.nextToken (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:2443:10)
+      at TypeScriptParserMixin.next (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:2356:10)
+      at TypeScriptParserMixin.parseLiteralAtNode (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:11125:10)
+      at TypeScriptParserMixin.parseLiteral (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:11130:17)
+      at TypeScriptParserMixin.parseStringLiteral (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:11133:17)
+      at TypeScriptParserMixin.parseExprAtom (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:10839:21)
+      at TypeScriptParserMixin.parseExprAtom (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:6811:20)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:10591:23)
+      at TypeScriptParserMixin.parseUpdate (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:10576:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:10556:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:9483:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:10410:61)
+      at TypeScriptParserMixin.parseExprOps (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:10415:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:10392:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:10355:21)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:9432:20)
+      at TypeScriptParserMixin.parseExpressionBase (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:10309:23)
+      at C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:10305:39
+      at TypeScriptParserMixin.allowInAnd (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:11932:16)
+      at TypeScriptParserMixin.parseExpression (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:10305:17)
+      at TypeScriptParserMixin.parseStatementContent (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:12376:23)
+      at TypeScriptParserMixin.parseStatementContent (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:9157:18)
+      at TypeScriptParserMixin.parseStatementLike (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:12243:17)
+      at TypeScriptParserMixin.parseModuleItem (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:12220:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:12796:36)
+      at TypeScriptParserMixin.parseBlockBody (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:12789:10)
+      at TypeScriptParserMixin.parseProgram (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:12117:10)
+      at TypeScriptParserMixin.parseTopLevel (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:12107:25)
+      at TypeScriptParserMixin.parse (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:13923:10)
+      at TypeScriptParserMixin.parse (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:9771:18)
+      at parse (C:\temp\rdln-project\node_modules\@babel\parser\lib\index.js:13957:38)
+      at parser (C:\temp\rdln-project\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (C:\temp\rdln-project\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (C:\temp\rdln-project\node_modules\@babel\core\lib\transformation\index.js:21:50)
+      at run.next (<anonymous>)
+      at transform (C:\temp\rdln-project\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (C:\temp\rdln-project\node_modules\gensync\index.js:261:32)
+      at C:\temp\rdln-project\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\temp\rdln-project\node_modules\gensync\index.js:223:11) 

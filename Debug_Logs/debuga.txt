@@ -1,0 +1,65 @@
+useComparison.ts:249 🔥 System protection disabled - allowing unrestricted processing for stress testing
+(anonymous) @ useComparison.ts:249
+handleKeyDown @ ComparisonInterface.tsx:254
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+useComparison.ts:324 🎯 Progress tracking enabled by algorithm
+ComparisonInterface.tsx:340 🎯 Auto-scrolled to output section (processing started) - Feature #2
+useComparison.ts:413 🔧 Post-comparison chunking state update: {progress: 100, stage: 'Complete', isChunking: false, enabled: true}
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+useComparison.ts:413 🔧 Post-comparison chunking state update: {progress: 100, stage: 'Complete', isChunking: false, enabled: true}
+useComparison.ts:413 🔧 Post-comparison chunking state update: {progress: 100, stage: 'Complete', isChunking: false, enabled: true}
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+RedlineOutput.tsx:42 DiffChange[] array: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]0: {type: 'unchanged', content: 'This ISDA Master Agreement (Multicurrency-Cross Border) ("Agreement") is entered into', index: 0}1: {type: 'removed', content: ' ', originalContent: undefined, revisedContent: undefined, index: 1}2: {type: 'unchanged', content: 'between', originalContent: undefined, revisedContent: undefined, index: 2}3: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 3}4: content: "Goldman"index: 4originalContent: undefinedrevisedContent: undefinedtype: "removed"[[Prototype]]: Object5: {type: 'added', content: 'J.P.', originalContent: undefined, revisedContent: undefined, index: 5}6: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 6}7: {type: 'removed', content: 'Sachs', originalContent: undefined, revisedContent: undefined, index: 7}8: {type: 'added', content: 'Morgan', originalContent: undefined, revisedContent: undefined, index: 8}9: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 9}10: {type: 'removed', content: 'International', originalContent: undefined, revisedContent: undefined, index: 10}11: {type: 'added', content: 'Securities plc', originalContent: undefined, revisedContent: undefined, index: 11}12: {type: 'unchanged', content: ',', originalContent: undefined, revisedContent: undefined, index: 12}13: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 13}14: {type: 'unchanged', content: 'a', originalContent: undefined, revisedContent: undefined, index: 14}15: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 15}16: {type: 'unchanged', content: 'company', originalContent: undefined, revisedContent: undefined, index: 16}17: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 17}18: {type: 'unchanged', content: 'incorporated', originalContent: undefined, revisedContent: undefined, index: 18}19: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 19}20: {type: 'unchanged', content: 'in', originalContent: undefined, revisedContent: undefined, index: 20}21: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 21}22: {type: 'unchanged', content: 'England', originalContent: undefined, revisedContent: undefined, index: 22}23: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 23}24: {type: 'unchanged', content: 'and', originalContent: undefined, revisedContent: undefined, index: 24}25: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 25}26: {type: 'unchanged', content: 'Wales', originalContent: undefined, revisedContent: undefined, index: 26}27: {type: 'added', content: ' ', originalContent: undefined, revisedContent: undefined, index: 27}length: 28[[Prototype]]: Array(0)
+RedlineOutput.tsx:397 🔧 Semantic chunking processing 28 changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:429 🔧 Semantic chunking results: {originalLength: 28, groupsCreated: 0, enabled: true}
+RedlineOutput.tsx:42 DiffChange[] array: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+RedlineOutput.tsx:397 🔧 Semantic chunking processing 28 changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:429 🔧 Semantic chunking results: {originalLength: 28, groupsCreated: 0, enabled: true}
+ComparisonInterface.tsx:159 🔧 SCROLL LOCK DEBUG: useEffect triggered - updating refs. Triggers: {isScrollLocked: false, hasResult: true, resultChanges: 28}
+useScrollSync.ts:153 🔄 SCROLL SYNC: Scroll elements detected via layout adaptation: {input1: true, input2: true, output: true, outputRefDirect: true, isScrollLocked: false, …}
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+ComparisonInterface.tsx:98 🔧 SCROLL LOCK DEBUG: Component initialized, isScrollLocked: false
+RedlineOutput.tsx:42 DiffChange[] array: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]0: {type: 'unchanged', content: 'This ISDA Master Agreement (Multicurrency-Cross Border) ("Agreement") is entered into', index: 0}1: {type: 'removed', content: ' ', originalContent: undefined, revisedContent: undefined, index: 1}2: {type: 'unchanged', content: 'between', originalContent: undefined, revisedContent: undefined, index: 2}3: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 3}4: {type: 'removed', content: 'Goldman', originalContent: undefined, revisedContent: undefined, index: 4}5: {type: 'added', content: 'J.P.', originalContent: undefined, revisedContent: undefined, index: 5}6: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 6}7: {type: 'removed', content: 'Sachs', originalContent: undefined, revisedContent: undefined, index: 7}8: {type: 'added', content: 'Morgan', originalContent: undefined, revisedContent: undefined, index: 8}9: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 9}10: {type: 'removed', content: 'International', originalContent: undefined, revisedContent: undefined, index: 10}11: {type: 'added', content: 'Securities plc', originalContent: undefined, revisedContent: undefined, index: 11}12: {type: 'unchanged', content: ',', originalContent: undefined, revisedContent: undefined, index: 12}13: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 13}14: {type: 'unchanged', content: 'a', originalContent: undefined, revisedContent: undefined, index: 14}15: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 15}16: {type: 'unchanged', content: 'company', originalContent: undefined, revisedContent: undefined, index: 16}17: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 17}18: {type: 'unchanged', content: 'incorporated', originalContent: undefined, revisedContent: undefined, index: 18}19: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 19}20: {type: 'unchanged', content: 'in', originalContent: undefined, revisedContent: undefined, index: 20}21: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 21}22: {type: 'unchanged', content: 'England', originalContent: undefined, revisedContent: undefined, index: 22}23: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 23}24: {type: 'unchanged', content: 'and', originalContent: undefined, revisedContent: undefined, index: 24}25: {type: 'unchanged', content: ' ', originalContent: undefined, revisedContent: undefined, index: 25}26: {type: 'unchanged', content: 'Wales', originalContent: undefined, revisedContent: undefined, index: 26}27: {type: 'added', content: ' ', originalContent: undefined, revisedContent: undefined, index: 27}length: 28[[Prototype]]: Array(0)
+RedlineOutput.tsx:397 🔧 Semantic chunking processing 28 changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:429 🔧 Semantic chunking results: {originalLength: 28, groupsCreated: 0, enabled: true}
+RedlineOutput.tsx:42 DiffChange[] array: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+RedlineOutput.tsx:397 🔧 Semantic chunking processing 28 changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:412 🔧 Found group of 1 removed changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:412 🔧 Found group of 1 added changes
+RedlineOutput.tsx:429 🔧 Semantic chunking results: {originalLength: 28, groupsCreated: 0, enabled: true}
+ComparisonInterface.tsx:356 ✨ Results spotlight activated (Feature #1) - 3s persist + 3s fade

@@ -380,7 +380,7 @@ const renderSingleChange = (change: DiffChange) => {
     case 'changed':
       return `<span class="bg-theme-accent-100 text-theme-accent-800 border border-theme-accent-300 line-through decoration-2 decoration-theme-accent-600">${escape(change.originalContent || '')}</span>` +
              `<span class="bg-theme-secondary-100 text-theme-secondary-800 border border-theme-secondary-300 underline decoration-2 decoration-theme-secondary-600">${escape(change.revisedContent || '')}</span>`;
-    default: // 'unchanged'
+    default: // unchanged
       return `<span>${escape(change.content || '')}</span>`;
   }
 };
