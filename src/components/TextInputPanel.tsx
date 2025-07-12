@@ -6,7 +6,7 @@ import { LanguageSettingsDropdown } from './LanguageSettingsDropdown';
 import { useLayout } from '../contexts/LayoutContext';
 import { BaseComponentProps } from '../types/components';
 import { useComponentPerformance } from '../utils/performanceUtils.tsx';
-import { formatPastedText } from '../utils/paragraphFormatting';
+import { formatPastedText, reconstructParagraphs } from '../utils/paragraphFormatting';
 
 interface TextInputPanelProps extends BaseComponentProps {
   title: string;
@@ -36,6 +36,15 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
     autoTrackInteractions: true
   });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleReconstructParagraphs = () => {
+    const reconstructed = reconstructParagraphs(value);
+    if (onChange.length > 1) {
+      (onChange as (value: string, isPasteAction?: boolean) => void)(reconstructed, false);
+    } else {
+      onChange(reconstructed);
+    }
+  };
   const segmentedControlRef = useRef<HTMLDivElement>(null);
   const [showLanguageSettings, setShowLanguageSettings] = useState(false);
   const [controlRect, setControlRect] = useState<DOMRect | null>(null);
@@ -563,6 +572,15 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         onSetSelectedLanguages={setSelectedLanguages}
         getLanguageDisplayName={getLanguageDisplayName}
       />
+      <div className="absolute bottom-2 right-2">
+        <button
+          onClick={handleReconstructParagraphs}
+          className="px-3 py-1 text-sm bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          title="Apply paragraph reconstruction based on lists, clauses, and indentation."
+        >
+          Reconstruct Paragraphs
+        </button>
+      </div>
     </div>
   );
 };
