@@ -1,25 +1,25 @@
 /**
- * Cleans up pasted text, particularly from sources like PDFs, by intelligently
- * removing single line breaks within paragraphs while preserving intentional paragraph breaks.
+ * (Version B) Cleans up pasted text using a conservative 'Don't Join If...' model.
+ * This approach respects all initial line breaks and only joins a line with the next
+ * if there are no strong indicators that the next line starts a new paragraph.
  * 
  * @param text The raw text string to format.
  * @returns The formatted text with unwanted line breaks removed.
  */
-export const reconstructParagraphs = (text: string): string => {
+export function formatPastedText(text: string): string {
   if (!text) {
     return '';
   }
 
-  // Regex to detect various list and clause markers.
-  // - ^\d+(\.\d+)*\.\s*: Matches 1., 1.1., 1.2.3. etc.
-  // - ^\([a-zA-Z0-9]+\)\s*: Matches (a), (i), (1) etc.
-  // - ^[\*\-•]\s+: Matches *, -, or •
+  const lines = text.replace(/\r\n|\r/g, '\n').split('\n');
+  if (lines.length <= 1) {
+    return text;
+  }
+
+  // Define all heuristics for what marks the start of a new paragraph.
   const markerRegex = /^(?:\d+(?:\.\d+)*\.?|\([a-zA-Z0-9]+\)|[\*\-•])\s+/;
-
-  // Regex for indentation (3+ spaces or a tab)
   const indentRegex = /^(?:\s{3,}|\t)/;
-
-  // Case-insensitive list of legal "signpost" keywords
+  const definitionRegex = /^[A-Z][A-Za-z\s]*\s(?:means|has the meaning)/;
   const signpostKeywords = [
     'WHEREAS',
     'NOW, THEREFORE,',
@@ -32,61 +32,48 @@ export const reconstructParagraphs = (text: string): string => {
   ];
   const signpostRegex = new RegExp(`^(${signpostKeywords.join('|')})`, 'i');
 
-  const lines = text.split('\n');
-  if (lines.length <= 1) {
-    return text;
-  }
+  const isParagraphStart = (line: string): boolean => {
+    return (
+      markerRegex.test(line) ||
+      indentRegex.test(line) ||
+      signpostRegex.test(line) ||
+      definitionRegex.test(line)
+    );
+  };
 
-  let reconstructedText = lines[0];
+  const reconstructedLines: string[] = [];
+  let currentParagraph = lines[0];
 
   for (let i = 1; i < lines.length; i++) {
     const currentLine = lines[i];
+    const previousLine = lines[i - 1];
 
-    // If the line is blank, it's already a hard break, preserve it.
-    if (currentLine.trim() === '') {
-        reconstructedText += '\n' + currentLine;
-        continue;
-    }
-
+    // Check for hard breaks based on current/previous line endings or next line starts.
     if (
-      markerRegex.test(currentLine) ||
-      indentRegex.test(currentLine) ||
-      signpostRegex.test(currentLine)
+      previousLine.trim().endsWith('.') ||
+      previousLine.trim().endsWith(':') ||
+      previousLine.trim().endsWith(';') ||
+      isParagraphStart(currentLine)
     ) {
-      reconstructedText += '\n\n' + currentLine;
+      reconstructedLines.push(currentParagraph);
+      currentParagraph = currentLine;
     } else {
-      reconstructedText += ' ' + currentLine.trim();
+      // This is a soft break, so join the lines.
+      currentParagraph += ' ' + currentLine.trim();
     }
   }
+  // Add the last paragraph
+  reconstructedLines.push(currentParagraph);
 
-  return reconstructedText;
-};
-
-/**
- * Cleans up pasted text, particularly from sources like PDFs, by intelligently
- * removing single line breaks within paragraphs while preserving intentional paragraph breaks.
- * 
- * @param text The raw text string to format.
- * @returns The formatted text with unwanted line breaks removed.
- */
-export function formatPastedText(text: string): string {
-  if (!text) {
-    return '';
-  }
-
-  // 1. Normalize all line endings to a single newline character.
-  let processedText = text.replace(/\r\n|\r/g, '\n');
-
-  // 2. Mark Hard Breaks: Find all lines that start with a list marker or numbered heading and protect them with a placeholder.
-  // This is the most reliable signal for a structural break in the document.
-  processedText = processedText.replace(/(\n)(?=\s*(\(\w+\)|\d+\s*\w+))/g, '%%HARD_BREAK%%');
-
-  // 3. Clean Soft Breaks: Now that hard breaks are protected, replace all remaining single newlines with a space.
-  // This safely joins lines within paragraphs and in the title block.
-  processedText = processedText.replace(/\n/g, ' ');
-
-  // 4. Restore Hard Breaks: Replace the placeholder with a proper newline character.
-  processedText = processedText.replace(/%%HARD_BREAK%%/g, '\n');
-
-  return processedText.trim();
+  return reconstructedLines.join('\n\n').replace(/\n\n\s*\n\n/g, '\n\n'); // Clean up excess newlines
 }
+
+// The old reconstructParagraphs function is now superseded by the new formatPastedText logic.
+// We can leave it here, commented out, or remove it.
+// For clarity in our A/B test, let's make it an empty function.
+export const reconstructParagraphs = (text: string): string => {
+  // This function is part of the old model. In the 'B' version,
+  // this functionality is integrated directly into formatPastedText.
+  // To avoid confusion, this button will now just run the new formatter.
+  return formatPastedText(text);
+};

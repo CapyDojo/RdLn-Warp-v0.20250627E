@@ -1,5 +1,6 @@
 import React, { useRef, useCallback, useState, useEffect, useMemo } from 'react';
 import { FileText, Image, AlertCircle, Loader, ChevronDown, Languages } from 'lucide-react';
+import { MagicWand, Sparkles } from '../icons';
 import { useOCR } from '../hooks/useOCR';
 import { OCRLanguage } from '../types/ocr-types';
 import { LanguageSettingsDropdown } from './LanguageSettingsDropdown';
@@ -45,6 +46,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
       onChange(reconstructed);
     }
   };
+
   const segmentedControlRef = useRef<HTMLDivElement>(null);
   const [showLanguageSettings, setShowLanguageSettings] = useState(false);
   const [controlRect, setControlRect] = useState<DOMRect | null>(null);
@@ -283,6 +285,13 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
             <FileText className="w-5 h-5 text-theme-primary-900" />
           )}
           <h3 className="text-lg font-semibold text-theme-primary-900">{title}</h3>
+          <button
+            onClick={handleReconstructParagraphs}
+            className="flex items-center justify-center p-2 rounded-lg bg-theme-neutral-100/70 backdrop-blur-sm border border-transparent hover:border-theme-neutral-300/50 transition-colors duration-200"
+            title="Reconstruct Paragraphs"
+          >
+            <Sparkles />
+          </button>
           {isProcessing && (
             <div className="flex items-center gap-2">
               <Loader className="w-4 h-4 text-theme-primary-600 animate-spin" />
@@ -290,11 +299,10 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
             </div>
           )}
         </div>
-        
         <div className="flex items-center gap-2">
           {/* OCR Language Segmented Control */}
           <div className="flex items-center gap-2">
-<span className="text-sm font-medium text-theme-neutral-700 hidden sm:inline">OCR Language</span>
+            <span className="text-sm font-medium text-theme-neutral-700 hidden sm:inline">OCR Language</span>
             <div className="segmented-control" ref={segmentedControlRef} role="group" aria-label="OCR Language Detection Mode">
               <button
                 onClick={() => {
@@ -572,15 +580,6 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         onSetSelectedLanguages={setSelectedLanguages}
         getLanguageDisplayName={getLanguageDisplayName}
       />
-      <div className="absolute bottom-2 right-2">
-        <button
-          onClick={handleReconstructParagraphs}
-          className="px-3 py-1 text-sm bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          title="Apply paragraph reconstruction based on lists, clauses, and indentation."
-        >
-          Reconstruct Paragraphs
-        </button>
-      </div>
     </div>
   );
 };
