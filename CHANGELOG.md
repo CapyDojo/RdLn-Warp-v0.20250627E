@@ -1,3 +1,21 @@
+## Version 0.4.4 - "Smart Paste & Formatting"
+*Released: July 13, 2025*
+
+### ✨ New Features & Major Enhancements
+
+#### **Smart Paste for PDF and Word Documents**
+- **Problem Solved**: Eliminates the tedious manual work of fixing broken line breaks when pasting multi-paragraph text from PDFs or Word documents. This provides a massive quality-of-life improvement for legal professionals.
+- **Hybrid Formatting Engine**:
+  - **For Microsoft Word**: Intelligently parses the rich HTML from the clipboard to preserve paragraph structure (`<p>` tags) while applying smart formatting to the text *within* each paragraph. This prevents extraneous line breaks.
+  - **For PDFs & Plain Text**: Implements a robust "Mark, Clean, Restore" heuristic. It protects legitimate list items and headings, removes unwanted single line breaks inside paragraphs, and then restores the protected breaks. This correctly reconstructs document structure from text that lacks explicit paragraph markers.
+- **Iterative Refinement**: The feature was developed through rigorous testing and refinement to handle regressions and edge cases, ensuring a reliable and seamless user experience across different document sources.
+
+### 🐞 Bug Fixes
+
+- **Fixed Paste Regression**: Corrected a series of regressions where fixes for PDF pasting broke Word pasting, and vice-versa. The final hybrid solution now correctly handles both sources without interference.
+
+---
+
 # RdLn Document Comparison Tool - Comprehensive Changelog
 
 ## Version 0.4.3 - "Intelligent Change Grouping & Rendering Fixes"

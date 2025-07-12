@@ -1,4 +1,25 @@
-## 2025-07-12: The Two-Front War of Diffing: Core Logic vs. Visual Rendering
+## 2025-07-13: The Smart Paste Dilemma: Solving the PDF vs. Word Formatting Problem
+
+**Problem**: Pasting text from different sources created a frustrating user experience. Text from PDFs had unwanted line breaks within paragraphs, while text from Word documents, when fixed with the same logic, would lose its paragraph structure entirely.
+
+**Solution Journey & Technical Insights**:
+
+### **1. The PDF Problem: Reconstructing Paragraphs from Broken Lines**
+- **Challenge**: Text copied from PDFs often lacks explicit paragraph breaks (double newlines). Instead, every line ends with a single newline, making it impossible to distinguish between a wrapped line and a true paragraph end.
+- **Initial Flawed Logic**: A simple regex to replace single newlines with spaces destroyed list formatting (e.g., `(a)`, `(i)`).
+- **The "Mark, Clean, Restore" Heuristic**: The robust solution was a three-step process on plain text:
+  1.  **Mark**: First, protect legitimate "hard breaks" by finding lines that start with list markers or numbered headings and prepending a unique placeholder (`<HARD_BREAK_PLACEHOLDER>`).
+  2.  **Clean**: With the important breaks protected, aggressively replace all remaining single newlines with a space. This joins all the broken lines inside paragraphs.
+  3.  **Restore**: Finally, replace the placeholder with a real newline, restoring the document's structure.
+
+### **2. The Word Regression: When a Fix Becomes a Bug**
+- **The Trap**: After perfecting the PDF logic, we discovered it broke pasting from Word. This created a classic regression where fixing one use case broke another.
+- **Root Cause**: Unlike PDFs, Word provides rich `text/html` on the clipboard, which contains structural tags like `<p>`. Our PDF-focused plain-text logic ignored this valuable information, causing incorrect formatting.
+- **The Hybrid Solution**: The final, robust solution was to check the data source first:
+  - **If HTML is present (from Word)**: Parse the HTML. Iterate through the block-level elements (`<p>`, etc.) and apply our smart formatting *to the text inside each block*. This preserves the high-level paragraph structure while cleaning up any messy line breaks within them.
+  - **If only Plain Text is present (from PDF)**: Fall back to running the smart formatting logic on the entire text blob.
+
+**Key Insight**: A "one size fits all" solution is often fragile. The most robust features anticipate different input sources and adapt their strategy accordingly. By creating a hybrid engine that uses rich data when available and falls back to smart heuristics when it's not, we built a feature that is both powerful and resilient, avoiding the common trap of overcorrection and regression.
 
 **Problem**: After major algorithm enhancements, two critical but distinct bugs emerged: one in the core diff logic and one in the final visual rendering, highlighting the need to debug the entire data-to-display pipeline.
 

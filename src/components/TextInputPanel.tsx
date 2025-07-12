@@ -5,7 +5,8 @@ import { OCRLanguage } from '../types/ocr-types';
 import { LanguageSettingsDropdown } from './LanguageSettingsDropdown';
 import { useLayout } from '../contexts/LayoutContext';
 import { BaseComponentProps } from '../types/components';
-import { useComponentPerformance, usePerformanceAwareHandler } from '../utils/performanceUtils.tsx';
+import { useComponentPerformance } from '../utils/performanceUtils.tsx';
+import { formatPastedText } from '../utils/paragraphFormatting';
 
 interface TextInputPanelProps extends BaseComponentProps {
   title: string;
@@ -29,24 +30,14 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   className,
   ...props
 }) => {
-  // Performance monitoring setup - TEMPORARILY DISABLED FOR DEBUGGING
-  const performanceTracker = {
-    trackMetric: () => {},
-    trackInteraction: () => {},
-    trackOperation: async (name: string, operation: () => any) => operation(),
-    trackRender: () => {},
-    startTiming: () => () => {},
-    isEnabled: false
-  };
-  // const performanceTracker = useComponentPerformance(props, 'TextInputPanel', {
-  //   category: 'input',
-  //   autoTrackRender: true,
-  //   autoTrackInteractions: true
-  // });
+  const performanceTracker = useComponentPerformance(props, 'TextInputPanel', {
+    category: 'input',
+    autoTrackRender: true,
+    autoTrackInteractions: true
+  });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const segmentedControlRef = useRef<HTMLDivElement>(null);
   const [showLanguageSettings, setShowLanguageSettings] = useState(false);
-  const [isPasteInProgress, setIsPasteInProgress] = useState(false);
   const [controlRect, setControlRect] = useState<DOMRect | null>(null);
   
   // Detect layout to conditionally apply dynamic scaling behavior
@@ -99,7 +90,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
   const handlePaste = useCallback(async (e: React.ClipboardEvent) => {
     const items = Array.from(e.clipboardData.items);
     const imageItem = items.find(item => item.type.startsWith('image/'));
-    const textItem = items.find(item => item.type.startsWith('text/'));
+    const textItem = items.find(item => item.type.startsWith('text/plain'));
     
     // Track paste operation type
     performanceTracker.trackMetric('paste_operation', {
@@ -108,11 +99,57 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
       itemCount: items.length
     });
     
-    // Mark that a paste is in progress for regular text
     if (textItem && !imageItem) {
-      setIsPasteInProgress(true);
-      // Clear the flag after a short delay to catch the onChange event
-      setTimeout(() => setIsPasteInProgress(false), 100);
+      e.preventDefault(); // Prevent default paste
+
+      const htmlContent = e.clipboardData.getData('text/html');
+      let formattedText = '';
+
+      // First, try to parse HTML content for rich text from Word, etc.
+      if (htmlContent) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlContent, 'text/html');
+        const blocks = Array.from(doc.body.children);
+        
+        if (blocks.length > 0) {
+          // The correct hybrid approach: run our smart formatting on the text content of each block.
+          formattedText = blocks
+            .map(block => formatPastedText(block.textContent || ''))
+            .filter(Boolean) // Filter out any empty blocks
+            .join('\n\n');
+        }
+      }
+
+      // If HTML parsing fails or is not available, fall back to our smart plain text formatter.
+      if (!formattedText) {
+        const plainText = e.clipboardData.getData('text/plain');
+        formattedText = formatPastedText(plainText);
+      }
+
+      // Insert the formatted text at the current cursor position
+      const textarea = textareaRef.current;
+      if (textarea) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const currentValue = value;
+        const newValue = currentValue.substring(0, start) + formattedText + currentValue.substring(end);
+
+        if (onChange.length > 1) {
+          (onChange as (value: string, isPasteAction?: boolean) => void)(newValue, true);
+        } else {
+          onChange(newValue);
+        }
+
+        // Set cursor position after the newly inserted text
+        setTimeout(() => {
+          const newCursorPos = start + formattedText.length;
+          textarea.setSelectionRange(newCursorPos, newCursorPos);
+          textarea.focus();
+        }, 0);
+      } else {
+        // Fallback if the ref is not available for some reason
+        onChange(value + formattedText);
+      }
     }
     
     if (imageItem) {
@@ -173,8 +210,7 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
         performanceTracker.trackMetric('ocr_error', { error: error.message });
       }
     }
-    // Regular text paste will be handled by the onChange handler with isPasteInProgress flag
-  }, [performanceTracker, isPasteInProgress, extractTextFromImage, value, onChange]);
+  }, [performanceTracker, extractTextFromImage, value, onChange]);
 
   const handleDrop = useCallback(async (e: React.DragEvent) => {
     e.preventDefault();
@@ -318,16 +354,9 @@ export const TextInputPanel: React.FC<TextInputPanelProps> = ({
           value={value}
           onChange={(e) => {
             const newValue = e.target.value;
-            // Check if this is a paste action (significant content change or isPasteInProgress flag)
-            const isLikelyPaste = isPasteInProgress || (newValue.length - value.length > 5);
-            
             // Try to call enhanced onChange if it exists, otherwise use regular onChange
             try {
-              if (isLikelyPaste) {
-                (onChange as (value: string, isPasteAction?: boolean) => void)(newValue, true);
-              } else {
-                onChange(newValue);
-              }
+              onChange(newValue);
             } catch (error) {
               // Fallback to regular onChange if enhanced version doesn't work
               onChange(newValue);
